@@ -1,0 +1,61 @@
+<h1 id="name">NAME</h1>
+<p>tk_dialog - Create modal dialog and wait for response</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>tk_dialog</strong> <em>window title text bitmap default
+string string ...</em></p>
+<h1 id="description">DESCRIPTION</h1>
+<p>This procedure is part of the Tk script library. It is largely
+<em>deprecated</em> by the <strong>tk_messageBox</strong>. Its arguments
+describe a dialog box:</p>
+<dl>
+<dt><em>window</em></dt>
+<dd>
+<p>Name of top-level window to use for dialog. Any existing window by
+this name is destroyed.</p>
+</dd>
+<dt><em>title</em></dt>
+<dd>
+<p>Text to appear in the window manager's title bar for the dialog.</p>
+</dd>
+<dt><em>text</em></dt>
+<dd>
+<p>Message to appear in the top portion of the dialog box.</p>
+</dd>
+<dt><em>bitmap</em></dt>
+<dd>
+<p>If non-empty, specifies a bitmap (in a form suitable for
+Tk_GetBitmap) to display in the top portion of the dialog, to the left
+of the text. If this is an empty string then no bitmap is displayed in
+the dialog.</p>
+</dd>
+<dt><em>default</em></dt>
+<dd>
+<p>If this is an integer greater than or equal to zero, then it gives
+the index of the button that is to be the default button for the dialog
+(0 for the leftmost button, and so on). If less than zero or an empty
+string then there will not be any default button.</p>
+</dd>
+<dt><em>string</em></dt>
+<dd>
+<p>There will be one button for each of these arguments. Each
+<em>string</em> specifies text to display in a button, in order from
+left to right.</p>
+</dd>
+</dl>
+<p>After creating a dialog box, <strong>tk_dialog</strong> waits for the
+user to select one of the buttons either by clicking on the button with
+the mouse or by typing return to invoke the default button (if any).
+Then it returns the index of the selected button: 0 for the leftmost
+button, 1 for the button next to it, and so on. If the dialog's window
+is destroyed before the user selects one of the buttons, then -1 is
+returned.</p>
+<p>While waiting for the user to respond, <strong>tk_dialog</strong>
+sets a local grab. This prevents the user from interacting with the
+application in any way except to invoke the dialog box.</p>
+<h1 id="example">EXAMPLE</h1>
+<pre><code>set reply [tk_dialog .foo &quot;The Title&quot; &quot;Do you want to say yes?&quot; \
+        questhead 0 Yes No &quot;I&#39;m not sure&quot;]</code></pre>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tk-Commands/tk_messageBox.html">tk_messageBox</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>bitmap, dialog, modal</p>

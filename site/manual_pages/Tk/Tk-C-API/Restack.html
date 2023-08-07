@@ -1,0 +1,28 @@
+<h1 id="name">NAME</h1>
+<p>Tk_RestackWindow - Change a window's position in the stacking
+order</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tk.h&gt;
+
+int
+Tk_RestackWindow(tkwin, aboveBelow, other)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Token for window to restack.</p>
+<p>Indicates new position of <em>tkwin</em> relative to <em>other</em>;
+must be <strong>Above</strong> or <strong>Below</strong>.</p>
+<p><em>Tkwin</em> will be repositioned just above or below this window.
+Must be a sibling of <em>tkwin</em> or a descendant of a sibling. If
+NULL then <em>tkwin</em> is restacked above or below all siblings.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p><strong>Tk_RestackWindow</strong> changes the stacking order of
+<em>window</em> relative to its siblings. If <em>other</em> is specified
+as NULL then <em>window</em> is repositioned at the top or bottom of its
+stacking order, depending on whether <em>aboveBelow</em> is
+<strong>Above</strong> or <strong>Below</strong>. If <em>other</em> has
+a non-NULL value then <em>window</em> is repositioned just above or
+below <em>other</em>.</p>
+<p>The <em>aboveBelow</em> argument must have one of the symbolic values
+<strong>Above</strong> or <strong>Below</strong>. Both of these values
+are defined by the include file &lt;X11/Xlib.h&gt;.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>above, below, obscure, stacking order</p>

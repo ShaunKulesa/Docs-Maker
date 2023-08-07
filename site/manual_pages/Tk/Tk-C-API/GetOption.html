@@ -1,0 +1,25 @@
+<h1 id="name">NAME</h1>
+<p>Tk_GetOption - retrieve an option from the option database</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tk.h&gt;
+
+Tk_Uid
+Tk_GetOption(tkwin, name, class)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Token for window.</p>
+<p>Name of desired option.</p>
+<p>Class of desired option. Null means there is no class for this
+option; do lookup based on name only.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>This procedure is invoked to retrieve an option from the database
+associated with <em>tkwin</em>'s main window. If there is an option for
+<em>tkwin</em> that matches the given <em>name</em> or <em>class</em>,
+then it is returned in the form of a Tk_Uid. If multiple options match
+<em>name</em> and <em>class</em>, then the highest-priority one is
+returned. If no option matches, then NULL is returned.</p>
+<p><strong>Tk_GetOption</strong> caches options related to
+<em>tkwin</em> so that successive calls for the same <em>tkwin</em> will
+execute much more quickly than successive calls for different
+windows.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>class, name, option, retrieve</p>

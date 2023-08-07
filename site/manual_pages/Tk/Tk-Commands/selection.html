@@ -1,0 +1,197 @@
+<h1 id="name">NAME</h1>
+<p>selection - Manipulate the X selection</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>selection</strong> <em>option</em> ?<em>arg arg ...</em>?</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>This command provides a Tcl interface to the X selection mechanism
+and implements the full selection functionality described in the X
+Inter-Client Communication Conventions Manual (ICCCM).</p>
+<p>Note that for management of the <strong>CLIPBOARD</strong> selection
+(see below), the <strong>clipboard</strong> command may also be
+used.</p>
+<p>The first argument to <strong>selection</strong> determines the
+format of the rest of the arguments and the behavior of the command. The
+following forms are currently supported:</p>
+<dl>
+<dt><strong>selection clear</strong> ?<strong>-displayof</strong>
+<em>window</em>? ?<strong>-selection</strong> <em>selection</em>?</dt>
+<dd>
+<p>If <em>selection</em> exists anywhere on <em>window</em>'s display,
+clear it so that no window owns the selection anymore.
+<em>Selection</em> specifies the X selection that should be cleared, and
+should be an atom name such as <strong>PRIMARY</strong> or
+<strong>CLIPBOARD</strong>; see the Inter-Client Communication
+Conventions Manual for complete details. <em>Selection</em> defaults to
+<strong>PRIMARY</strong> and <em>window</em> defaults to Returns an
+empty string.</p>
+</dd>
+<dt><strong>selection get</strong> ?<strong>-displayof</strong>
+<em>window</em>? ?<strong>-selection</strong> <em>selection</em>?
+?<strong>-type</strong> <em>type</em>?</dt>
+<dd>
+<p>Retrieves the value of <em>selection</em> from <em>window</em>'s
+display and returns it as a result. <em>Selection</em> defaults to
+<strong>PRIMARY</strong> and <em>window</em> defaults to <em>Type</em>
+specifies the form in which the selection is to be returned (the desired
+for conversion, in ICCCM terminology), and should be an atom name such
+as <strong>STRING</strong> or <strong>FILE_NAME</strong>; see the
+Inter-Client Communication Conventions Manual for complete details.
+<em>Type</em> defaults to <strong>STRING</strong>. The selection owner
+may choose to return the selection in any of several different
+representation formats, such as <strong>STRING</strong>,
+<strong>UTF8_STRING</strong>, <strong>ATOM</strong>,
+<strong>INTEGER</strong>, etc. (this format is different than the
+selection type; see the ICCCM for all the confusing details). If the
+selection is returned in a non-string format, such as
+<strong>INTEGER</strong> or <strong>ATOM</strong>, the
+<strong>selection</strong> command converts it to string format as a
+collection of fields separated by spaces: atoms are converted to their
+textual names, and anything else is converted to hexadecimal integers.
+Note that <strong>selection get</strong> does not retrieve the selection
+in the <strong>UTF8_STRING</strong> format unless told to.</p>
+</dd>
+<dt><strong>selection handle</strong> ?<strong>-selection</strong>
+<em>s</em>? ?<strong>-type</strong> <em>t</em>?
+?<strong>-format</strong> <em>f</em>? <em>window command</em></dt>
+<dd>
+<p>Creates a handler for selection requests, such that <em>command</em>
+will be executed whenever selection <em>s</em> is owned by
+<em>window</em> and someone attempts to retrieve it in the form given by
+type <em>t</em> (e.g. <em>t</em> is specified in the <strong>selection
+get</strong> command). <em>S</em> defaults to <strong>PRIMARY</strong>,
+<em>t</em> defaults to <strong>STRING</strong>, and <em>f</em> defaults
+to <strong>STRING</strong>. If <em>command</em> is an empty string then
+any existing handler for <em>window</em>, <em>t</em>, and <em>s</em> is
+removed. Note that when the selection is handled as type
+<strong>STRING</strong> it is also automatically handled as type
+<strong>UTF8_STRING</strong> as well.</p>
+<p>When <em>selection</em> is requested, <em>window</em> is the
+selection owner, and <em>type</em> is the requested type,
+<em>command</em> will be executed as a Tcl command with two additional
+numbers appended to it (with space separators). The two additional
+numbers are <em>offset</em> and <em>maxChars</em>: <em>offset</em>
+specifies a starting character position in the selection and
+<em>maxChars</em> gives the maximum number of characters to retrieve.
+The command should return a value consisting of at most
+<em>maxChars</em> of the selection, starting at position
+<em>offset</em>. For very large selections (larger than
+<em>maxChars</em>) the selection will be retrieved using several
+invocations of <em>command</em> with increasing <em>offset</em> values.
+If <em>command</em> returns a string whose length is less than
+<em>maxChars</em>, the return value is assumed to include all of the
+remainder of the selection; if the length of <em>command</em>'s result
+is equal to <em>maxChars</em> then <em>command</em> will be invoked
+again, until it eventually returns a result shorter than
+<em>maxChars</em>. The value of <em>maxChars</em> will always be
+relatively large (thousands of characters).</p>
+<p>If <em>command</em> returns an error then the selection retrieval is
+rejected just as if the selection did not exist at all.</p>
+<p>The <em>format</em> argument specifies the representation that should
+be used to transmit the selection to the requester (the second column of
+Table 2 of the ICCCM), and defaults to <strong>STRING</strong>. If
+<em>format</em> is <strong>STRING</strong>, the selection is transmitted
+as 8-bit ASCII characters (i.e. just in the form returned by
+<em>command</em>, in the system <strong>encoding</strong>; the
+<strong>UTF8_STRING</strong> format always uses UTF-8 as its encoding).
+If <em>format</em> is <strong>ATOM</strong>, then the return value from
+<em>command</em> is divided into fields separated by white space; each
+field is converted to its atom value, and the 32-bit atom value is
+transmitted instead of the atom name. For any other <em>format</em>, the
+return value from <em>command</em> is divided into fields separated by
+white space and each field is converted to a 32-bit integer; an array of
+integers is transmitted to the selection requester.</p>
+<p>The <em>format</em> argument is needed only for compatibility with
+selection requesters that do not use Tk. If Tk is being used to retrieve
+the selection then the value is converted back to a string at the
+requesting end, so <em>format</em> is irrelevant.</p>
+</dd>
+<dt><strong>selection own</strong> ?<strong>-displayof</strong>
+<em>window</em>? ?<strong>-selection</strong> <em>selection</em>?</dt>
+<dd>
+
+</dd>
+<dt><strong>selection own</strong> ?<strong>-command</strong>
+<em>command</em>? ?<strong>-selection</strong> <em>selection</em>?
+<em>window</em></dt>
+<dd>
+<p>The first form of <strong>selection own</strong> returns the path
+name of the window in this application that owns <em>selection</em> on
+the display containing <em>window</em>, or an empty string if no window
+in this application owns the selection. <em>Selection</em> defaults to
+<strong>PRIMARY</strong> and <em>window</em> defaults to</p>
+<p>The second form of <strong>selection own</strong> causes
+<em>window</em> to become the new owner of <em>selection</em> on
+<em>window</em>'s display, returning an empty string as result. The
+existing owner, if any, is notified that it has lost the selection. If
+<em>command</em> is specified, it is a Tcl script to execute when some
+other window claims ownership of the selection away from
+<em>window</em>. <em>Selection</em> defaults to PRIMARY.</p>
+</dd>
+</dl>
+<h1 id="widget-facilities">WIDGET FACILITIES</h1>
+<p>The <strong>text</strong>, <strong>entry</strong>,
+<strong>ttk::entry</strong>, <strong>listbox</strong>,
+<strong>spinbox</strong> and <strong>ttk::spinbox</strong> widgets have
+the option <strong>-exportselection</strong>. If a widget has this
+option set to boolean <strong>true</strong>, then (in an unsafe
+interpreter) a selection made in the widget is automatically written to
+the <strong>PRIMARY</strong> selection.</p>
+<p>A GUI event, for example
+<strong>&lt;&lt;PasteSelection&gt;&gt;</strong>, can copy the
+<strong>PRIMARY</strong> selection to certain widgets. This copy is
+implemented by a widget binding to the event. The binding script makes
+appropriate calls to the <strong>selection</strong> command.</p>
+<h1 id="portability-issues">PORTABILITY ISSUES</h1>
+<p>On X11, the <strong>PRIMARY</strong> selection is a system-wide
+feature of the X server, allowing communication between different
+processes that are X11 clients.</p>
+<p>On Windows, the <strong>PRIMARY</strong> selection is not provided by
+the system, but only by Tk, and so it is shared only between windows of
+a parent interpreter and its child interpreters. It is not shared
+between interpreters in different processes or different threads. Each
+parent interpreter has a separate <strong>PRIMARY</strong> selection
+that is shared only with its child interpreters which are not safe
+interpreters.</p>
+<h1 id="security">SECURITY</h1>
+<p>A safe interpreter cannot read from the <strong>PRIMARY</strong>
+selection because its <strong>selection</strong> command is hidden. For
+this reason the <strong>PRIMARY</strong> selection cannot be written to
+the Tk widgets of a safe interpreter.</p>
+<p>A Tk widget can have its option <strong>-exportselection</strong> set
+to boolean <strong>true</strong>, but in a safe interpreter this option
+has no effect: writing from the widget to the <strong>PRIMARY</strong>
+selection is disabled.</p>
+<p>These are security features. A safe interpreter may run untrusted
+code, and it is a security risk if this untrusted code can read or write
+the <strong>PRIMARY</strong> selection used by other interpreters.</p>
+<h1 id="examples">EXAMPLES</h1>
+<p>On X11 platforms, one of the standard selections available is the
+<strong>SECONDARY</strong> selection. Hardly anything uses it, but here
+is how to read it using Tk:</p>
+<pre><code>set selContents [selection get -selection SECONDARY]</code></pre>
+<p>Many different types of data may be available for a selection; the
+special type <strong>TARGETS</strong> allows you to get a list of
+available types:</p>
+<pre><code>foreach type [selection get -type TARGETS] {
+   puts &quot;Selection PRIMARY supports type $type&quot;
+}</code></pre>
+<p>To claim the selection, you must first set up a handler to supply the
+data for the selection. Then you have to claim the selection...</p>
+<pre><code># Set up the data handler ready for incoming requests
+set foo &quot;This is a string with some data in it... blah blah&quot;
+selection handle -selection SECONDARY . getData
+proc getData {offset maxChars} {
+   puts &quot;Retrieving selection starting at $offset&quot;
+   return [string range $::foo $offset [expr {$offset+$maxChars-1}]]
+}
+
+# Now we grab the selection itself
+puts &quot;Claiming selection&quot;
+selection own -command lost -selection SECONDARY .
+proc lost {} {
+   puts &quot;Lost selection&quot;
+}</code></pre>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tk-Commands/clipboard.html">clipboard</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>clear, format, handler, ICCCM, own, selection, target, type</p>

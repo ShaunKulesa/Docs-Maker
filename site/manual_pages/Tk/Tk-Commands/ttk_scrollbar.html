@@ -1,0 +1,195 @@
+<h1 id="name">NAME</h1>
+<p>ttk::scrollbar - Control the viewport of a scrollable widget</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>ttk::scrollbar</strong> <em>pathName</em>
+?<em>options...</em>?</p>
+<h1 id="description">DESCRIPTION</h1>
+<p><strong>ttk::scrollbar</strong> widgets are typically linked to an
+associated window that displays a document of some sort, such as a file
+being edited or a drawing. A scrollbar displays a <em>thumb</em> in the
+middle portion of the scrollbar, whose position and size provides
+information about the portion of the document visible in the associated
+window. The thumb may be dragged by the user to control the visible
+region. Depending on the theme, two or more arrow buttons may also be
+present; these are used to scroll the visible region in discrete
+units.</p>
+<h1 id="standard-options">STANDARD OPTIONS</h1>
+<pre><code>-class   -cursor -style
+-takefocus</code></pre>
+<p>See the manual entry for details on the standard options.</p>
+<h1 id="widget-specific-options">WIDGET-SPECIFIC OPTIONS</h1>
+<pre><code>Command-Line Name:   -command
+Database Name:  command
+Database Class: Command</code></pre>
+<blockquote>
+<p>A Tcl script prefix to evaluate to change the view in the widget
+associated with the scrollbar. Additional arguments are appended to the
+value of this option, as described in <strong>SCROLLING
+COMMANDS</strong> below, whenever the user requests a view change by
+manipulating the scrollbar.</p>
+</blockquote>
+<blockquote>
+<p>This option typically consists of a two-element list, containing the
+name of a scrollable widget followed by either <strong>xview</strong>
+(for horizontal scrollbars) or <strong>yview</strong> (for vertical
+scrollbars).</p>
+</blockquote>
+<pre><code>Command-Line Name:   -orient
+Database Name:  orient
+Database Class: Orient</code></pre>
+<blockquote>
+<p>One of <strong>horizontal</strong> or <strong>vertical</strong>.
+Specifies the orientation of the scrollbar.</p>
+</blockquote>
+<h1 id="widget-command">WIDGET COMMAND</h1>
+<dl>
+<dt><em>pathName</em> <strong>cget</strong> <em>option</em></dt>
+<dd>
+<p>Returns the current value of the specified <em>option</em>; see
+<em>ttk::widget(n)</em>.</p>
+</dd>
+<dt><em>pathName</em> <strong>configure</strong> ?<em>option</em>?
+?<em>value option value ...</em>?</dt>
+<dd>
+<p>Modify or query widget options; see <em>ttk::widget(n)</em>.</p>
+</dd>
+<dt><em>pathName</em> <strong>get</strong></dt>
+<dd>
+<p>Returns the scrollbar settings in the form of a list whose elements
+are the arguments to the most recent <strong>set</strong> widget
+command.</p>
+</dd>
+<dt><em>pathName</em> <strong>identify</strong> <em>x y</em></dt>
+<dd>
+<p>Returns the name of the element at position <em>x</em>, <em>y</em>.
+See <em>ttk::widget(n)</em>.</p>
+</dd>
+<dt><em>pathName</em> <strong>instate</strong> <em>statespec</em>
+?<em>script</em>?</dt>
+<dd>
+<p>Test the widget state; see <em>ttk::widget(n)</em>.</p>
+</dd>
+<dt><em>pathName</em> <strong>set</strong> <em>first last</em></dt>
+<dd>
+<p>This command is normally invoked by the scrollbar's associated widget
+from an <strong>-xscrollcommand</strong> or
+<strong>-yscrollcommand</strong> callback. Specifies the visible range
+to be displayed. <em>first</em> and <em>last</em> are real fractions
+between 0 and 1.</p>
+</dd>
+<dt><em>pathName</em> <strong>state</strong> ?<em>stateSpec</em>?</dt>
+<dd>
+<p>Modify or query the widget state; see <em>ttk::widget(n)</em>.</p>
+</dd>
+</dl>
+<h1 id="internal-commands">INTERNAL COMMANDS</h1>
+<p>The following widget commands are used internally by the
+<strong>TScrollbar</strong> widget class bindings.</p>
+<dl>
+<dt><em>pathName</em> <strong>delta</strong> <em>deltaX deltaY</em></dt>
+<dd>
+<p>Returns a real number indicating the fractional change in the
+scrollbar setting that corresponds to a given change in thumb position.
+For example, if the scrollbar is horizontal, the result indicates how
+much the scrollbar setting must change to move the thumb <em>deltaX</em>
+pixels to the right (<em>deltaY</em> is ignored in this case). If the
+scrollbar is vertical, the result indicates how much the scrollbar
+setting must change to move the thumb <em>deltaY</em> pixels down. The
+arguments and the result may be zero or negative.</p>
+</dd>
+<dt><em>pathName</em> <strong>fraction</strong> <em>x y</em></dt>
+<dd>
+<p>Returns a real number between 0 and 1 indicating where the point
+given by <em>x</em> and <em>y</em> lies in the trough area of the
+scrollbar, where 0.0 corresponds to the top or left of the trough and
+1.0 corresponds to the bottom or right. <em>X</em> and <em>y</em> are
+pixel coordinates relative to the scrollbar widget. If <em>x</em> and
+<em>y</em> refer to a point outside the trough, the closest point in the
+trough is used.</p>
+</dd>
+</dl>
+<h1 id="scrolling-commands">SCROLLING COMMANDS</h1>
+<p>When the user interacts with the scrollbar, for example by dragging
+the thumb, the scrollbar notifies the associated widget that it must
+change its view. The scrollbar makes the notification by evaluating a
+Tcl command generated from the scrollbar's <strong>-command</strong>
+option. The command may take any of the following forms. In each case,
+<em>prefix</em> is the contents of the <strong>-command</strong> option,
+which usually has a form like <strong>.t yview</strong></p>
+<dl>
+<dt><em>prefix</em> <strong>moveto</strong> <em>fraction</em></dt>
+<dd>
+<p><em>Fraction</em> is a real number between 0 and 1. The widget should
+adjust its view so that the point given by <em>fraction</em> appears at
+the beginning of the widget. If <em>fraction</em> is 0 it refers to the
+beginning of the document. 1.0 refers to the end of the document, 0.333
+refers to a point one-third of the way through the document, and so
+on.</p>
+</dd>
+<dt><em>prefix</em> <strong>scroll</strong> <em>number</em>
+<strong>units</strong></dt>
+<dd>
+<p>The widget should adjust its view by <em>number</em> units. The units
+are defined in whatever way makes sense for the widget, such as
+characters or lines in a text widget. <em>Number</em> is either 1, which
+means one unit should scroll off the top or left of the window, or -1,
+which means that one unit should scroll off the bottom or right of the
+window.</p>
+</dd>
+<dt><em>prefix</em> <strong>scroll</strong> <em>number</em>
+<strong>pages</strong></dt>
+<dd>
+<p>The widget should adjust its view by <em>number</em> pages. It is up
+to the widget to define the meaning of a page; typically it is slightly
+less than what fits in the window, so that there is a slight overlap
+between the old and new views. <em>Number</em> is either 1, which means
+the next page should become visible, or -1, which means that the
+previous page should become visible.</p>
+</dd>
+</dl>
+<h1 id="widget-states">WIDGET STATES</h1>
+<p>The scrollbar automatically sets the <strong>disabled</strong> state
+bit. when the entire range is visible (range is 0.0 to 1.0), and clears
+it otherwise. It also sets the <strong>active</strong> and
+<strong>pressed</strong> state flags of individual elements, based on
+the position and state of the mouse pointer.</p>
+<h1 id="example">EXAMPLE</h1>
+<pre><code>set f [frame .f]
+ttk::scrollbar $f.hsb -orient horizontal -command [list $f.t xview]
+ttk::scrollbar $f.vsb -orient vertical -command [list $f.t yview]
+text $f.t -xscrollcommand [list $f.hsb set] -yscrollcommand [list $f.vsb set]
+grid $f.t -row 0 -column 0 -sticky nsew
+grid $f.vsb -row 0 -column 1 -sticky nsew
+grid $f.hsb -row 1 -column 0 -sticky nsew
+grid columnconfigure $f 0 -weight 1
+grid rowconfigure $f 0 -weight 1
+pack $f</code></pre>
+<h1 id="styling-options">STYLING OPTIONS</h1>
+<p>The class name for a <strong>ttk::scrollbar</strong> is
+<strong>TScrollbar</strong>.</p>
+<p>Dynamic states: <strong>active</strong>,
+<strong>disabled</strong>.</p>
+<p><strong>TScrollbar</strong> (or more specifically
+<strong>Vertical.TScrollbar</strong> and
+<strong>Horizontal.TScrollbar</strong>) styling options that are
+configurable with <strong>ttk::style</strong> are:</p>
+<p><strong>-arrowcolor</strong> <em>color</em><br />
+<strong>-arrowsize</strong> <em>amount</em><br />
+<strong>-background</strong> <em>color</em><br />
+<strong>-bordercolor</strong> <em>color</em><br />
+<strong>-darkcolor</strong> <em>color</em> (color of the dark part of
+the 3D relief)<br />
+<strong>-foreground</strong> <em>color</em><br />
+<strong>-gripcount</strong> <em>count</em> (number of lines on the
+thumb)<br />
+<strong>-lightcolor</strong> <em>color</em> (color of the light part of
+the 3D relief)<br />
+<strong>-troughcolor</strong> <em>color</em></p>
+<p>Some options are only available for specific themes.</p>
+<p>See the <strong>ttk::style</strong> manual page for information on
+how to configure ttk styles.</p>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tk-Commands/ttk::widget.html">ttk::widget</a>, <a
+href="../Tk-Commands/scrollbar.html">scrollbar</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>scrollbar, widget</p>

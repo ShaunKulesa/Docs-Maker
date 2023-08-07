@@ -1,0 +1,177 @@
+<h1 id="name">NAME</h1>
+<p>ttk::combobox - text field with popdown selection list</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>ttk::combobox</strong> <em>pathName</em>
+?<em>options</em>?</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>A <strong>ttk::combobox</strong> combines a text field with a
+pop-down list of values; the user may select the value of the text field
+from among the values in the list.</p>
+<h1 id="standard-options">STANDARD OPTIONS</h1>
+<pre><code>-class   -cursor -takefocus
+-style</code></pre>
+<p>See the manual entry for details on the standard options.</p>
+<h1 id="widget-specific-options">WIDGET-SPECIFIC OPTIONS</h1>
+<pre><code>Command-Line Name:   -exportselection
+Database Name:  exportSelection
+Database Class: ExportSelection</code></pre>
+<blockquote>
+<p>Boolean value. If set, the widget selection is linked to the X
+selection.</p>
+</blockquote>
+<pre><code>Command-Line Name:   -justify
+Database Name:  justify
+Database Class: Justify</code></pre>
+<blockquote>
+<p>Specifies how the text is aligned within the widget. Must be one of
+<strong>left</strong>, <strong>center</strong>, or
+<strong>right</strong>.</p>
+</blockquote>
+<pre><code>Command-Line Name:   -height
+Database Name:  height
+Database Class: Height</code></pre>
+<blockquote>
+<p>Specifies the height of the pop-down listbox, in rows.</p>
+</blockquote>
+<pre><code>Command-Line Name:   -postcommand
+Database Name:  postCommand
+Database Class: PostCommand</code></pre>
+<blockquote>
+<p>A Tcl script to evaluate immediately before displaying the listbox.
+The <strong>-postcommand</strong> script may specify the
+<strong>-values</strong> to display.</p>
+</blockquote>
+<pre><code>Command-Line Name:   -state
+Database Name:  state
+Database Class: State</code></pre>
+<blockquote>
+<p>One of <strong>normal</strong>, <strong>readonly</strong>, or
+<strong>disabled</strong>. In the <strong>readonly</strong> state, the
+value may not be edited directly, and the user can only select one of
+the <strong>-values</strong> from the dropdown list. In the
+<strong>normal</strong> state, the text field is directly editable. In
+the <strong>disabled</strong> state, no interaction is possible.</p>
+</blockquote>
+<pre><code>Command-Line Name:   -textvariable
+Database Name:  textVariable
+Database Class: TextVariable</code></pre>
+<blockquote>
+<p>Specifies the name of a global variable whose value is linked to the
+widget value. Whenever the variable changes value the widget value is
+updated, and vice versa.</p>
+</blockquote>
+<pre><code>Command-Line Name:   -values
+Database Name:  values
+Database Class: Values</code></pre>
+<blockquote>
+<p>Specifies the list of values to display in the drop-down listbox.</p>
+</blockquote>
+<pre><code>Command-Line Name:   -width
+Database Name:  width
+Database Class: Width</code></pre>
+<blockquote>
+<p>Specifies an integer value indicating the desired width of the entry
+window, in average-size characters of the widget's font.</p>
+</blockquote>
+<h1 id="widget-command">WIDGET COMMAND</h1>
+<p>The following subcommands are possible for combobox widgets:</p>
+<dl>
+<dt><em>pathName</em> <strong>current</strong> ?<em>newIndex</em>?</dt>
+<dd>
+<p>If <em>newIndex</em> is supplied, sets the combobox value to the
+element at position <em>newIndex</em> in the list of
+<strong>-values</strong> (in addition to integers, the
+<strong>end</strong> index is supported and indicates the last element
+of the list). Otherwise, returns the index of the current value in the
+list of <strong>-values</strong> or <strong>-1</strong> if the current
+value does not appear in the list.</p>
+</dd>
+<dt><em>pathName</em> <strong>get</strong></dt>
+<dd>
+<p>Returns the current value of the combobox.</p>
+</dd>
+<dt><em>pathName</em> <strong>set</strong> <em>value</em></dt>
+<dd>
+<p>Sets the value of the combobox to <em>value</em>.</p>
+</dd>
+</dl>
+<p>The combobox widget also supports the following
+<strong>ttk::entry</strong> widget subcommands (see
+<em>ttk::entry(n)</em> for details):</p>
+<blockquote>
+<pre><code>bbox    delete  icursor
+index   insert  selection
+xview</code></pre>
+</blockquote>
+<p>The combobox widget also supports the following generic
+<strong>ttk::widget</strong> widget subcommands (see
+<em>ttk::widget(n)</em> for details):</p>
+<blockquote>
+<pre><code>cget    configure   identify
+instate state</code></pre>
+</blockquote>
+<h1 id="virtual-events">VIRTUAL EVENTS</h1>
+<p>The combobox widget generates a
+<strong>&lt;&lt;ComboboxSelected&gt;&gt;</strong> virtual event when the
+user selects an element from the list of values. If the selection action
+unposts the listbox, this event is delivered after the listbox is
+unposted.</p>
+<h1 id="styling-options">STYLING OPTIONS</h1>
+<p>The class name for a <strong>ttk::combobox</strong> is
+<strong>TCombobox</strong>. The <strong>ttk::combobox</strong> uses the
+<strong>entry</strong> and <strong>listbox</strong> widgets internally.
+The listbox frame has a class name of
+<strong>ComboboxPopdownFrame</strong>.</p>
+<p>Dynamic states: <strong>disabled</strong>, <strong>focus</strong>,
+<strong>pressed</strong>, <strong>readonly</strong>.</p>
+<p><strong>TCombobox</strong> styling options configurable with
+<strong>ttk::style</strong> are:</p>
+<p><strong>-arrowcolor</strong> <em>color</em><br />
+<strong>-arrowsize</strong> <em>amount</em><br />
+<strong>-background</strong> <em>color</em><br />
+<strong>-bordercolor</strong> <em>color</em><br />
+<strong>-darkcolor</strong> <em>color</em><br />
+<strong>-focusfill</strong> <em>color</em><br />
+<strong>-foreground</strong> <em>color</em><br />
+<strong>-fieldbackground</strong> <em>color</em></p>
+<blockquote>
+<p>Can only be changed when using non-native and non-graphical
+themes.</p>
+</blockquote>
+<p><strong>-insertcolor</strong> <em>color</em><br />
+<strong>-insertwidth</strong> <em>amount</em><br />
+<strong>-lightcolor</strong> <em>color</em><br />
+<strong>-padding</strong> <em>padding</em><br />
+<strong>-postoffset</strong> <em>padding</em><br />
+<strong>-selectbackground</strong> <em>color</em></p>
+<blockquote>
+<p>Text entry select background.</p>
+</blockquote>
+<p><strong>-selectforeground</strong> <em>color</em></p>
+<blockquote>
+<p>Text entry select foreground.</p>
+</blockquote>
+<p>The <strong>ttk::combobox</strong> popdown listbox cannot be
+configured using <strong>ttk::style</strong> nor via the widget
+<strong>configure</strong> command. The listbox can be configured using
+the option database.</p>
+<p>option add *TCombobox*Listbox.background <em>color</em><br />
+option add *TCombobox*Listbox.font <em>font</em><br />
+option add *TCombobox*Listbox.foreground <em>color</em><br />
+option add *TCombobox*Listbox.selectBackground <em>color</em><br />
+option add *TCombobox*Listbox.selectForeground <em>color</em></p>
+<p>To configure a specific listbox (subject to future change):</p>
+<pre><code>set popdown [ttk::combobox::PopdownWindow .mycombobox]
+$popdown.f.l configure -font font</code></pre>
+<p><strong>ComboboxPopdownFrame</strong> styling options configurable
+with <strong>ttk::style</strong> are:</p>
+<p><strong>-borderwidth</strong> <em>amount</em><br />
+<strong>-relief</strong> <em>relief</em></p>
+<p>Some options are only available for specific themes.</p>
+<p>See the <strong>ttk::style</strong> manual page for information on
+how to configure ttk styles.</p>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tk-Commands/ttk::widget.html">ttk::widget</a>, <a
+href="../Tk-Commands/ttk::entry.html">ttk::entry</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>choice, entry, list box, text box, widget</p>

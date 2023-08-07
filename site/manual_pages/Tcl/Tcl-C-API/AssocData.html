@@ -1,0 +1,63 @@
+<h1 id="name">NAME</h1>
+<p>Tcl_GetAssocData, Tcl_SetAssocData, Tcl_DeleteAssocData - manage
+associations of string keys and user specified data with Tcl
+interpreters</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tcl.h&gt;
+
+ClientData
+Tcl_GetAssocData(interp, key, delProcPtr)
+
+Tcl_SetAssocData(interp, key, delProc, clientData)
+
+Tcl_DeleteAssocData(interp, key)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Interpreter in which to execute the specified command.</p>
+<p>Key for association with which to store data or from which to delete
+or retrieve data. Typically the module prefix for a package.</p>
+<p>Procedure to call when <em>interp</em> is deleted.</p>
+<p>Pointer to location in which to store address of current deletion
+procedure for association. Ignored if NULL.</p>
+<p>Arbitrary one-word value associated with the given key in this
+interpreter. This data is owned by the caller.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>These procedures allow extensions to associate their own data with a
+Tcl interpreter. An association consists of a string key, typically the
+name of the extension, and a one-word value, which is typically a
+pointer to a data structure holding data specific to the extension. Tcl
+makes no interpretation of either the key or the value for an
+association.</p>
+<p>Storage management is facilitated by storing with each association a
+procedure to call when the interpreter is deleted. This procedure can
+dispose of the storage occupied by the client's data in any way it sees
+fit.</p>
+<p><strong>Tcl_SetAssocData</strong> creates an association between a
+string key and a user specified datum in the given interpreter. If there
+is already an association with the given <em>key</em>,
+<strong>Tcl_SetAssocData</strong> overwrites it with the new
+information. It is up to callers to organize their use of names to avoid
+conflicts, for example, by using package names as the keys. If the
+<em>deleteProc</em> argument is non-NULL it specifies the address of a
+procedure to invoke if the interpreter is deleted before the association
+is deleted. <em>DeleteProc</em> should have arguments and result that
+match the type <strong>Tcl_InterpDeleteProc</strong>:</p>
+<pre><code>typedef void Tcl_InterpDeleteProc(
+        ClientData clientData,
+        Tcl_Interp *interp);</code></pre>
+<p>When <em>deleteProc</em> is invoked the <em>clientData</em> and
+<em>interp</em> arguments will be the same as the corresponding
+arguments passed to <strong>Tcl_SetAssocData</strong>. The deletion
+procedure will <em>not</em> be invoked if the association is deleted
+before the interpreter is deleted.</p>
+<p><strong>Tcl_GetAssocData</strong> returns the datum stored in the
+association with the specified key in the given interpreter, and if the
+<em>delProcPtr</em> field is non-<strong>NULL</strong>, the address
+indicated by it gets the address of the delete procedure stored with
+this association. If no association with the specified key exists in the
+given interpreter <strong>Tcl_GetAssocData</strong> returns
+<strong>NULL</strong>.</p>
+<p><strong>Tcl_DeleteAssocData</strong> deletes an association with a
+specified key in the given interpreter. Then it calls the deletion
+procedure.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>association, data, deletion procedure, interpreter, key</p>

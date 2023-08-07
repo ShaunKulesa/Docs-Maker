@@ -1,0 +1,268 @@
+<h1 id="name">NAME</h1>
+<p>mathfunc - Mathematical functions for Tcl expressions</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p>package require <strong>Tcl 8.5</strong></p>
+<p><strong>::tcl::mathfunc::abs</strong> <em>arg</em><br />
+<strong>::tcl::mathfunc::acos</strong> <em>arg</em><br />
+<strong>::tcl::mathfunc::asin</strong> <em>arg</em><br />
+<strong>::tcl::mathfunc::atan</strong> <em>arg</em><br />
+<strong>::tcl::mathfunc::atan2</strong> <em>y</em> <em>x</em><br />
+<strong>::tcl::mathfunc::bool</strong> <em>arg</em><br />
+<strong>::tcl::mathfunc::ceil</strong> <em>arg</em><br />
+<strong>::tcl::mathfunc::cos</strong> <em>arg</em><br />
+<strong>::tcl::mathfunc::cosh</strong> <em>arg</em><br />
+<strong>::tcl::mathfunc::double</strong> <em>arg</em><br />
+<strong>::tcl::mathfunc::entier</strong> <em>arg</em><br />
+<strong>::tcl::mathfunc::exp</strong> <em>arg</em><br />
+<strong>::tcl::mathfunc::floor</strong> <em>arg</em><br />
+<strong>::tcl::mathfunc::fmod</strong> <em>x</em> <em>y</em><br />
+<strong>::tcl::mathfunc::hypot</strong> <em>x</em> <em>y</em><br />
+<strong>::tcl::mathfunc::int</strong> <em>arg</em><br />
+<strong>::tcl::mathfunc::isqrt</strong> <em>arg</em><br />
+<strong>::tcl::mathfunc::log</strong> <em>arg</em><br />
+<strong>::tcl::mathfunc::log10</strong> <em>arg</em><br />
+<strong>::tcl::mathfunc::max</strong> <em>arg</em> ?<em>arg</em>
+...?<br />
+<strong>::tcl::mathfunc::min</strong> <em>arg</em> ?<em>arg</em>
+...?<br />
+<strong>::tcl::mathfunc::pow</strong> <em>x</em> <em>y</em><br />
+<strong>::tcl::mathfunc::rand</strong><br />
+<strong>::tcl::mathfunc::round</strong> <em>arg</em><br />
+<strong>::tcl::mathfunc::sin</strong> <em>arg</em><br />
+<strong>::tcl::mathfunc::sinh</strong> <em>arg</em><br />
+<strong>::tcl::mathfunc::sqrt</strong> <em>arg</em><br />
+<strong>::tcl::mathfunc::srand</strong> <em>arg</em><br />
+<strong>::tcl::mathfunc::tan</strong> <em>arg</em><br />
+<strong>::tcl::mathfunc::tanh</strong> <em>arg</em><br />
+<strong>::tcl::mathfunc::wide</strong> <em>arg</em></p>
+<h1 id="description">DESCRIPTION</h1>
+<p>The <strong>expr</strong> command handles mathematical functions of
+the form <strong>sin($x)</strong> or <strong>atan2($y,$x)</strong> by
+converting them to calls of the form <strong>[tcl::mathfunc::sin [expr
+{$x}]]</strong> or <strong>[tcl::mathfunc::atan2 [expr {$y}] [expr
+{$x}]]</strong>. A number of math functions are available by default
+within the namespace <strong>::tcl::mathfunc</strong>; these functions
+are also available for code apart from <strong>expr</strong>, by
+invoking the given commands directly.</p>
+<p>Tcl supports the following mathematical functions in expressions, all
+of which work solely with floating-point numbers unless otherwise
+noted:</p>
+<blockquote>
+<pre><code>abs acos    asin    atan
+atan2   bool    ceil    cos
+cosh    double  entier  exp
+floor   fmod    hypot   int
+isqrt   log log10   max
+min pow rand    round
+sin sinh    sqrt    srand
+tan tanh    wide</code></pre>
+</blockquote>
+<p>In addition to these predefined functions, applications may define
+additional functions by using <strong>proc</strong> (or any other
+method, such as <strong>interp alias</strong> or
+<strong>Tcl_CreateObjCommand</strong>) to define new commands in the
+<strong>tcl::mathfunc</strong> namespace. In addition, an obsolete
+interface named <strong>Tcl_CreateMathFunc</strong>() is available to
+extensions that are written in C. The latter interface is not
+recommended for new implementations.</p>
+<h2 id="detailed-definitions">DETAILED DEFINITIONS</h2>
+<dl>
+<dt><strong>abs</strong> <em>arg</em></dt>
+<dd>
+<p>Returns the absolute value of <em>arg</em>. <em>Arg</em> may be
+either integer or floating-point, and the result is returned in the same
+form.</p>
+</dd>
+<dt><strong>acos</strong> <em>arg</em></dt>
+<dd>
+<p>Returns the arc cosine of <em>arg</em>, in the range
+[<em>0</em>,<em>pi</em>] radians. <em>Arg</em> should be in the range
+[<em>-1</em>,<em>1</em>].</p>
+</dd>
+<dt><strong>asin</strong> <em>arg</em></dt>
+<dd>
+<p>Returns the arc sine of <em>arg</em>, in the range
+[<em>-pi/2</em>,<em>pi/2</em>] radians. <em>Arg</em> should be in the
+range [<em>-1</em>,<em>1</em>].</p>
+</dd>
+<dt><strong>atan</strong> <em>arg</em></dt>
+<dd>
+<p>Returns the arc tangent of <em>arg</em>, in the range
+[<em>-pi/2</em>,<em>pi/2</em>] radians.</p>
+</dd>
+<dt><strong>atan2</strong> <em>y x</em></dt>
+<dd>
+<p>Returns the arc tangent of <em>y</em>/<em>x</em>, in the range
+[<em>-pi</em>,<em>pi</em>] radians. <em>x</em> and <em>y</em> cannot
+both be 0. If <em>x</em> is greater than <em>0</em>, this is equivalent
+to</p>
+</dd>
+<dt><strong>bool</strong> <em>arg</em></dt>
+<dd>
+<p>Accepts any numeric value, or any string acceptable to <strong>string
+is boolean</strong>, and returns the corresponding boolean value
+<strong>0</strong> or <strong>1</strong>. Non-zero numbers are true.
+Other numbers are false. Non-numeric strings produce boolean value in
+agreement with <strong>string is true</strong> and <strong>string is
+false</strong>.</p>
+</dd>
+<dt><strong>ceil</strong> <em>arg</em></dt>
+<dd>
+<p>Returns the smallest integral floating-point value (i.e. with a zero
+fractional part) not less than <em>arg</em>. The argument may be any
+numeric value.</p>
+</dd>
+<dt><strong>cos</strong> <em>arg</em></dt>
+<dd>
+<p>Returns the cosine of <em>arg</em>, measured in radians.</p>
+</dd>
+<dt><strong>cosh</strong> <em>arg</em></dt>
+<dd>
+<p>Returns the hyperbolic cosine of <em>arg</em>. If the result would
+cause an overflow, an error is returned.</p>
+</dd>
+<dt><strong>double</strong> <em>arg</em></dt>
+<dd>
+<p>The argument may be any numeric value, If <em>arg</em> is a
+floating-point value, returns <em>arg</em>, otherwise converts
+<em>arg</em> to floating-point and returns the converted value. May
+return <strong>Inf</strong> or <strong>-Inf</strong> when the argument
+is a numeric value that exceeds the floating-point range.</p>
+</dd>
+<dt><strong>entier</strong> <em>arg</em></dt>
+<dd>
+<p>The argument may be any numeric value. The integer part of
+<em>arg</em> is determined and returned. The integer range returned by
+this function is unlimited, unlike <strong>int</strong> and
+<strong>wide</strong> which truncate their range to fit in particular
+storage widths.</p>
+</dd>
+<dt><strong>exp</strong> <em>arg</em></dt>
+<dd>
+<p>Returns the exponential of <em>arg</em>, defined as
+<em>e</em>**<em>arg</em>. If the result would cause an overflow, an
+error is returned.</p>
+</dd>
+<dt><strong>floor</strong> <em>arg</em></dt>
+<dd>
+<p>Returns the largest integral floating-point value (i.e. with a zero
+fractional part) not greater than <em>arg</em>. The argument may be any
+numeric value.</p>
+</dd>
+<dt><strong>fmod</strong> <em>x y</em></dt>
+<dd>
+<p>Returns the floating-point remainder of the division of <em>x</em> by
+<em>y</em>. If <em>y</em> is 0, an error is returned.</p>
+</dd>
+<dt><strong>hypot</strong> <em>x y</em></dt>
+<dd>
+<p>Computes the length of the hypotenuse of a right-angled triangle,
+approximately except for being more numerically stable when the two
+arguments have substantially different magnitudes.</p>
+</dd>
+<dt><strong>int</strong> <em>arg</em></dt>
+<dd>
+<p>The argument may be any numeric value. The integer part of
+<em>arg</em> is determined, and then the low order bits of that integer
+value up to the machine word size are returned as an integer value. For
+reference, the number of bytes in the machine word are stored in the
+<strong>wordSize</strong> element of the <strong>tcl_platform</strong>
+array.</p>
+</dd>
+<dt><strong>isqrt</strong> <em>arg</em></dt>
+<dd>
+<p>Computes the integer part of the square root of <em>arg</em>.
+<em>Arg</em> must be a positive value, either an integer or a floating
+point number. Unlike <strong>sqrt</strong>, which is limited to the
+precision of a floating point number, <em>isqrt</em> will return a
+result of arbitrary precision.</p>
+</dd>
+<dt><strong>log</strong> <em>arg</em></dt>
+<dd>
+<p>Returns the natural logarithm of <em>arg</em>. <em>Arg</em> must be a
+positive value.</p>
+</dd>
+<dt><strong>log10</strong> <em>arg</em></dt>
+<dd>
+<p>Returns the base 10 logarithm of <em>arg</em>. <em>Arg</em> must be a
+positive value.</p>
+</dd>
+<dt><strong>max</strong> <em>arg</em> <em>...</em></dt>
+<dd>
+<p>Accepts one or more numeric arguments. Returns the one argument with
+the greatest value.</p>
+</dd>
+<dt><strong>min</strong> <em>arg</em> <em>...</em></dt>
+<dd>
+<p>Accepts one or more numeric arguments. Returns the one argument with
+the least value.</p>
+</dd>
+<dt><strong>pow</strong> <em>x y</em></dt>
+<dd>
+<p>Computes the value of <em>x</em> raised to the power <em>y</em>. If
+<em>x</em> is negative, <em>y</em> must be an integer value.</p>
+</dd>
+<dt><strong>rand</strong></dt>
+<dd>
+<p>Returns a pseudo-random floating-point value in the range
+(<em>0</em>,<em>1</em>). The generator algorithm is a simple linear
+congruential generator that is not cryptographically secure. Each result
+from <strong>rand</strong> completely determines all future results from
+subsequent calls to <strong>rand</strong>, so <strong>rand</strong>
+should not be used to generate a sequence of secrets, such as one-time
+passwords. The seed of the generator is initialized from the internal
+clock of the machine or may be set with the <strong>srand</strong>
+function.</p>
+</dd>
+<dt><strong>round</strong> <em>arg</em></dt>
+<dd>
+<p>If <em>arg</em> is an integer value, returns <em>arg</em>, otherwise
+converts <em>arg</em> to integer by rounding and returns the converted
+value.</p>
+</dd>
+<dt><strong>sin</strong> <em>arg</em></dt>
+<dd>
+<p>Returns the sine of <em>arg</em>, measured in radians.</p>
+</dd>
+<dt><strong>sinh</strong> <em>arg</em></dt>
+<dd>
+<p>Returns the hyperbolic sine of <em>arg</em>. If the result would
+cause an overflow, an error is returned.</p>
+</dd>
+<dt><strong>sqrt</strong> <em>arg</em></dt>
+<dd>
+<p>The argument may be any non-negative numeric value. Returns a
+floating-point value that is the square root of <em>arg</em>. May return
+<strong>Inf</strong> when the argument is a numeric value that exceeds
+the square of the maximum value of the floating-point range.</p>
+</dd>
+<dt><strong>srand</strong> <em>arg</em></dt>
+<dd>
+<p>The <em>arg</em>, which must be an integer, is used to reset the seed
+for the random number generator of <strong>rand</strong>. Returns the
+first random number (see <strong>rand</strong>) from that seed. Each
+interpreter has its own seed.</p>
+</dd>
+<dt><strong>tan</strong> <em>arg</em></dt>
+<dd>
+<p>Returns the tangent of <em>arg</em>, measured in radians.</p>
+</dd>
+<dt><strong>tanh</strong> <em>arg</em></dt>
+<dd>
+<p>Returns the hyperbolic tangent of <em>arg</em>.</p>
+</dd>
+<dt><strong>wide</strong> <em>arg</em></dt>
+<dd>
+<p>The argument may be any numeric value. The integer part of
+<em>arg</em> is determined, and then the low order 64 bits of that
+integer value are returned as an integer value.</p>
+</dd>
+</dl>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-Commands/expr.html">expr</a>, <a
+href="../Tcl-Commands/mathop.html">mathop</a>, <a
+href="../Tcl-Commands/namespace.html">namespace</a></p>
+<h1 id="copyright">COPYRIGHT</h1>
+<pre><code>Copyright © 1993 The Regents of the University of California.
+Copyright © 1994-2000 Sun Microsystems Incorporated.
+Copyright © 2005, 2006 Kevin B. Kenny &lt;kennykb@acm.org&gt;.</code></pre>

@@ -1,0 +1,37 @@
+<h1 id="name">NAME</h1>
+<p>Tk_InternAtom, Tk_GetAtomName - manage cache of X atoms</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tk.h&gt;
+
+Atom
+Tk_InternAtom(tkwin, name)
+
+const char *
+Tk_GetAtomName(tkwin, atom)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Token for window. Used to map atom or name relative to a particular
+display.</p>
+<p>String name for which atom is desired.</p>
+<p>Atom for which corresponding string name is desired.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>These procedures are similar to the Xlib procedures
+<strong>XInternAtom</strong> and <strong>XGetAtomName</strong>.
+<strong>Tk_InternAtom</strong> returns the atom identifier associated
+with string given by <em>name</em>; the atom identifier is only valid
+for the display associated with <em>tkwin</em>.
+<strong>Tk_GetAtomName</strong> returns the string associated with
+<em>atom</em> on <em>tkwin</em>'s display. The string returned by
+<strong>Tk_GetAtomName</strong> is in Tk's storage: the caller need not
+free this space when finished with the string, and the caller should not
+modify the contents of the returned string. If there is no atom
+<em>atom</em> on <em>tkwin</em>'s display, then
+<strong>Tk_GetAtomName</strong> returns the string</p>
+<p>Tk caches the information returned by <strong>Tk_InternAtom</strong>
+and <strong>Tk_GetAtomName</strong> so that future calls for the same
+information can be serviced from the cache without contacting the
+server. Thus <strong>Tk_InternAtom</strong> and
+<strong>Tk_GetAtomName</strong> are generally much faster than their
+Xlib counterparts, and they should be used in place of the Xlib
+procedures.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>atom, cache, display</p>

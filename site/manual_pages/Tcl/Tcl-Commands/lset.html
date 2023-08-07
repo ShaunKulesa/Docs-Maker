@@ -1,0 +1,99 @@
+<h1 id="name">NAME</h1>
+<p>lset - Change an element in a list</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>lset</strong> <em>varName ?index ...? newValue</em></p>
+<h1 id="description">DESCRIPTION</h1>
+<p>The <strong>lset</strong> command accepts a parameter,
+<em>varName</em>, which it interprets as the name of a variable
+containing a Tcl list. It also accepts zero or more <em>indices</em>
+into the list. The indices may be presented either consecutively on the
+command line, or grouped in a Tcl list and presented as a single
+argument. Finally, it accepts a new value for an element of
+<em>varName</em>.</p>
+<p>If no indices are presented, the command takes the form:</p>
+<pre><code>lset varName newValue</code></pre>
+<p>or</p>
+<pre><code>lset varName {} newValue</code></pre>
+<p>In this case, <em>newValue</em> replaces the old value of the
+variable <em>varName</em>.</p>
+<p>When presented with a single index, the <strong>lset</strong> command
+treats the content of the <em>varName</em> variable as a Tcl list. It
+addresses the <em>index</em>'th element in it (0 refers to the first
+element of the list). When interpreting the list, <strong>lset</strong>
+observes the same rules concerning braces and quotes and backslashes as
+the Tcl command interpreter; however, variable substitution and command
+substitution do not occur. The command constructs a new list in which
+the designated element is replaced with <em>newValue</em>. This new list
+is stored in the variable <em>varName</em>, and is also the return value
+from the <strong>lset</strong> command.</p>
+<p>If <em>index</em> is negative or greater than the number of elements
+in <em>$varName</em>, then an error occurs.</p>
+<p>If <em>index</em> is equal to the number of elements in
+<em>$varName</em>, then the given element is appended to the list.</p>
+<p>The interpretation of each simple <em>index</em> value is the same as
+for the command <strong>string index</strong>, supporting simple index
+arithmetic and indices relative to the end of the list.</p>
+<p>If additional <em>index</em> arguments are supplied, then each
+argument is used in turn to address an element within a sublist
+designated by the previous indexing operation, allowing the script to
+alter elements in sublists (or append elements to sublists). The
+command,</p>
+<pre><code>lset a 1 2 newValue</code></pre>
+<p>or</p>
+<pre><code>lset a {1 2} newValue</code></pre>
+<p>replaces element 2 of sublist 1 with <em>newValue</em>.</p>
+<p>The integer appearing in each <em>index</em> argument must be greater
+than or equal to zero. The integer appearing in each <em>index</em>
+argument must be less than or equal to the length of the corresponding
+list. In other words, the <strong>lset</strong> command can change the
+size of a list only by appending an element (setting the one after the
+current end). If an index is outside the permitted range, an error is
+reported.</p>
+<h1 id="examples">EXAMPLES</h1>
+<p>In each of these examples, the initial value of <em>x</em> is:</p>
+<pre><code>set x [list [list a b c] [list d e f] [list g h i]]
+      → {a b c} {d e f} {g h i}</code></pre>
+<p>The indicated return value also becomes the new value of <em>x</em>
+(except in the last case, which is an error which leaves the value of
+<em>x</em> unchanged.)</p>
+<pre><code>lset x {j k l}
+      → j k l
+lset x {} {j k l}
+      → j k l
+lset x 0 j
+      → j {d e f} {g h i}
+lset x 2 j
+      → {a b c} {d e f} j
+lset x end j
+      → {a b c} {d e f} j
+lset x end-1 j
+      → {a b c} j {g h i}
+lset x 2 1 j
+      → {a b c} {d e f} {g j i}
+lset x {2 1} j
+      → {a b c} {d e f} {g j i}
+lset x {2 3} j
+      → list index out of range</code></pre>
+<p>In the following examples, the initial value of <em>x</em> is:</p>
+<pre><code>set x [list [list [list a b] [list c d]] \
+            [list [list e f] [list g h]]]
+      → {{a b} {c d}} {{e f} {g h}}</code></pre>
+<p>The indicated return value also becomes the new value of
+<em>x</em>.</p>
+<pre><code>lset x 1 1 0 j
+      → {{a b} {c d}} {{e f} {j h}}
+lset x {1 1 0} j
+      → {{a b} {c d}} {{e f} {j h}}</code></pre>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-Commands/list.html">list</a>, <a
+href="../Tcl-Commands/lappend.html">lappend</a>, <a
+href="../Tcl-Commands/lindex.html">lindex</a>, <a
+href="../Tcl-Commands/linsert.html">linsert</a>, <a
+href="../Tcl-Commands/llength.html">llength</a>, <a
+href="../Tcl-Commands/lsearch.html">lsearch</a>, <a
+href="../Tcl-Commands/lsort.html">lsort</a>, <a
+href="../Tcl-Commands/lrange.html">lrange</a>, <a
+href="../Tcl-Commands/lreplace.html">lreplace</a>, <a
+href="../Tcl-Commands/string.html">string</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>element, index, list, replace, set</p>

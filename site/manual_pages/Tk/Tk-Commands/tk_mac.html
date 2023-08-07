@@ -1,0 +1,268 @@
+<h1 id="name">NAME</h1>
+<p>tk::mac - Access Mac-Specific Functionality on OS X from Tk</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>::tk::mac::DoScriptFile
+::tk::mac::DoScriptText
+::tk::mac::ShowPreferences
+::tk::mac::OpenApplication
+::tk::mac::ReopenApplication
+::tk::mac::OpenDocument file...
+::tk::mac::PrintDocument file...
+::tk::mac::Quit
+::tk::mac::OnHide
+::tk::mac::OnShow
+::tk::mac::ShowHelp
+::tk::mac::PerformService
+::tk::mac::LaunchURL URL...
+::tk::mac::GetAppPath
+
+::tk::mac::standardAboutPanel
+
+::tk::mac::useCompatibilityMetrics boolean
+::tk::mac::CGAntialiasLimit limit
+::tk::mac::antialiasedtext number
+::tk::mac::useThemedToplevel boolean
+
+
+::tk::mac::iconBitmap name width height -kind value</code></pre>
+<h1 id="event-handler-callbacks">EVENT HANDLER CALLBACKS</h1>
+<p>The Aqua/Mac OS X application environment defines a number of
+additional events that applications should respond to. These events are
+mapped by Tk to calls to commands in the <strong>::tk::mac</strong>
+namespace; unless otherwise noted, if the command is absent, no action
+will be taken.</p>
+<dl>
+<dt><strong>::tk::mac::DoScriptFile</strong></dt>
+<dd>
+<p>The default Apple Event handler for AEDoScriptHandler. This command
+executes a Tcl file when an AppleScript sends a command to Wish with a
+file path as a parameter.</p>
+</dd>
+<dt><strong>::tk::mac::DoScriptText</strong></dt>
+<dd>
+<p>The default Apple Event handler for AEDoScriptHandler. This command
+executes Tcl code when an AppleScript sends a command to Wish with Tcl
+code or a Tcl procedure as a parameter.</p>
+</dd>
+<dt><strong>::tk::mac::ShowPreferences</strong></dt>
+<dd>
+<p>The default Apple Event handler for kAEShowPreferences, The
+application menu menu item is only enabled when this proc is defined.
+Typically this command is used to wrap a specific own preferences
+command, which pops up a preferences window. Something like:</p>
+<pre><code>proc ::tk::mac::ShowPreferences {} {
+    setPref
+}</code></pre>
+</dd>
+<dt><strong>::tk::mac::OpenApplication</strong></dt>
+<dd>
+<p>If a proc of this name is defined, this proc fill fire when your
+application is initially opened. It is the default Apple Event handler
+for kAEOpenApplication,</p>
+</dd>
+<dt><strong>::tk::mac::ReopenApplication</strong></dt>
+<dd>
+<p>If a proc of this name is defined it is the default Apple Event
+handler for kAEReopenApplication, the Apple Event sent when your
+application is opened when it is already running (e.g. by clicking its
+icon in the Dock). Here is a sample that raises a minimized window when
+the Dock icon is clicked:</p>
+<pre><code>proc ::tk::mac::ReopenApplication {} {
+    if {[wm state .] eq &quot;withdrawn&quot;} {
+        wm state . normal
+    } else {
+        wm deiconify .
+    }
+    raise .
+}</code></pre>
+</dd>
+<dt><strong>::tk::mac::OpenDocument</strong> <em>file...</em></dt>
+<dd>
+<p>If a proc of this name is defined it is the default Apple Event
+handler for kAEOpenDocuments, the Apple Event sent when your application
+is asked to open one or more documents (e.g., by drag &amp; drop onto
+the app or by opening a document of a type associated to the app). The
+proc should take as arguments paths to the files to be opened, like
+so:</p>
+<pre><code>proc ::tk::mac::OpenDocument {args} {
+    foreach f $args {my_open_document $f}
+}</code></pre>
+</dd>
+<dt><strong>::tk::mac::PrintDocument</strong> <em>file...</em></dt>
+<dd>
+<p>If a proc of this name is defined it is the default Apple Event
+handler for kAEPrintDocuments, the Apple Event sent when your
+application is asked to print a document. It takes a single absolute
+file path as an argument.</p>
+</dd>
+<dt><strong>::tk::mac::Quit</strong></dt>
+<dd>
+<p>If a proc of this name is defined it is the default Apple Event
+handler for kAEQuitApplication, the Apple Event sent when your
+application is asked to be quit, e.g. via the quit menu item in the
+application menu, the quit menu item in the Dock menu, or during a
+logout/restart/shutdown etc. If this is not defined,
+<strong>exit</strong> is called instead.</p>
+</dd>
+<dt><strong>::tk::mac::OnHide</strong></dt>
+<dd>
+<p>If defined, this is called when your application receives a
+kEventAppHidden event, e.g. via the hide menu item in the application or
+Dock menus.</p>
+</dd>
+<dt><strong>::tk::mac::OnShow</strong></dt>
+<dd>
+<p>If defined, this is called when your application receives a
+kEventAppShown event, e.g. via the show all menu item in the application
+menu, or by clicking the Dock icon of a hidden application.</p>
+</dd>
+<dt><strong>::tk::mac::ShowHelp</strong></dt>
+<dd>
+<p>Customizes behavior of Apple Help menu; if this procedure is not
+defined, the platform-specific standard Help menu item performs the
+default Cocoa action of showing the Help Book configured in the
+application's Info.plist (or displaying an alert if no Help Book is
+set).</p>
+</dd>
+<dt><strong>::tk::mac::PerformService</strong></dt>
+<dd>
+<p>Executes a Tcl procedure called from the macOS menu in the
+Application menu item. The menu item allows for inter-application
+communication; data from one application, such as selected text, can be
+sent to another application for processing, for example to Safari as a
+search item for Google, or to TextEdit to be appended to a file. An
+example of the proc is below, and should be rewritten in an application
+script for customization:</p>
+<pre><code>proc ::tk::mac::PerformService {} {
+    set data [clipboard get]
+    $w insert end $data
+}</code></pre>
+</dd>
+</dl>
+<p>Note that the mechanism for retrieving the data is from the
+clipboard; there is no other supported way to obtain the data. If the
+Services process is not desired, the NSServices keys can be deleted from
+the application's Info.plist file. The underlying code supporting this
+command also allows the text, entry and ttk::entry widgets to access
+services from other applications via the Services menu. The NSPortName
+key in Wish's Info.plist file is currently set as ; if a developer
+changes the name of the Wish executable to something else, this key
+should be modified with the same name.</p>
+<dl>
+<dt><strong>::tk::mac::LaunchURL</strong> <em>URL...</em></dt>
+<dd>
+<p>If defined, launches a URL within Tk. This would be used if a Tk
+application wants to handle a URL itself, such as displaying data from
+an RSS feed, rather than launching a default application to handle the
+URL, although it can defined as such. Wish includes a stub URL scheme of
+in the CFBundleURLSchemes key of its Info.plist file; this should be
+customized for the specific URL scheme the developer wants to
+support.</p>
+</dd>
+<dt><strong>::tk::mac::GetAppPath</strong></dt>
+<dd>
+<p>Returns the current applications's file path.</p>
+</dd>
+</dl>
+<h1 id="additional-dialogs">ADDITIONAL DIALOGS</h1>
+<p>The Aqua/Mac OS X defines additional dialogs that applications should
+support.</p>
+<dl>
+<dt><strong>::tk::mac::standardAboutPanel</strong></dt>
+<dd>
+<p>Brings the standard Cocoa about panel to the front with information
+filled in from the application bundle files. The panel displays the
+application icon and the values associated to the info.plist keys named
+CFBundleName, CFBundleShortVersionString, NSAboutPanelOptionVersion and
+NSHumanReadableCopyright. If a file named <em>Credits.html</em> or
+<em>Credits.rtf</em> exists in the bundle's Resources directory then its
+contents will be displayed in a scrolling text box at the bottom of the
+dialog. See the documentation for -[NSApplication
+orderFrontStandardAboutPanelWithOptions:] for more details. A hook is
+also provided for a custom About dialog. If a Tcl proc named
+tkAboutDialog is defined in the main interpreter then that procedure
+will be called instead of opening the standardAboutPanel.</p>
+</dd>
+</dl>
+<h1 id="system-configuration">SYSTEM CONFIGURATION</h1>
+<p>There are a number of additional global configuration options that
+control the details of how Tk renders by default.</p>
+<dl>
+<dt><strong>::tk::mac::useCompatibilityMetrics</strong>
+<em>boolean</em></dt>
+<dd>
+<p>Preserves compatibility with older Tk/Aqua metrics; set to
+<strong>false</strong> for more native spacing.</p>
+</dd>
+<dt><strong>::tk::mac::CGAntialiasLimit</strong> <em>limit</em></dt>
+<dd>
+<p>Sets the antialiasing limit; lines thinner that <em>limit</em> pixels
+will not be antialiased. Integer, set to 0 by default, making all lines
+be antialiased.</p>
+</dd>
+<dt><strong>::tk::mac::antialiasedtext</strong> <em>number</em></dt>
+<dd>
+<p>Sets anti-aliased text. Controls text antialiasing, possible values
+for <em>number</em> are -1 (default, use system default for text AA), 0
+(no text AA), 1 (use text AA).</p>
+</dd>
+<dt><strong>::tk::mac::useThemedToplevel</strong> <em>boolean</em></dt>
+<dd>
+<p>Sets toplevel windows to draw with the modern grayish/ pinstripe Mac
+background. Equivalent to configuring the toplevel with or to using a
+<strong>ttk::frame</strong>.</p>
+</dd>
+</dl>
+<h1 id="support-commands">SUPPORT COMMANDS</h1>
+<dl>
+<dt><strong>::tk::mac::iconBitmap</strong> <em>name width height -kind
+value</em></dt>
+<dd>
+<p>Renders native icons and bitmaps in Tk applications (including any
+image file readable by NSImage). A native bitmap name is interpreted as
+follows (in order):</p>
+<ul>
+<li><p>predefined builtin 32x32 icon name (<strong>stop</strong>,
+<strong>caution</strong>, <strong>document</strong>, etc.)</p></li>
+<li><p><em>name</em>, as defined by
+<strong>tk::mac::iconBitmap</strong></p></li>
+<li><p>NSImage named image name</p></li>
+<li><p>NSImage url string</p></li>
+<li><p>4-char OSType of IconServices icon</p></li>
+</ul>
+<p>The <em>width</em> and <em>height</em> arguments to
+<strong>tk::mac::iconBitmap</strong> define the dimensions of the image
+to create, and <em>-kind</em> must be one of:</p>
+<dl>
+<dt><strong>-file</strong></dt>
+<dd>
+<p>icon of file at given path</p>
+</dd>
+<dt><strong>-fileType</strong></dt>
+<dd>
+<p>icon of given file type</p>
+</dd>
+<dt><strong>-osType</strong></dt>
+<dd>
+<p>icon of given 4-char OSType file type</p>
+</dd>
+<dt><strong>-systemType</strong></dt>
+<dd>
+<p>icon for given IconServices 4-char OSType</p>
+</dd>
+<dt><strong>-namedImage</strong></dt>
+<dd>
+<p>named NSImage for given name</p>
+</dd>
+<dt><strong>-imageFile</strong></dt>
+<dd>
+<p>image at given path</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tk-Commands/bind.html">bind</a>, <a
+href="../Tk-Commands/wm.html">wm</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>about dialog, antialiasing, Apple event, icon, NSImage</p>

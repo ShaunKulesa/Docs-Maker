@@ -1,0 +1,120 @@
+<h1 id="name">NAME</h1>
+<p>Tcl_AsyncCreate, Tcl_AsyncMark, Tcl_AsyncInvoke, Tcl_AsyncDelete,
+Tcl_AsyncReady - handle asynchronous events</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tcl.h&gt;
+
+Tcl_AsyncHandler
+Tcl_AsyncCreate(proc, clientData)
+
+Tcl_AsyncMark(async)
+
+int
+Tcl_AsyncInvoke(interp, code)
+
+Tcl_AsyncDelete(async)
+
+int
+Tcl_AsyncReady()</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Procedure to invoke to handle an asynchronous event.</p>
+<p>One-word value to pass to <em>proc</em>.</p>
+<p>Token for asynchronous event handler.</p>
+<p>Tcl interpreter in which command was being evaluated when handler was
+invoked, or NULL if handler was invoked when there was no interpreter
+active.</p>
+<p>Completion code from command that just completed in <em>interp</em>,
+or 0 if <em>interp</em> is NULL.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>These procedures provide a safe mechanism for dealing with
+asynchronous events such as signals. If an event such as a signal occurs
+while a Tcl script is being evaluated then it is not safe to take any
+substantive action to process the event. For example, it is not safe to
+evaluate a Tcl script since the interpreter may already be in the middle
+of evaluating a script; it may not even be safe to allocate memory,
+since a memory allocation could have been in progress when the event
+occurred. The only safe approach is to set a flag indicating that the
+event occurred, then handle the event later when the world has returned
+to a clean state, such as after the current Tcl command completes.</p>
+<p><strong>Tcl_AsyncCreate</strong>, <strong>Tcl_AsyncDelete</strong>,
+and <strong>Tcl_AsyncReady</strong> are thread sensitive. They access
+and/or set a thread-specific data structure in the event of a core built
+with <em>--enable-threads</em>. The token created by
+<strong>Tcl_AsyncCreate</strong> contains the needed thread information
+it was called from so that calling
+<strong>Tcl_AsyncMark</strong>(<em>token</em>) will only yield the
+origin thread into the asynchronous handler.</p>
+<p><strong>Tcl_AsyncCreate</strong> creates an asynchronous handler and
+returns a token for it. The asynchronous handler must be created before
+any occurrences of the asynchronous event that it is intended to handle
+(it is not safe to create a handler at the time of an event). When an
+asynchronous event occurs the code that detects the event (such as a
+signal handler) should call <strong>Tcl_AsyncMark</strong> with the
+token for the handler. <strong>Tcl_AsyncMark</strong> will mark the
+handler as ready to execute, but it will not invoke the handler
+immediately. Tcl will call the <em>proc</em> associated with the handler
+later, when the world is in a safe state, and <em>proc</em> can then
+carry out the actions associated with the asynchronous event.
+<em>Proc</em> should have arguments and result that match the type
+<strong>Tcl_AsyncProc</strong>:</p>
+<pre><code>typedef int Tcl_AsyncProc(
+        ClientData clientData,
+        Tcl_Interp *interp,
+        int code);</code></pre>
+<p>The <em>clientData</em> will be the same as the <em>clientData</em>
+argument passed to <strong>Tcl_AsyncCreate</strong> when the handler was
+created. If <em>proc</em> is invoked just after a command has completed
+execution in an interpreter, then <em>interp</em> will identify the
+interpreter in which the command was evaluated and <em>code</em> will be
+the completion code returned by that command. The command's result will
+be present in the interpreter's result. When <em>proc</em> returns,
+whatever it leaves in the interpreter's result will be returned as the
+result of the command and the integer value returned by <em>proc</em>
+will be used as the new completion code for the command.</p>
+<p>It is also possible for <em>proc</em> to be invoked when no
+interpreter is active. This can happen, for example, if an asynchronous
+event occurs while the application is waiting for interactive input or
+an X event. In this case <em>interp</em> will be NULL and <em>code</em>
+will be 0, and the return value from <em>proc</em> will be ignored.</p>
+<p>The procedure <strong>Tcl_AsyncInvoke</strong> is called to invoke
+all of the handlers that are ready. The procedure
+<strong>Tcl_AsyncReady</strong> will return non-zero whenever any
+asynchronous handlers are ready; it can be checked to avoid calls to
+<strong>Tcl_AsyncInvoke</strong> when there are no ready handlers. Tcl
+calls <strong>Tcl_AsyncReady</strong> after each command is evaluated
+and calls <strong>Tcl_AsyncInvoke</strong> if needed. Applications may
+also call <strong>Tcl_AsyncInvoke</strong> at interesting times for that
+application. For example, Tcl's event handler calls
+<strong>Tcl_AsyncReady</strong> after each event and calls
+<strong>Tcl_AsyncInvoke</strong> if needed. The <em>interp</em> and
+<em>code</em> arguments to <strong>Tcl_AsyncInvoke</strong> have the
+same meaning as for <em>proc</em>: they identify the active interpreter,
+if any, and the completion code from the command that just
+completed.</p>
+<p><strong>Tcl_AsyncDelete</strong> removes an asynchronous handler so
+that its <em>proc</em> will never be invoked again. A handler can be
+deleted even when ready, and it will still not be invoked.</p>
+<p>If multiple handlers become active at the same time, the handlers are
+invoked in the order they were created (oldest handler first). The
+<em>code</em> and the interpreter's result for later handlers reflect
+the values returned by earlier handlers, so that the most recently
+created handler has last say about the interpreter's result and
+completion code. If new handlers become ready while handlers are
+executing, <strong>Tcl_AsyncInvoke</strong> will invoke them all; at
+each point it invokes the highest-priority (oldest) ready handler,
+repeating this over and over until there are no longer any ready
+handlers.</p>
+<h1 id="warning">WARNING</h1>
+<p>It is almost always a bad idea for an asynchronous event handler to
+modify the interpreter's result or return a code different from its
+<em>code</em> argument. This sort of behavior can disrupt the execution
+of scripts in subtle ways and result in bugs that are extremely
+difficult to track down. If an asynchronous event handler needs to
+evaluate Tcl scripts then it should first save the interpreter's state
+by calling <strong>Tcl_SaveInterpState</strong>, passing in the
+<em>code</em> argument. When the asynchronous handler is finished it
+should restore the interpreter's state by calling
+<strong>Tcl_RestoreInterpState</strong>, and then returning the
+<em>code</em> argument.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>asynchronous event, handler, signal, Tcl_SaveInterpState, thread</p>

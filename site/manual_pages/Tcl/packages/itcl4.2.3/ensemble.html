@@ -1,0 +1,131 @@
+<h1 id="name">NAME</h1>
+<p>itcl::ensemble - create or modify a composite command</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>itcl::ensemble ensName ?command arg arg...?</code></pre>
+<p>or</p>
+<pre><code>ensemble ensName {
+    part partName args body
+    ...
+    ensemble partName {
+        part subPartName args body
+        part subPartName args body
+    ...
+    }
+}</code></pre>
+<h1 id="description">DESCRIPTION</h1>
+<p>The <strong>ensemble</strong> command is used to create or modify a
+composite command. See the section <strong>WHAT IS AN ENSEMBLE?</strong>
+below for a brief overview of ensembles.</p>
+<p>If the <strong>ensemble</strong> command finds an existing ensemble
+called <em>ensName</em>, it updates that ensemble. Otherwise, it creates
+an ensemble called <em>ensName</em>. If the <em>ensName</em> is a simple
+name like "foo", then an ensemble command named "foo" is added to the
+current namespace context. If a command named "foo" already exists in
+that context, then it is deleted. If the <em>ensName</em> contains
+namespace qualifiers like "a::b::foo", then the namespace path is
+resolved, and the ensemble command is added that namespace context.
+Parent namespaces like "a" and "b" are created automatically, as
+needed.</p>
+<p>If the <em>ensName</em> contains spaces like "a::b::foo bar baz",
+then additional words like "bar" and "baz" are treated as sub-ensembles.
+Sub-ensembles are merely parts within an ensemble; they do not have a
+Tcl command associated with them. An ensemble like "foo" can have a
+sub-ensemble called "foo bar", which in turn can have a sub-ensemble
+called "foo bar baz". In this case, the sub-ensemble "foo bar" must be
+created before the sub-ensemble "foo bar baz" that resides within
+it.</p>
+<p>If there are any arguments following <em>ensName</em>, then they are
+treated as commands, and they are executed to update the ensemble. The
+following commands are recognized in this context: <strong>part</strong>
+and <strong>ensemble</strong>.</p>
+<p>The <strong>part</strong> command defines a new part for the
+ensemble. Its syntax is identical to the usual <strong>proc</strong>
+command, but it defines a part within an ensemble, instead of a Tcl
+command. If a part called <em>partName</em> already exists within the
+ensemble, then the <strong>part</strong> command returns an error.</p>
+<p>The <strong>ensemble</strong> command can be nested inside another
+<strong>ensemble</strong> command to define a sub-ensemble.</p>
+<h1 id="what-is-an-ensemble">WHAT IS AN ENSEMBLE?</h1>
+<p>The usual "info" command is a composite command--the command name
+<strong>info</strong> must be followed by a sub-command like
+<strong>body</strong> or <strong>globals</strong>. We will refer to a
+command like <strong>info</strong> as an <em>ensemble</em>, and to
+sub-commands like <strong>body</strong> or <strong>globals</strong> as
+its <em>parts</em>.</p>
+<p>Ensembles can be nested. For example, the <strong>info</strong>
+command has an ensemble <strong>info namespace</strong> within it. This
+ensemble has parts like <strong>info namespace all</strong> and
+<strong>info namespace children</strong>.</p>
+<p>With ensembles, composite commands can be created and extended in an
+automatic way. Any package can find an existing ensemble and add new
+parts to it. So extension writers can add their own parts, for example,
+to the <strong>info</strong> command.</p>
+<p>The ensemble facility manages all of the part names and keeps track
+of unique abbreviations. Normally, you can abbreviate <strong>info
+complete</strong> to <strong>info comp</strong>. But if an extension
+adds the part <strong>info complexity</strong>, the minimum abbreviation
+for <strong>info complete</strong> becomes <strong>info
+complet</strong>.</p>
+<p>The ensemble facility not only automates the construction of
+composite commands, but it automates the error handling as well. If you
+invoke an ensemble command without specifying a part name, you get an
+automatically generated error message that summarizes the usage
+information. For example, when the <strong>info</strong> command is
+invoked without any arguments, it produces the following error
+message:</p>
+<pre><code>wrong # args: should be one of...
+  info args procname
+  info body procname
+  info cmdcount
+  info commands ?pattern?
+  info complete command
+  info context
+  info default procname arg varname
+  info exists varName
+  info globals ?pattern?
+  info level ?number?
+  info library
+  info locals ?pattern?
+  info namespace option ?arg arg ...?
+  info patchlevel
+  info procs ?pattern?
+  info protection ?-command? ?-variable? name
+  info script
+  info tclversion
+  info vars ?pattern?
+  info which ?-command? ?-variable? ?-namespace? name</code></pre>
+<p>You can also customize the way an ensemble responds to errors. When
+an ensemble encounters an unspecified or ambiguous part name, it looks
+for a part called <strong>@error</strong>. If it exists, then it is used
+to handle the error. This part will receive all of the arguments on the
+command line starting with the offending part name. It can find another
+way of resolving the command, or generate its own error message.</p>
+<h1 id="example">EXAMPLE</h1>
+<p>We could use an ensemble to clean up the syntax of the various "wait"
+commands in Tcl/Tk. Instead of using a series of strange commands like
+this:</p>
+<pre><code>vwait x
+tkwait visibility .top
+tkwait window .</code></pre>
+<p>we could use commands with a uniform syntax, like this:</p>
+<pre><code>wait variable x
+wait visibility .top
+wait window .</code></pre>
+<p>The Tcl package could define the following ensemble:</p>
+<pre><code>itcl::ensemble wait part variable {name} {
+    uplevel vwait $name
+}</code></pre>
+<p>The Tk package could add some options to this ensemble, with a
+command like this:</p>
+<pre><code>itcl::ensemble wait {
+    part visibility {name} {
+        tkwait visibility $name
+    }
+    part window {name} {
+        tkwait window $name
+    }
+}</code></pre>
+<p>Other extensions could add their own parts to the
+<strong>wait</strong> command too.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>ensemble, part, info</p>

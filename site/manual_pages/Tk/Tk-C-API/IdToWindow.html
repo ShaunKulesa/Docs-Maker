@@ -1,0 +1,16 @@
+<h1 id="name">NAME</h1>
+<p>Tk_IdToWindow - Find Tk's window information for an X window</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tk.h&gt;
+
+Tk_Window
+Tk_IdToWindow(display, window)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>X display containing the window.</p>
+<p>X id for window.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>Given an X window identifier and the X display it corresponds to,
+this procedure returns the corresponding Tk_Window handle. If there is
+no Tk_Window corresponding to <em>window</em> then NULL is returned.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>X window id</p>

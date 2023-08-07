@@ -1,0 +1,36 @@
+<h1 id="name">NAME</h1>
+<p>llength - Count the number of elements in a list</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>llength</strong> <em>list</em></p>
+<h1 id="description">DESCRIPTION</h1>
+<p>Treats <em>list</em> as a list and returns a decimal string giving
+the number of elements in it.</p>
+<h1 id="examples">EXAMPLES</h1>
+<p>The result is the number of elements:</p>
+<pre><code>% llength {a b c d e}
+5
+% llength {a b c}
+3
+% llength {}
+0</code></pre>
+<p>Elements are not guaranteed to be exactly words in a dictionary sense
+of course, especially when quoting is used:</p>
+<pre><code>% llength {a b {c d} e}
+4
+% llength {a b { } c d e}
+6</code></pre>
+<p>An empty list is not necessarily an empty string:</p>
+<pre><code>% set var { }; puts &quot;[string length $var],[llength $var]&quot;
+1,0</code></pre>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-Commands/list.html">list</a>, <a
+href="../Tcl-Commands/lappend.html">lappend</a>, <a
+href="../Tcl-Commands/lindex.html">lindex</a>, <a
+href="../Tcl-Commands/linsert.html">linsert</a>, <a
+href="../Tcl-Commands/lsearch.html">lsearch</a>, <a
+href="../Tcl-Commands/lset.html">lset</a>, <a
+href="../Tcl-Commands/lsort.html">lsort</a>, <a
+href="../Tcl-Commands/lrange.html">lrange</a>, <a
+href="../Tcl-Commands/lreplace.html">lreplace</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>element, list, length</p>

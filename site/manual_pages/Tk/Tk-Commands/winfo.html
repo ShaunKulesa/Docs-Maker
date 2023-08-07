@@ -1,0 +1,378 @@
+<h1 id="name">NAME</h1>
+<p>winfo - Return window-related information</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>winfo</strong> <em>option</em> ?<em>arg arg ...</em>?</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>The <strong>winfo</strong> command is used to retrieve information
+about windows managed by Tk. It can take any of a number of different
+forms, depending on the <em>option</em> argument. The legal forms
+are:</p>
+<dl>
+<dt><strong>winfo atom</strong> ?<strong>-displayof</strong>
+<em>window</em>? <em>name</em></dt>
+<dd>
+<p>Returns a decimal string giving the integer identifier for the atom
+whose name is <em>name</em>. If no atom exists with the name
+<em>name</em> then a new one is created. If the
+<strong>-displayof</strong> option is given then the atom is looked up
+on the display of <em>window</em>; otherwise it is looked up on the
+display of the application's main window.</p>
+</dd>
+<dt><strong>winfo atomname</strong> ?<strong>-displayof</strong>
+<em>window</em>? <em>id</em></dt>
+<dd>
+<p>Returns the textual name for the atom whose integer identifier is
+<em>id</em>. If the <strong>-displayof</strong> option is given then the
+identifier is looked up on the display of <em>window</em>; otherwise it
+is looked up on the display of the application's main window. This
+command is the inverse of the <strong>winfo atom</strong> command. It
+generates an error if no such atom exists.</p>
+</dd>
+<dt><strong>winfo cells</strong> <em>window</em></dt>
+<dd>
+<p>Returns a decimal string giving the number of cells in the color map
+for <em>window</em>.</p>
+</dd>
+<dt><strong>winfo children</strong> <em>window</em></dt>
+<dd>
+<p>Returns a list containing the path names of all the children of
+<em>window</em>. Top-level windows are returned as children of their
+logical parents. The list is in stacking order, with the lowest window
+first, except for Top-level windows which are not returned in stacking
+order. Use the <strong>wm stackorder</strong> command to query the
+stacking order of Top-level windows.</p>
+</dd>
+<dt><strong>winfo class</strong> <em>window</em></dt>
+<dd>
+<p>Returns the class name for <em>window</em>.</p>
+</dd>
+<dt><strong>winfo colormapfull</strong> <em>window</em></dt>
+<dd>
+<p>Returns 1 if the colormap for <em>window</em> is known to be full, 0
+otherwise. The colormap for a window is to be full if the last attempt
+to allocate a new color on that window failed and this application has
+not freed any colors in the colormap since the failed allocation.</p>
+</dd>
+<dt><strong>winfo containing</strong> ?<strong>-displayof</strong>
+<em>window</em>? <em>rootX rootY</em></dt>
+<dd>
+<p>Returns the path name for the window containing the point given by
+<em>rootX</em> and <em>rootY</em>. <em>RootX</em> and <em>rootY</em> are
+specified in screen units (i.e. any form acceptable to
+<strong>Tk_GetPixels</strong>) in the coordinate system of the root
+window (if a virtual-root window manager is in use then the coordinate
+system of the virtual root window is used). If the
+<strong>-displayof</strong> option is given then the coordinates refer
+to the screen containing <em>window</em>; otherwise they refer to the
+screen of the application's main window. If no window in this
+application contains the point then an empty string is returned. An
+empty string is also returned if the point lies in the title bar or
+border of its highest containing toplevel in this application. (Note
+that with some window managers the borders may be invisible.) In
+selecting the containing window, children are given higher priority than
+parents and among siblings the highest one in the stacking order is
+chosen.</p>
+</dd>
+<dt><strong>winfo depth</strong> <em>window</em></dt>
+<dd>
+<p>Returns a decimal string giving the depth of <em>window</em> (number
+of bits per pixel).</p>
+</dd>
+<dt><strong>winfo exists</strong> <em>window</em></dt>
+<dd>
+<p>Returns 1 if there exists a window named <em>window</em>, 0 if no
+such window exists.</p>
+</dd>
+<dt><strong>winfo fpixels</strong> <em>window</em> <em>number</em></dt>
+<dd>
+<p>Returns a floating-point value giving the number of pixels in
+<em>window</em> corresponding to the distance given by <em>number</em>.
+<em>Number</em> may be specified in any of the forms acceptable to
+<strong>Tk_GetScreenMM</strong>, such as or The return value may be
+fractional; for an integer value, use <strong>winfo pixels</strong>.</p>
+</dd>
+<dt><strong>winfo geometry</strong> <em>window</em></dt>
+<dd>
+<p>Returns the geometry for <em>window</em>, in the form
+<em>width</em><strong>x</strong><em>height</em><strong>+</strong><em>x</em><strong>+</strong><em>y</em>.
+All dimensions are in pixels.</p>
+</dd>
+<dt><strong>winfo height</strong> <em>window</em></dt>
+<dd>
+<p>Returns a decimal string giving <em>window</em>'s height in pixels.
+When a window is first created its height will be 1 pixel; the height
+will eventually be changed by a geometry manager to fulfil the window's
+needs. If you need the true height immediately after creating a widget,
+invoke <strong>update</strong> to force the geometry manager to arrange
+it, or use <strong>winfo reqheight</strong> to get the window's
+requested height instead of its actual height.</p>
+</dd>
+<dt><strong>winfo id</strong> <em>window</em></dt>
+<dd>
+<p>Returns a hexadecimal string giving a low-level platform-specific
+identifier for <em>window</em>. On Unix platforms, this is the X window
+identifier. Under Windows, this is the Windows HWND. On the Macintosh
+the value has no meaning outside Tk.</p>
+</dd>
+<dt><strong>winfo interps</strong> ?<strong>-displayof</strong>
+<em>window</em>?</dt>
+<dd>
+<p>Returns a list whose members are the names of all Tcl interpreters
+(e.g. all Tk-based applications) currently registered for a particular
+display. If the <strong>-displayof</strong> option is given then the
+return value refers to the display of <em>window</em>; otherwise it
+refers to the display of the application's main window.</p>
+</dd>
+<dt><strong>winfo ismapped</strong> <em>window</em></dt>
+<dd>
+<p>Returns <strong>1</strong> if <em>window</em> is currently mapped,
+<strong>0</strong> otherwise.</p>
+</dd>
+<dt><strong>winfo manager</strong> <em>window</em></dt>
+<dd>
+<p>Returns the name of the geometry manager currently responsible for
+<em>window</em>, or an empty string if <em>window</em> is not managed by
+any geometry manager. The name is usually the name of the Tcl command
+for the geometry manager, such as <strong>pack</strong> or
+<strong>place</strong>. If the geometry manager is a widget, such as
+canvases or text, the name is the widget's class command, such as
+<strong>canvas</strong>.</p>
+</dd>
+<dt><strong>winfo name</strong> <em>window</em></dt>
+<dd>
+<p>Returns <em>window</em>'s name (i.e. its name within its parent, as
+opposed to its full path name). The command <strong>winfo name
+.</strong> will return the name of the application.</p>
+</dd>
+<dt><strong>winfo parent</strong> <em>window</em></dt>
+<dd>
+<p>Returns the path name of <em>window</em>'s parent, or an empty string
+if <em>window</em> is the main window of the application.</p>
+</dd>
+<dt><strong>winfo pathname</strong> ?<strong>-displayof</strong>
+<em>window</em>? <em>id</em></dt>
+<dd>
+<p>Returns the path name of the window whose X identifier is
+<em>id</em>. <em>Id</em> must be a decimal, hexadecimal, or octal
+integer and must correspond to a window in the invoking application. If
+the <strong>-displayof</strong> option is given then the identifier is
+looked up on the display of <em>window</em>; otherwise it is looked up
+on the display of the application's main window.</p>
+</dd>
+<dt><strong>winfo pixels</strong> <em>window</em> <em>number</em></dt>
+<dd>
+<p>Returns the number of pixels in <em>window</em> corresponding to the
+distance given by <em>number</em>. <em>Number</em> may be specified in
+any of the forms acceptable to <strong>Tk_GetPixels</strong>, such as or
+The result is rounded to the nearest integer value; for a fractional
+result, use <strong>winfo fpixels</strong>.</p>
+</dd>
+<dt><strong>winfo pointerx</strong> <em>window</em></dt>
+<dd>
+<p>If the mouse pointer is on the same screen as <em>window</em>,
+returns the pointer's x coordinate, measured in pixels in the screen's
+root window. If a virtual root window is in use on the screen, the
+position is measured in the virtual root. If the mouse pointer is not on
+the same screen as <em>window</em> then -1 is returned.</p>
+</dd>
+<dt><strong>winfo pointerxy</strong> <em>window</em></dt>
+<dd>
+<p>If the mouse pointer is on the same screen as <em>window</em>,
+returns a list with two elements, which are the pointer's x and y
+coordinates measured in pixels in the screen's root window. If a virtual
+root window is in use on the screen, the position is computed in the
+virtual root. If the mouse pointer is not on the same screen as
+<em>window</em> then both of the returned coordinates are -1.</p>
+</dd>
+<dt><strong>winfo pointery</strong> <em>window</em></dt>
+<dd>
+<p>If the mouse pointer is on the same screen as <em>window</em>,
+returns the pointer's y coordinate, measured in pixels in the screen's
+root window. If a virtual root window is in use on the screen, the
+position is computed in the virtual root. If the mouse pointer is not on
+the same screen as <em>window</em> then -1 is returned.</p>
+</dd>
+<dt><strong>winfo reqheight</strong> <em>window</em></dt>
+<dd>
+<p>Returns a decimal string giving <em>window</em>'s requested height,
+in pixels. This is the value used by <em>window</em>'s geometry manager
+to compute its geometry.</p>
+</dd>
+<dt><strong>winfo reqwidth</strong> <em>window</em></dt>
+<dd>
+<p>Returns a decimal string giving <em>window</em>'s requested width, in
+pixels. This is the value used by <em>window</em>'s geometry manager to
+compute its geometry.</p>
+</dd>
+<dt><strong>winfo rgb</strong> <em>window color</em></dt>
+<dd>
+<p>Returns a list containing three decimal values in the range 0 to
+65535, which are the red, green, and blue intensities that correspond to
+<em>color</em> in the window given by <em>window</em>. <em>Color</em>
+may be specified in any of the forms acceptable for a color option.</p>
+</dd>
+<dt><strong>winfo rootx</strong> <em>window</em></dt>
+<dd>
+<p>Returns a decimal string giving the x-coordinate, in the root window
+of the screen, of the upper-left corner of <em>window</em>'s border (or
+<em>window</em> if it has no border).</p>
+</dd>
+<dt><strong>winfo rooty</strong> <em>window</em></dt>
+<dd>
+<p>Returns a decimal string giving the y-coordinate, in the root window
+of the screen, of the upper-left corner of <em>window</em>'s border (or
+<em>window</em> if it has no border).</p>
+</dd>
+<dt><strong>winfo screen</strong> <em>window</em></dt>
+<dd>
+<p>Returns the name of the screen associated with <em>window</em>, in
+the form <em>displayName</em>.<em>screenIndex</em>.</p>
+</dd>
+<dt><strong>winfo screencells</strong> <em>window</em></dt>
+<dd>
+<p>Returns a decimal string giving the number of cells in the default
+color map for <em>window</em>'s screen.</p>
+</dd>
+<dt><strong>winfo screendepth</strong> <em>window</em></dt>
+<dd>
+<p>Returns a decimal string giving the depth of the root window of
+<em>window</em>'s screen (number of bits per pixel).</p>
+</dd>
+<dt><strong>winfo screenheight</strong> <em>window</em></dt>
+<dd>
+<p>Returns a decimal string giving the height of <em>window</em>'s
+screen, in pixels.</p>
+</dd>
+<dt><strong>winfo screenmmheight</strong> <em>window</em></dt>
+<dd>
+<p>Returns a decimal string giving the height of <em>window</em>'s
+screen, in millimeters.</p>
+</dd>
+<dt><strong>winfo screenmmwidth</strong> <em>window</em></dt>
+<dd>
+<p>Returns a decimal string giving the width of <em>window</em>'s
+screen, in millimeters.</p>
+</dd>
+<dt><strong>winfo screenvisual</strong> <em>window</em></dt>
+<dd>
+<p>Returns one of the following strings to indicate the default visual
+class for <em>window</em>'s screen: <strong>directcolor</strong>,
+<strong>grayscale</strong>, <strong>pseudocolor</strong>,
+<strong>staticcolor</strong>, <strong>staticgray</strong>, or
+<strong>truecolor</strong>.</p>
+</dd>
+<dt><strong>winfo screenwidth</strong> <em>window</em></dt>
+<dd>
+<p>Returns a decimal string giving the width of <em>window</em>'s
+screen, in pixels.</p>
+</dd>
+<dt><strong>winfo server</strong> <em>window</em></dt>
+<dd>
+<p>Returns a string containing information about the server for
+<em>window</em>'s display. The exact format of this string may vary from
+platform to platform. For X servers the string has the form where
+<em>major</em> and <em>minor</em> are the version and revision numbers
+provided by the server (e.g., <strong>X11R5</strong>), <em>vendor</em>
+is the name of the vendor for the server, and <em>vendorRelease</em> is
+an integer release number provided by the server.</p>
+</dd>
+<dt><strong>winfo toplevel</strong> <em>window</em></dt>
+<dd>
+<p>Returns the path name of the top-of-hierarchy window containing
+<em>window</em>. In standard Tk this will always be a
+<strong>toplevel</strong> widget, but extensions may create other kinds
+of top-of-hierarchy widgets.</p>
+</dd>
+<dt><strong>winfo viewable</strong> <em>window</em></dt>
+<dd>
+<p>Returns 1 if <em>window</em> and all of its ancestors up through the
+nearest toplevel window are mapped. Returns 0 if any of these windows
+are not mapped.</p>
+</dd>
+<dt><strong>winfo visual</strong> <em>window</em></dt>
+<dd>
+<p>Returns one of the following strings to indicate the visual class for
+<em>window</em>: <strong>directcolor</strong>,
+<strong>grayscale</strong>, <strong>pseudocolor</strong>,
+<strong>staticcolor</strong>, <strong>staticgray</strong>, or
+<strong>truecolor</strong>.</p>
+</dd>
+<dt><strong>winfo visualid</strong> <em>window</em></dt>
+<dd>
+<p>Returns the X identifier for the visual for <em>window</em>.</p>
+</dd>
+<dt><strong>winfo visualsavailable</strong> <em>window</em>
+?<strong>includeids</strong>?</dt>
+<dd>
+<p>Returns a list whose elements describe the visuals available for
+<em>window</em>'s screen. Each element consists of a visual class
+followed by an integer depth. The class has the same form as returned by
+<strong>winfo visual</strong>. The depth gives the number of bits per
+pixel in the visual. In addition, if the <strong>includeids</strong>
+argument is provided, then the depth is followed by the X identifier for
+the visual.</p>
+</dd>
+<dt><strong>winfo vrootheight</strong> <em>window</em></dt>
+<dd>
+<p>Returns the height of the virtual root window associated with
+<em>window</em> if there is one; otherwise returns the height of
+<em>window</em>'s screen.</p>
+</dd>
+<dt><strong>winfo vrootwidth</strong> <em>window</em></dt>
+<dd>
+<p>Returns the width of the virtual root window associated with
+<em>window</em> if there is one; otherwise returns the width of
+<em>window</em>'s screen.</p>
+</dd>
+<dt><strong>winfo vrootx</strong> <em>window</em></dt>
+<dd>
+<p>Returns the x-offset of the virtual root window associated with
+<em>window</em>, relative to the root window of its screen. This is
+normally either zero or negative. Returns 0 if there is no virtual root
+window for <em>window</em>.</p>
+</dd>
+<dt><strong>winfo vrooty</strong> <em>window</em></dt>
+<dd>
+<p>Returns the y-offset of the virtual root window associated with
+<em>window</em>, relative to the root window of its screen. This is
+normally either zero or negative. Returns 0 if there is no virtual root
+window for <em>window</em>.</p>
+</dd>
+<dt><strong>winfo width</strong> <em>window</em></dt>
+<dd>
+<p>Returns a decimal string giving <em>window</em>'s width in pixels.
+When a window is first created its width will be 1 pixel; the width will
+eventually be changed by a geometry manager to fulfil the window's
+needs. If you need the true width immediately after creating a widget,
+invoke <strong>update</strong> to force the geometry manager to arrange
+it, or use <strong>winfo reqwidth</strong> to get the window's requested
+width instead of its actual width.</p>
+</dd>
+<dt><strong>winfo x</strong> <em>window</em></dt>
+<dd>
+<p>Returns a decimal string giving the x-coordinate, in
+<em>window</em>'s parent, of the upper-left corner of <em>window</em>'s
+border (or <em>window</em> if it has no border).</p>
+</dd>
+<dt><strong>winfo y</strong> <em>window</em></dt>
+<dd>
+<p>Returns a decimal string giving the y-coordinate, in
+<em>window</em>'s parent, of the upper-left corner of <em>window</em>'s
+border (or <em>window</em> if it has no border).</p>
+</dd>
+</dl>
+<h1 id="example">EXAMPLE</h1>
+<p>Print where the mouse pointer is and what window it is currently
+over:</p>
+<pre><code>lassign [winfo pointerxy .] x y
+puts -nonewline &quot;Mouse pointer at ($x,$y) which is &quot;
+set win [winfo containing $x $y]
+if {$win eq &quot;&quot;} {
+    puts &quot;over no window&quot;
+} else {
+    puts &quot;over $win&quot;
+}</code></pre>
+<h1 id="keywords">KEYWORDS</h1>
+<p>atom, children, class, geometry, height, identifier, information,
+interpreters, mapped, parent, path name, screen, virtual root, width,
+window</p>

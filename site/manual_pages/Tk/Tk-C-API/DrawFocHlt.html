@@ -1,0 +1,20 @@
+<h1 id="name">NAME</h1>
+<p>Tk_DrawFocusHighlight - draw the traversal highlight ring for a
+widget</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tk.h&gt;
+
+Tk_DrawFocusHighlight(tkwin, gc, width, drawable)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Window for which the highlight is being drawn. Used to retrieve the
+window's dimensions, among other things.</p>
+<p>Graphics context to use for drawing the highlight.</p>
+<p>Width of the highlight ring, in pixels.</p>
+<p>Drawable in which to draw the highlight; usually an offscreen pixmap
+for double buffering.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p><strong>Tk_DrawFocusHighlight</strong> is a utility procedure that
+draws the traversal highlight ring for a widget. It is typically invoked
+by widgets during redisplay.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>focus, traversal highlight</p>

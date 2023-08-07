@@ -1,0 +1,40 @@
+<h1 id="name">NAME</h1>
+<p>Tk_GetJoinStyle, Tk_NameOfJoinStyle - translate between strings and
+join styles</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tk.h&gt;
+
+int
+Tk_GetJoinStyle(interp, string, joinPtr)
+
+const char *
+Tk_NameOfJoinStyle(join)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Interpreter to use for error reporting.</p>
+<p>String containing name of join style - one of or - or a unique
+abbreviation of one.</p>
+<p>Pointer to location in which to store X join style corresponding to
+<em>string</em>.</p>
+<p>Join style: one of <strong>JoinBevel</strong>,
+<strong>JoinMiter</strong>, <strong>JoinRound</strong>.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p><strong>Tk_GetJoinStyle</strong> places in <em>*joinPtr</em> the X
+join style corresponding to <em>string</em>, which will be one of
+<strong>JoinBevel</strong>, <strong>JoinMiter</strong>, or
+<strong>JoinRound</strong>. Join styles are typically used in X graphics
+contexts to indicate how adjacent line segments should be joined
+together. See the X documentation for information on what each style
+implies.</p>
+<p>Under normal circumstances the return value is
+<strong>TCL_OK</strong> and <em>interp</em> is unused. If
+<em>string</em> does not contain a valid join style or an abbreviation
+of one of these names, then an error message is stored in interpreter
+<em>interp</em>'s result, <strong>TCL_ERROR</strong> is returned, and
+<em>*joinPtr</em> is unmodified.</p>
+<p><strong>Tk_NameOfJoinStyle</strong> is the logical inverse of
+<strong>Tk_GetJoinStyle</strong>. Given a join style such as
+<strong>JoinBevel</strong> it returns a statically-allocated string
+corresponding to <em>join</em>. If <em>join</em> is not a legal join
+style, then is returned.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>bevel, join style, miter, round</p>

@@ -1,0 +1,34 @@
+<h1 id="name">NAME</h1>
+<p>throw - Generate a machine-readable error</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>throw</strong> <em>type message</em></p>
+<h1 id="description">DESCRIPTION</h1>
+<p>This command causes the current evaluation to be unwound with an
+error. The error created is described by the <em>type</em> and
+<em>message</em> arguments: <em>type</em> must contain a list of words
+describing the error in a form that is machine-readable (and which will
+form the error-code part of the result dictionary), and <em>message</em>
+should contain text that is intended for display to a human being.</p>
+<p>The stack will be unwound until the error is trapped by a suitable
+<strong>catch</strong> or <strong>try</strong> command. If it reaches
+the event loop without being trapped, it will be reported through the
+<strong>bgerror</strong> mechanism. If it reaches the top level of
+script evaluation in <strong>tclsh</strong>, it will be printed on the
+console before, in the non-interactive case, causing an exit (the
+behavior in other programs will depend on the details of how Tcl is
+embedded and used).</p>
+<p>By convention, the words in the <em>type</em> argument should go from
+most general to most specific.</p>
+<h1 id="examples">EXAMPLES</h1>
+<p>The following produces an error that is identical to that produced by
+<strong>expr</strong> when trying to divide a value by zero.</p>
+<pre><code>throw {ARITH DIVZERO {divide by zero}} {divide by zero}</code></pre>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-Commands/catch.html">catch</a>, <a
+href="../Tcl-Commands/error.html">error</a>, <a
+href="../Tcl-Commands/errorCode.html">errorCode</a>, <a
+href="../Tcl-Commands/errorInfo.html">errorInfo</a>, <a
+href="../Tcl-Commands/return.html">return</a>, <a
+href="../Tcl-Commands/try.html">try</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>error, exception</p>

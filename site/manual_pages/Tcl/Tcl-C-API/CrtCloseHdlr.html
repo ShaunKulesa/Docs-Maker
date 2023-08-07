@@ -1,0 +1,37 @@
+<h1 id="name">NAME</h1>
+<p>Tcl_CreateCloseHandler, Tcl_DeleteCloseHandler - arrange for
+callbacks when channels are closed</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tcl.h&gt;
+
+void
+Tcl_CreateCloseHandler(channel, proc, clientData)
+
+void
+Tcl_DeleteCloseHandler(channel, proc, clientData)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>The channel for which to create or delete a close callback.</p>
+<p>The procedure to call as the callback.</p>
+<p>Arbitrary one-word value to pass to <em>proc</em>.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p><strong>Tcl_CreateCloseHandler</strong> arranges for <em>proc</em> to
+be called when <em>channel</em> is closed with
+<strong>Tcl_Close</strong> or <strong>Tcl_UnregisterChannel</strong>, or
+using the Tcl <strong>close</strong> command. <em>Proc</em> should match
+the following prototype:</p>
+<pre><code>typedef void Tcl_CloseProc(
+        ClientData clientData);</code></pre>
+<p>The <em>clientData</em> is the same as the value provided in the call
+to <strong>Tcl_CreateCloseHandler</strong>.</p>
+<p><strong>Tcl_DeleteCloseHandler</strong> removes a close callback for
+<em>channel</em>. The <em>proc</em> and <em>clientData</em> identify
+which close callback to remove; <strong>Tcl_DeleteCloseHandler</strong>
+does nothing if its <em>proc</em> and <em>clientData</em> arguments do
+not match the <em>proc</em> and <em>clientData</em> for a close handler
+for <em>channel</em>.</p>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-Commands/close.html">close</a>, <a
+href="../Tcl-C-API/Tcl_Close.html">Tcl_Close</a>, <a
+href="../Tcl-C-API/Tcl_UnregisterChannel.html">Tcl_UnregisterChannel</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>callback, channel closing</p>

@@ -1,0 +1,35 @@
+<h1 id="name">NAME</h1>
+<p>raise - Change a window's position in the stacking order</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>raise</strong> <em>window</em> ?<em>aboveThis</em>?</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>If the <em>aboveThis</em> argument is omitted then the command raises
+<em>window</em> so that it is above all of its siblings in the stacking
+order (it will not be obscured by any siblings and will obscure any
+siblings that overlap it). If <em>aboveThis</em> is specified then it
+must be the path name of a window that is either a sibling of
+<em>window</em> or the descendant of a sibling of <em>window</em>. In
+this case the <strong>raise</strong> command will insert <em>window</em>
+into the stacking order just above <em>aboveThis</em> (or the ancestor
+of <em>aboveThis</em> that is a sibling of <em>window</em>); this could
+end up either raising or lowering <em>window</em>.</p>
+<p>All <strong>toplevel</strong> windows may be restacked with respect
+to each other, whatever their relative path names, but the window
+manager is not obligated to strictly honor requests to restack.</p>
+<p>On macOS raising an iconified <strong>toplevel</strong> window causes
+it to be deiconified.</p>
+<h1 id="example">EXAMPLE</h1>
+<p>Make a button appear to be in a sibling frame that was created after
+it. This is is often necessary when building GUIs in the style where you
+create your activity widgets first before laying them out on the
+display:</p>
+<pre><code>button .b -text &quot;Hi there!&quot;
+pack [frame .f -background blue]
+pack [label .f.l1 -text &quot;This is above&quot;]
+pack .b -in .f
+pack [label .f.l2 -text &quot;This is below&quot;]
+raise .b</code></pre>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tk-Commands/lower.html">lower</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>obscure, raise, stacking order</p>

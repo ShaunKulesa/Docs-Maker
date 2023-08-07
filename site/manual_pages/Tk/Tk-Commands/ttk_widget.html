@@ -1,0 +1,420 @@
+<h1 id="name">NAME</h1>
+<p>ttk::widget - Standard options and commands supported by Tk themed
+widgets</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>This manual describes common widget options and commands.</p>
+<h1 id="standard-options">STANDARD OPTIONS</h1>
+<p>The following options are supported by all Tk themed widgets:</p>
+<pre><code>Command-Line Name:   -class
+Database Name:  undefined
+Database Class: undefined</code></pre>
+<blockquote>
+<p>Specifies the window class. The class is used when querying the
+option database for the window's other options, to determine the default
+bindtags for the window, and to select the widget's default layout and
+style. This is a read-only option: it may only be specified when the
+window is created, and may not be changed with the
+<strong>configure</strong> widget command.</p>
+</blockquote>
+<pre><code>Command-Line Name:   -cursor
+Database Name:  cursor
+Database Class: Cursor</code></pre>
+<blockquote>
+<p>Specifies the mouse cursor to be used for the widget. See
+<strong>Tk_GetCursor</strong> and <em>cursors(n)</em> in the Tk
+reference manual for the legal values. If set to the empty string (the
+default), the cursor is inherited from the parent widget.</p>
+</blockquote>
+<pre><code>Command-Line Name:   -takefocus
+Database Name:  takeFocus
+Database Class: TakeFocus</code></pre>
+<blockquote>
+<p>Determines whether the window accepts the focus during keyboard
+traversal. Either <strong>0</strong>, <strong>1</strong>, a command
+prefix (to which the widget path is appended, and which should return
+<strong>0</strong> or <strong>1</strong>), or the empty string. See
+<em>options(n)</em> in the Tk reference manual for the full
+description.</p>
+</blockquote>
+<pre><code>Command-Line Name:   -style
+Database Name:  style
+Database Class: Style</code></pre>
+<blockquote>
+<p>May be used to specify a custom widget style.</p>
+</blockquote>
+<h1 id="scrollable-widget-options">SCROLLABLE WIDGET OPTIONS</h1>
+<p>The following options are supported by widgets that are controllable
+by a scrollbar. See <em>scrollbar(n)</em> for more information</p>
+<pre><code>Command-Line Name:   -xscrollcommand
+Database Name:  xScrollCommand
+Database Class: ScrollCommand</code></pre>
+<blockquote>
+<p>A command prefix, used to communicate with horizontal scrollbars.</p>
+</blockquote>
+<blockquote>
+<p>When the view in the widget's window changes, the widget will
+generate a Tcl command by concatenating the scroll command and two
+numbers. Each of the numbers is a fraction between 0 and 1 indicating a
+position in the document; 0 indicates the beginning, and 1 indicates the
+end. The first fraction indicates the first information in the widget
+that is visible in the window, and the second fraction indicates the
+information just after the last portion that is visible.</p>
+<p>Typically the <strong>-xscrollcommand</strong> option consists of the
+path name of a <strong>scrollbar</strong> widget followed by e.g. This
+will cause the scrollbar to be updated whenever the view in the window
+changes.</p>
+<p>If this option is set to the empty string (the default), then no
+command will be executed.</p>
+</blockquote>
+<pre><code>Command-Line Name:   -yscrollcommand
+Database Name:  yScrollCommand
+Database Class: ScrollCommand</code></pre>
+<blockquote>
+<p>A command prefix, used to communicate with vertical scrollbars. See
+the description of <strong>-xscrollcommand</strong> above for
+details.</p>
+</blockquote>
+<h1 id="label-options">LABEL OPTIONS</h1>
+<p>The following options are supported by labels, buttons, and other
+button-like widgets:</p>
+<pre><code>Command-Line Name:   -compound
+Database Name:  compound
+Database Class: Compound</code></pre>
+<blockquote>
+<p>Specifies how to display the image relative to the text, in the case
+both <strong>-text</strong> and <strong>-image</strong> are present. If
+set to the empty string (the default), the rules described in the
+"Elements" section of <em>ttk::intro(n)</em> explain which value is
+actually used. The other valid values are:</p>
+</blockquote>
+<blockquote>
+<dl>
+<dt>text</dt>
+<dd>
+<p>Display text only.</p>
+</dd>
+<dt>image</dt>
+<dd>
+<p>Display image only.</p>
+</dd>
+<dt>center</dt>
+<dd>
+<p>Display text centered on top of image.</p>
+</dd>
+<dt>top</dt>
+<dd>
+
+</dd>
+<dt>bottom</dt>
+<dd>
+
+</dd>
+<dt>left</dt>
+<dd>
+
+</dd>
+<dt>right</dt>
+<dd>
+<p>Display image above, below, left of, or right of the text,
+respectively.</p>
+</dd>
+<dt>none</dt>
+<dd>
+<p>Display the image if present, otherwise the text.</p>
+</dd>
+</dl>
+</blockquote>
+<pre><code>Command-Line Name:   -font
+Database Name:  font
+Database Class: Font</code></pre>
+<blockquote>
+<p>Font to use for the text displayed by the widget.</p>
+</blockquote>
+<pre><code>Command-Line Name:   -foreground
+Database Name:  textColor
+Database Class: TextColor</code></pre>
+<blockquote>
+<p>The widget's foreground color. If unspecified, the theme default is
+used.</p>
+</blockquote>
+<pre><code>Command-Line Name:   -image
+Database Name:  image
+Database Class: Image</code></pre>
+<blockquote>
+<p>Specifies an image to display. This is a list of 1 or more elements.
+The first element is the default image name. The rest of the list is a
+sequence of <em>statespec / value</em> pairs as per <strong>style
+map</strong>, specifying different images to use when the widget is in a
+particular state or combination of states. All images in the list should
+have the same size.</p>
+</blockquote>
+<pre><code>Command-Line Name:   -padding
+Database Name:  padding
+Database Class: Padding</code></pre>
+<blockquote>
+<p>Specifies the internal padding for the widget. The padding is a list
+of up to four length specifications <em>left top right bottom</em>. If
+fewer than four elements are specified, <em>bottom</em> defaults to
+<em>top</em>, <em>right</em> defaults to <em>left</em>, and <em>top</em>
+defaults to <em>left</em>. In other words, a list of three numbers
+specify the left, vertical, and right padding; a list of two numbers
+specify the horizontal and the vertical padding; a single number
+specifies the same padding all the way around the widget.</p>
+</blockquote>
+<pre><code>Command-Line Name:   -text
+Database Name:  text
+Database Class: Text</code></pre>
+<blockquote>
+<p>Specifies a text string to be displayed inside the widget (unless
+overridden by <strong>-textvariable</strong>).</p>
+</blockquote>
+<pre><code>Command-Line Name:   -textvariable
+Database Name:  textVariable
+Database Class: Variable</code></pre>
+<blockquote>
+<p>Specifies the name of a global variable whose value will be used in
+place of the <strong>-text</strong> resource.</p>
+</blockquote>
+<pre><code>Command-Line Name:   -underline
+Database Name:  underline
+Database Class: Underline</code></pre>
+<blockquote>
+<p>If set, specifies the integer index (0-based) of a character to
+underline in the text string. The underlined character is used for
+mnemonic activation.</p>
+</blockquote>
+<pre><code>Command-Line Name:   -width
+Database Name:  width
+Database Class: Width</code></pre>
+<blockquote>
+<p>If greater than zero, specifies how much space, in character widths,
+to allocate for the text label. If less than zero, specifies a minimum
+width. If zero or unspecified, the natural width of the text label is
+used.</p>
+</blockquote>
+<h1 id="compatibility-options">COMPATIBILITY OPTIONS</h1>
+<p>This option is only available for themed widgets that have
+traditional Tk widgets.</p>
+<pre><code>Command-Line Name:   -state
+Database Name:  state
+Database Class: State</code></pre>
+<blockquote>
+<p>May be set to <strong>normal</strong> or <strong>disabled</strong> to
+control the <strong>disabled</strong> state bit. This is a write-only
+option: setting it changes the widget state, but the
+<strong>state</strong> widget command does not affect the
+<strong>-state</strong> option.</p>
+</blockquote>
+<h1 id="commands">COMMANDS</h1>
+<dl>
+<dt><em>pathName</em> <strong>cget</strong> <em>option</em></dt>
+<dd>
+<p>Returns the current value of the configuration option given by
+<em>option</em>.</p>
+</dd>
+<dt><em>pathName</em> <strong>configure</strong> ?<em>option</em>?
+?<em>value option value ...</em>?</dt>
+<dd>
+<p>Query or modify the configuration options of the widget. If one or
+more <em>option-value</em> pairs are specified, then the command
+modifies the given widget option(s) to have the given value(s); in this
+case the command returns an empty string. If <em>option</em> is
+specified with no <em>value</em>, then the command returns a list
+describing the named option: the elements of the list are the option
+name, database name, database class, default value, and current value.
+If no <em>option</em> is specified, returns a list describing all of the
+available options for <em>pathName</em>.</p>
+</dd>
+<dt><em>pathName</em> <strong>identify element</strong> <em>x
+y</em></dt>
+<dd>
+<p>Returns the name of the element under the point given by <em>x</em>
+and <em>y</em>, or an empty string if the point does not lie within any
+element. <em>x</em> and <em>y</em> are pixel coordinates relative to the
+widget. Some widgets accept other <strong>identify</strong>
+subcommands.</p>
+</dd>
+<dt><em>pathName</em> <strong>instate</strong> <em>statespec</em>
+?<em>script</em>?</dt>
+<dd>
+<p>Test the widget's state. If <em>script</em> is not specified, returns
+1 if the widget state matches <em>statespec</em> and 0 otherwise. If
+<em>script</em> is specified, equivalent to</p>
+</dd>
+</dl>
+<!-- -->
+<pre><code>if {[pathName instate stateSpec]} script</code></pre>
+<dl>
+<dt><em>pathName</em> <strong>state</strong> ?<em>stateSpec</em>?</dt>
+<dd>
+<p>Modify or inquire widget state. If <em>stateSpec</em> is present,
+sets the widget state: for each flag in <em>stateSpec</em>, sets the
+corresponding flag or clears it if prefixed by an exclamation point.</p>
+<p>Returns a new state spec indicating which flags were changed:</p>
+<pre><code>set changes [pathName state spec]
+pathName state $changes</code></pre>
+<p>will restore <em>pathName</em> to the original state. If
+<em>stateSpec</em> is not specified, returns a list of the
+currently-enabled state flags.</p>
+</dd>
+<dt><em>pathName</em> <strong>xview</strong> <em>args</em></dt>
+<dd>
+<p>This command is used to query and change the horizontal position of
+the content in the widget's window. It can take any of the following
+forms:</p>
+<dl>
+<dt><em>pathName</em> <strong>xview</strong></dt>
+<dd>
+<p>Returns a list containing two elements. Each element is a real
+fraction between 0 and 1; together they describe the horizontal span
+that is visible in the window. For example, if the first element is .2
+and the second element is .6, 20% of the widget's content is off-screen
+to the left, the middle 40% is visible in the window, and 40% of the
+content is off-screen to the right. These are the same values passed to
+scrollbars via the <strong>-xscrollcommand</strong> option.</p>
+</dd>
+<dt><em>pathName</em> <strong>xview</strong> <em>index</em></dt>
+<dd>
+<p>Adjusts the view in the window so that the content given by
+<em>index</em> is displayed at the left edge of the window.</p>
+</dd>
+<dt><em>pathName</em> <strong>xview moveto</strong>
+<em>fraction</em></dt>
+<dd>
+<p>Adjusts the view in the window so that the character
+<em>fraction</em> of the way through the content appears at the left
+edge of the window. <em>Fraction</em> must be a fraction between 0 and
+1.</p>
+</dd>
+<dt><em>pathName</em> <strong>xview scroll</strong> <em>number
+what</em></dt>
+<dd>
+<p>This command shifts the view in the window left or right according to
+<em>number</em> and <em>what</em>. <em>Number</em> must be an integer.
+<em>What</em> must be either <strong>units</strong> or
+<strong>pages</strong>. If <em>what</em> is <strong>units</strong>, the
+view adjusts left or right by <em>number</em> average-width characters
+on the display; if it is <strong>pages</strong> then the view adjusts by
+<em>number</em> screenfuls. If <em>number</em> is negative then
+characters farther to the left become visible; if it is positive then
+characters farther to the right become visible.</p>
+</dd>
+</dl>
+</dd>
+<dt><em>pathName</em> <strong>yview</strong> <em>args</em></dt>
+<dd>
+<p>This command is used to query and change the vertical position of the
+content in the widget's window. It can take any of the following
+forms:</p>
+<dl>
+<dt><em>pathName</em> <strong>yview</strong></dt>
+<dd>
+<p>Returns a list containing two elements. Each element is a real
+fraction between 0 and 1; together they describe the vertical span that
+is visible in the window. For example, if the first element is .2 and
+the second element is .6, 20% of the widget's content is off-screen to
+the top, the middle 40% is visible in the window, and 40% of the content
+is off-screen to the bottom. These are the same values passed to
+scrollbars via the <strong>-yscrollcommand</strong> option.</p>
+</dd>
+<dt><em>pathName</em> <strong>yview</strong> <em>index</em></dt>
+<dd>
+<p>Adjusts the view in the window so that the content given by
+<em>index</em> is displayed at the top edge of the window.</p>
+</dd>
+<dt><em>pathName</em> <strong>yview moveto</strong>
+<em>fraction</em></dt>
+<dd>
+<p>Adjusts the view in the window so that the item <em>fraction</em> of
+the way through the content appears at the top edge of the window.
+<em>Fraction</em> must be a fraction between 0 and 1.</p>
+</dd>
+<dt><em>pathName</em> <strong>yview scroll</strong> <em>number
+what</em></dt>
+<dd>
+<p>This command shifts the view in the window up or down according to
+<em>number</em> and <em>what</em>. <em>Number</em> must be an integer.
+<em>What</em> must be either <strong>units</strong> or
+<strong>pages</strong>. If <em>what</em> is <strong>units</strong>, the
+view adjusts up or down by <em>number</em> average-width characters on
+the display; if it is <strong>pages</strong> then the view adjusts by
+<em>number</em> screenfuls. If <em>number</em> is negative then items
+farther to the top become visible; if it is positive then items farther
+to the bottom become visible.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<h1 id="widget-states">WIDGET STATES</h1>
+<p>The widget state is a bitmap of independent state flags. Widget state
+flags include:</p>
+<dl>
+<dt><strong>active</strong></dt>
+<dd>
+<p>The mouse cursor is over the widget and pressing a mouse button will
+cause some action to occur. (aka (Gnome), (Windows),</p>
+</dd>
+<dt><strong>disabled</strong></dt>
+<dd>
+<p>Widget is disabled under program control (aka</p>
+</dd>
+<dt><strong>focus</strong></dt>
+<dd>
+<p>Widget has keyboard focus.</p>
+</dd>
+<dt><strong>pressed</strong></dt>
+<dd>
+<p>Widget is being pressed (aka in Motif).</p>
+</dd>
+<dt><strong>selected</strong></dt>
+<dd>
+<p>or for things like checkbuttons and radiobuttons.</p>
+</dd>
+<dt><strong>background</strong></dt>
+<dd>
+<p>Windows and the Mac have a notion of an or foreground window. The
+<strong>background</strong> state is set for widgets in a background
+window, and cleared for those in the foreground window.</p>
+</dd>
+<dt><strong>readonly</strong></dt>
+<dd>
+<p>Widget should not allow user modification.</p>
+</dd>
+<dt><strong>alternate</strong></dt>
+<dd>
+<p>A widget-specific alternate display format. For example, used for
+checkbuttons and radiobuttons in the or state, and for buttons with
+<strong>-default active</strong>.</p>
+</dd>
+<dt><strong>invalid</strong></dt>
+<dd>
+<p>The widget's value is invalid. (Potential uses: scale widget value
+out of bounds, entry widget value failed validation.)</p>
+</dd>
+<dt><strong>hover</strong></dt>
+<dd>
+<p>The mouse cursor is within the widget. This is similar to the
+<strong>active</strong> state; it is used in some themes for widgets
+that provide distinct visual feedback for the active widget in addition
+to the active element within the widget.</p>
+</dd>
+</dl>
+<p>A <em>state specification</em> or <em>stateSpec</em> is a list of
+state names, optionally prefixed with an exclamation point (!)
+indicating that the bit is off.</p>
+<h1 id="examples">EXAMPLES</h1>
+<pre><code>set b [ttk::button .b]
+
+# Disable the widget:
+$b state disabled
+
+# Invoke the widget only if it is currently pressed and enabled:
+$b instate {pressed !disabled} { .b invoke }
+
+# Reenable widget:
+$b state !disabled</code></pre>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tk-Commands/ttk::intro.html">ttk::intro</a>, <a
+href="../Tk-Commands/ttk::style.html">ttk::style</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>state, configure, option</p>

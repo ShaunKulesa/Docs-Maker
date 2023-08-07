@@ -1,0 +1,32 @@
+<h1 id="name">NAME</h1>
+<p>exit - End the application</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>exit</strong> ?<em>returnCode</em>?</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>Terminate the process, returning <em>returnCode</em> to the system as
+the exit status. If <em>returnCode</em> is not specified then it
+defaults to 0.</p>
+<h1 id="example">EXAMPLE</h1>
+<p>Since non-zero exit codes are usually interpreted as error cases by
+the calling process, the <strong>exit</strong> command is an important
+part of signaling that something fatal has gone wrong. This code
+fragment is useful in scripts to act as a general problem trap:</p>
+<pre><code>proc main {} {
+    # ... put the real main code in here ...
+}
+
+if {[catch {main} msg options]} {
+    puts stderr &quot;unexpected script error: $msg&quot;
+    if {[info exists env(DEBUG)]} {
+        puts stderr &quot;---- BEGIN TRACE ----&quot;
+        puts stderr [dict get $options -errorinfo]
+        puts stderr &quot;---- END TRACE ----&quot;
+    }
+
+    # Reserve code 1 for &quot;expected&quot; error exits...
+    exit 2
+}</code></pre>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-Commands/exec.html">exec</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>abort, exit, process</p>

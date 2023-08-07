@@ -1,0 +1,90 @@
+<h1 id="name">NAME</h1>
+<p>ttk::radiobutton - Mutually exclusive option widget</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>ttk::radiobutton</strong> <em>pathName</em>
+?<em>options</em>?</p>
+<h1 id="description">DESCRIPTION</h1>
+<p><strong>ttk::radiobutton</strong> widgets are used in groups to show
+or change a set of mutually-exclusive options. Radiobuttons are linked
+to a Tcl variable, and have an associated value; when a radiobutton is
+clicked, it sets the variable to its associated value.</p>
+<h1 id="standard-options">STANDARD OPTIONS</h1>
+<pre><code>-class   -compound   -cursor
+-image  -state  -style
+-takefocus  -text   -textvariable
+-underline  -width</code></pre>
+<p>See the manual entry for details on the standard options.</p>
+<h1 id="widget-specific-options">WIDGET-SPECIFIC OPTIONS</h1>
+<pre><code>Command-Line Name:   -command
+Database Name:  command
+Database Class: Command</code></pre>
+<blockquote>
+<p>A Tcl script to evaluate whenever the widget is invoked.</p>
+</blockquote>
+<pre><code>Command-Line Name:   -value
+Database Name:  Value
+Database Class: Value</code></pre>
+<blockquote>
+<p>The value to store in the associated <strong>-variable</strong> when
+the widget is selected.</p>
+</blockquote>
+<pre><code>Command-Line Name:   -variable
+Database Name:  variable
+Database Class: Variable</code></pre>
+<blockquote>
+<p>The name of a global variable whose value is linked to the widget.
+Default value is <strong>::selectedButton</strong>.</p>
+</blockquote>
+<h1 id="widget-command">WIDGET COMMAND</h1>
+<p>In addition to the standard <strong>cget</strong>,
+<strong>configure</strong>, <strong>identify</strong>,
+<strong>instate</strong>, and <strong>state</strong> commands,
+radiobuttons support the following additional widget commands:</p>
+<dl>
+<dt><em>pathname</em> <strong>invoke</strong></dt>
+<dd>
+<p>Sets the <strong>-variable</strong> to the <strong>-value</strong>,
+selects the widget, and evaluates the associated
+<strong>-command</strong>. Returns the result of the
+<strong>-command</strong>, or the empty string if no
+<strong>-command</strong> is specified.</p>
+</dd>
+</dl>
+<h1 id="widget-states">WIDGET STATES</h1>
+<p>The widget does not respond to user input if the
+<strong>disabled</strong> state is set. The widget sets the
+<strong>selected</strong> state whenever the linked
+<strong>-variable</strong> is set to the widget's
+<strong>-value</strong>, and clears it otherwise. The widget sets the
+<strong>alternate</strong> state whenever the linked
+<strong>-variable</strong> is unset. (The <strong>alternate</strong>
+state may be used to indicate a or selection.)</p>
+<h1 id="standard-styles">STANDARD STYLES</h1>
+<p><strong>Ttk::radiobutton</strong> widgets support the
+<strong>Toolbutton</strong> style in all standard themes, which is
+useful for creating widgets for toolbars.</p>
+<h1 id="styling-options">STYLING OPTIONS</h1>
+<p>The class name for a <strong>ttk::radiobutton</strong> is
+<strong>TRadiobutton</strong>.</p>
+<p>Dynamic states: <strong>active</strong>, <strong>alternate</strong>,
+<strong>disabled</strong>, <strong>pressed</strong>,
+<strong>readonly</strong>, <strong>selected</strong>.</p>
+<p><strong>TRadiobutton</strong> styling options configurable with
+<strong>ttk::style</strong> are:</p>
+<p><strong>-background</strong> <em>color</em><br />
+<strong>-compound</strong> <em>compound</em><br />
+<strong>-foreground</strong> <em>color</em><br />
+<strong>-indicatorbackground</strong> <em>color</em><br />
+<strong>-indicatorcolor</strong> <em>color</em><br />
+<strong>-indicatormargin</strong> <em>padding</em><br />
+<strong>-indicatorrelief</strong> <em>relief</em><br />
+<strong>-padding</strong> <em>padding</em></p>
+<p>Some options are only available for specific themes.</p>
+<p>See the <strong>ttk::style</strong> manual page for information on
+how to configure ttk styles.</p>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tk-Commands/ttk::widget.html">ttk::widget</a>, <a
+href="../Tk-Commands/ttk::checkbutton.html">ttk::checkbutton</a>, <a
+href="../Tk-Commands/radiobutton.html">radiobutton</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>widget, button, option</p>

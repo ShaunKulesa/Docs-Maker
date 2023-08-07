@@ -1,0 +1,139 @@
+<h1 id="name">NAME</h1>
+<p>fcopy - Copy data from one channel to another</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>fcopy</strong> <em>inchan</em> <em>outchan</em>
+?<strong>-size</strong> <em>size</em>? ?<strong>-command</strong>
+<em>callback</em>?</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>The <strong>fcopy</strong> command copies data from one I/O channel,
+<em>inchan</em> to another I/O channel, <em>outchan</em>. The
+<strong>fcopy</strong> command leverages the buffering in the Tcl I/O
+system to avoid extra copies and to avoid buffering too much data in
+main memory when copying large files to slow destinations like network
+sockets.</p>
+<p>The <strong>fcopy</strong> command transfers data from
+<em>inchan</em> until end of file or <em>size</em> bytes or characters
+have been transferred; <em>size</em> is in bytes if the two channels are
+using the same encoding, and is in characters otherwise. If no
+<strong>-size</strong> argument is given, then the copy goes until end
+of file. All the data read from <em>inchan</em> is copied to
+<em>outchan</em>. Without the <strong>-command</strong> option,
+<strong>fcopy</strong> blocks until the copy is complete and returns the
+number of bytes or characters (using the same rules as for the
+<strong>-size</strong> option) written to <em>outchan</em>.</p>
+<p>The <strong>-command</strong> argument makes <strong>fcopy</strong>
+work in the background. In this case it returns immediately and the
+<em>callback</em> is invoked later when the copy completes. The
+<em>callback</em> is called with one or two additional arguments that
+indicates how many bytes were written to <em>outchan</em>. If an error
+occurred during the background copy, the second argument is the error
+string associated with the error. With a background copy, it is not
+necessary to put <em>inchan</em> or <em>outchan</em> into non-blocking
+mode; the <strong>fcopy</strong> command takes care of that
+automatically. However, it is necessary to enter the event loop by using
+the <strong>vwait</strong> command or by using Tk.</p>
+<p>You are not allowed to do other input operations with
+<em>inchan</em>, or output operations with <em>outchan</em>, during a
+background <strong>fcopy</strong>. The converse is entirely legitimate,
+as exhibited by the bidirectional fcopy example below.</p>
+<p>If either <em>inchan</em> or <em>outchan</em> get closed while the
+copy is in progress, the current copy is stopped and the command
+callback is <em>not</em> made. If <em>inchan</em> is closed, then all
+data already queued for <em>outchan</em> is written out.</p>
+<p>Note that <em>inchan</em> can become readable during a background
+copy. You should turn off any <strong>fileevent</strong> handlers during
+a background copy so those handlers do not interfere with the copy. Any
+wrong-sided I/O attempted (by a <strong>fileevent</strong> handler or
+otherwise) will get a error.</p>
+<p><strong>Fcopy</strong> translates end-of-line sequences in
+<em>inchan</em> and <em>outchan</em> according to the
+<strong>-translation</strong> option for these channels. See the manual
+entry for <strong>fconfigure</strong> for details on the
+<strong>-translation</strong> option. The translations mean that the
+number of bytes read from <em>inchan</em> can be different than the
+number of bytes written to <em>outchan</em>. Only the number of bytes
+written to <em>outchan</em> is reported, either as the return value of a
+synchronous <strong>fcopy</strong> or as the argument to the callback
+for an asynchronous <strong>fcopy</strong>.</p>
+<p><strong>Fcopy</strong> obeys the encodings and character translations
+configured for the channels. This means that the incoming characters are
+converted internally first UTF-8 and then into the encoding of the
+channel <strong>fcopy</strong> writes to. See the manual entry for
+<strong>fconfigure</strong> for details on the
+<strong>-encoding</strong> and <strong>-translation</strong> options. No
+conversion is done if both channels are set to encoding and have
+matching translations. If only the output channel is set to encoding the
+system will write the internal UTF-8 representation of the incoming
+characters. If only the input channel is set to encoding the system will
+assume that the incoming bytes are valid UTF-8 characters and convert
+them according to the output encoding. The behaviour of the system for
+bytes which are not valid UTF-8 characters is undefined in this
+case.</p>
+<h1 id="examples">EXAMPLES</h1>
+<p>The first example transfers the contents of one channel exactly to
+another. Note that when copying one file to another, it is better to use
+<strong>file copy</strong> which also copies file metadata (e.g. the
+file access permissions) where possible.</p>
+<pre><code>fconfigure $in -translation binary
+fconfigure $out -translation binary
+fcopy $in $out</code></pre>
+<p>This second example shows how the callback gets passed the number of
+bytes transferred. It also uses vwait to put the application into the
+event loop. Of course, this simplified example could be done without the
+command callback.</p>
+<pre><code>proc Cleanup {in out bytes {error {}}} {
+    global total
+    set total $bytes
+    close $in
+    close $out
+    if {[string length $error] != 0} {
+        # error occurred during the copy
+    }
+}
+set in [open $file1]
+set out [socket $server $port]
+fcopy $in $out -command [list Cleanup $in $out]
+vwait total</code></pre>
+<p>The third example copies in chunks and tests for end of file in the
+command callback.</p>
+<pre><code>proc CopyMore {in out chunk bytes {error {}}} {
+    global total done
+    incr total $bytes
+    if {([string length $error] != 0) || [eof $in]} {
+        set done $total
+        close $in
+        close $out
+    } else {
+        fcopy $in $out -size $chunk \
+                -command [list CopyMore $in $out $chunk]
+    }
+}
+set in [open $file1]
+set out [socket $server $port]
+set chunk 1024
+set total 0
+fcopy $in $out -size $chunk \
+        -command [list CopyMore $in $out $chunk]
+vwait done</code></pre>
+<p>The fourth example starts an asynchronous, bidirectional fcopy
+between two sockets. Those could also be pipes from two [open "|hal
+9000" r+] (though their conversation would remain secret to the script,
+since all four fileevent slots are busy).</p>
+<pre><code>set flows 2
+proc Done {dir args} {
+     global flows done
+     puts &quot;$dir is over.&quot;
+     incr flows -1
+     if {$flows&lt;=0} {set done 1}
+}
+fcopy $sok1 $sok2 -command [list Done UP]
+fcopy $sok2 $sok1 -command [list Done DOWN]
+vwait done</code></pre>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-Commands/eof.html">eof</a>, <a
+href="../Tcl-Commands/fblocked.html">fblocked</a>, <a
+href="../Tcl-Commands/fconfigure.html">fconfigure</a>, <a
+href="../Tcl-Commands/file.html">file</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>blocking, channel, end of line, end of file, nonblocking, read,
+translation</p>

@@ -1,0 +1,79 @@
+<h1 id="name">NAME</h1>
+<p>Tk_GeometryRequest, Tk_SetMinimumRequestSize, Tk_SetInternalBorder,
+Tk_SetInternalBorderEx - specify desired geometry or internal border for
+a window</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tk.h&gt;
+
+Tk_GeometryRequest(tkwin, reqWidth, reqHeight)
+
+Tk_SetMinimumRequestSize(tkwin, minWidth, minHeight)
+
+Tk_SetInternalBorder(tkwin, width)
+
+Tk_SetInternalBorderEx(tkwin, left, right, top, bottom)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Window for which geometry is being requested.</p>
+<p>Desired width for <em>tkwin</em>, in pixel units.</p>
+<p>Desired height for <em>tkwin</em>, in pixel units.</p>
+<p>Desired minimum requested width for <em>tkwin</em>, in pixel
+units.</p>
+<p>Desired minimum requested height for <em>tkwin</em>, in pixel
+units.</p>
+<p>Space to leave for internal border for <em>tkwin</em>, in pixel
+units.</p>
+<p>Space to leave for left side of internal border for <em>tkwin</em>,
+in pixel units.</p>
+<p>Space to leave for right side of internal border for <em>tkwin</em>,
+in pixel units.</p>
+<p>Space to leave for top side of internal border for <em>tkwin</em>, in
+pixel units.</p>
+<p>Space to leave for bottom side of internal border for <em>tkwin</em>,
+in pixel units.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p><strong>Tk_GeometryRequest</strong> is called by widget code to
+indicate its preference for the dimensions of a particular window. The
+arguments to <strong>Tk_GeometryRequest</strong> are made available to
+the geometry manager for the window, which then decides on the actual
+geometry for the window. Although geometry managers generally try to
+satisfy requests made to <strong>Tk_GeometryRequest</strong>, there is
+no guarantee that this will always be possible. Widget code should not
+assume that a geometry request will be satisfied until it receives a
+<strong>ConfigureNotify</strong> event indicating that the geometry
+change has occurred. Widget code should never call procedures like
+<strong>Tk_ResizeWindow</strong> directly. Instead, it should invoke
+<strong>Tk_GeometryRequest</strong> and leave the final geometry
+decisions to the geometry manager.</p>
+<p>If <em>tkwin</em> is a top-level window, then the geometry
+information will be passed to the window manager using the standard
+ICCCM protocol.</p>
+<p><strong>Tk_SetInternalBorder</strong> is called by widget code to
+indicate that the widget has an internal border. This means that the
+widget draws a decorative border inside the window instead of using the
+standard X borders, which are external to the window's area. For
+example, internal borders are used to draw 3-D effects. <em>Width</em>
+specifies the width of the border in pixels. Geometry managers will use
+this information to avoid placing any children of <em>tkwin</em>
+overlapping the outermost <em>width</em> pixels of <em>tkwin</em>'s
+area.</p>
+<p><strong>Tk_SetInternalBorderEx</strong> works like
+<strong>Tk_SetInternalBorder</strong> but lets you specify different
+widths for different sides of the window.</p>
+<p><strong>Tk_SetMinimumRequestSize</strong> is called by widget code to
+indicate that a geometry manager should request at least this size for
+the widget. This allows a widget to have some control over its size when
+a propagating geometry manager is used inside it.</p>
+<p>The information specified in calls to
+<strong>Tk_GeometryRequest</strong>,
+<strong>Tk_SetMinimumRequestSize</strong>,
+<strong>Tk_SetInternalBorder</strong> and
+<strong>Tk_SetInternalBorderEx</strong> can be retrieved using the
+macros <strong>Tk_ReqWidth</strong>, <strong>Tk_ReqHeight</strong>,
+<strong>Tk_MinReqWidth</strong>, <strong>Tk_MinReqHeight</strong>,
+<strong>Tk_MinReqWidth</strong>, <strong>Tk_InternalBorderLeft</strong>,
+<strong>Tk_InternalBorderRight</strong>,
+<strong>Tk_InternalBorderTop</strong> and
+<strong>Tk_InternalBorderBottom</strong>. See the
+<strong>Tk_WindowId</strong> manual entry for details.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>geometry, request</p>

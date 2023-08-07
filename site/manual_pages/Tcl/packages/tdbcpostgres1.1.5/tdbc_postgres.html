@@ -1,0 +1,143 @@
+<p><br />
+</p>
+<h1 id="name">NAME</h1>
+<p>tdbc::postgres - TDBC-POSTGRES bridge</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p>package require <strong>tdbc::postgres 1.0</strong></p>
+<p><strong>tdbc::postgres::connection create</strong> <em>db</em>
+?<em>-option value...</em>?<br />
+<strong>tdbc::postgres::connection new</strong> ?<em>-option
+value...</em>?</p>
+<p><br />
+</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>The <strong>tdbc::postgres</strong> driver provides a database
+interface that conforms to Tcl DataBase Connectivity (TDBC) and allows a
+Tcl script to connect to a Postgres database.</p>
+<p>Connection to a POSTGRES database is established by invoking
+<strong>tdbc::postgres::connection create</strong>, passing it the name
+to give the database handle and a set of <em>-option-value</em> pairs.
+The available options are enumerated under CONNECTION OPTIONS below. As
+an alternative, <strong>tdbc::postgres::connection new</strong> may be
+used to create a database connection with an automatically assigned
+name. The return value from <strong>tdbc::postgres::connection
+new</strong> is the name that was chosen for the connection handle.</p>
+<p>The side effect of <strong>tdbc::postgres::connection create</strong>
+is to create a new database connection.. See
+<strong>tdbc::connection(n)</strong> for the details of how to use the
+connection to manipulate a database.</p>
+<h1 id="connection-options">CONNECTION OPTIONS</h1>
+<p>The <strong>tdbc::postgres::connection create</strong> object command
+supports the <strong>-encoding</strong>, <strong>-isolation</strong>,
+<strong>-readonly</strong> and <strong>-timeout</strong> options common
+to all TDBC drivers. The <strong>-timeout</strong> option will only
+affect connection process, once connected this value will be ignored and
+cannot be changed after connecting.</p>
+<p>In addition, the following options are recognized (these options must
+be set on the initial creation of the connection; they cannot be changed
+after connecting) :</p>
+<dl>
+<dt>-host hostname</dt>
+<dd>
+<p>Connects to the host specified by <em>hostname</em>. Default is to
+connect using a local Unix domain socket.</p>
+</dd>
+<dt>-hostaddr address</dt>
+<dd>
+<p>Connects to the host specified by given IP <em>address</em>. If both
+<strong>-host</strong> and <strong>-hostaddr</strong> are given, the
+value of <strong>-host</strong> is ignored. Default is to connect using
+a local Unix domain socket.</p>
+</dd>
+<dt>-port number</dt>
+<dd>
+<p>Connects to a Postgres server listening on the port specified by
+<em>number</em>. It is used only when <em>host</em> or <em>hostaddr</em>
+is specified.</p>
+</dd>
+<dt>-user name</dt>
+<dd>
+<p>Presents <em>name</em> as the user name to the Postgres server.
+Default is the current user ID.</p>
+</dd>
+<dt>-passwd password</dt>
+<dd>
+
+</dd>
+<dt>-password password</dt>
+<dd>
+<p>These two options are synonymous. They present the given
+<em>password</em> as the user's password to the Postgres server. Default
+is not to present a password.</p>
+</dd>
+<dt>-database name</dt>
+<dd>
+
+</dd>
+<dt>-db name</dt>
+<dd>
+<p>These two options are synonymous. They present the given
+<em>name</em> as the name of the default database to use in Postgres
+queries. If not specified, the default database for the current user is
+used.</p>
+</dd>
+<dt>-options opts</dt>
+<dd>
+<p>This sets <em>opts</em> as additional command line options send to
+the server.</p>
+</dd>
+<dt>-tty file</dt>
+<dd>
+<p>This option is ignored on never servers. Formerly this specified
+where to send debug output. This option is left for compatibility with
+older servers.</p>
+</dd>
+<dt>-sslmode mode</dt>
+<dd>
+<p>This option determines whether or with what priority an SSL
+connection will be negotiated with the server. There are four
+<em>modes</em>: <strong>disable</strong> will attempt only an
+unencrypted SSL connection; <strong>allow</strong> will negotiate,
+trying first a non-SSL connection, then if that fails, trying an SSL
+connection; <strong>prefer</strong> (the default) will negotiate, trying
+first an SSL connection, then if that fails, trying a regular non-SSL
+connection; <strong>require</strong> will try only an SSL connection. If
+PostgreSQL is compiled without SSL support, using option
+<strong>require</strong> will cause an error, and options
+<strong>allow</strong> and <strong>prefer</strong> will be tolerated but
+the driver will be unable to negotiate an SSL connection.</p>
+</dd>
+<dt>-requiressl</dt>
+<dd>
+<p>This option is deprecated in favor of the <strong>-sslmode</strong>
+setting. The <em>flag</em> value must be a Boolean value. If it is
+<strong>true</strong> (or any equivalent), driver will then refuse to
+connect if the server does not accept an SSL connection. The default
+value is <strong>false</strong> (or any equivalent), and acts the same
+like <strong>-sslmode</strong> <strong>preffered</strong></p>
+</dd>
+<dt>-service</dt>
+<dd>
+<p>It specifies a service <em>name</em> in pg_service.conf file that
+holds additional connection parameters. This allows applications to
+specify only a service name so connection parameters can be centrally
+maintained. Refer to PostgreSQL Documentation or
+PREFIX/share/pg_service.conf.sample file for details.</p>
+</dd>
+</dl>
+<h1 id="examples">EXAMPLES</h1>
+<blockquote>
+<pre><code>tdbc::postgres::connection -user joe -passwd sesame -db joes_database</code></pre>
+</blockquote>
+<p>Connects to the Postgres server on the local host using the default
+connection method, presenting user ID 'joe' and password 'sesame'. Uses
+'joes_database' as the default database name.</p>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../tdbc1.1.5/tdbc.html">tdbc</a>, <a
+href="../tdbc1.1.5/tdbc::connection.html">tdbc::connection</a>, <a
+href="../tdbc1.1.5/tdbc::resultset.html">tdbc::resultset</a>, <a
+href="../tdbc1.1.5/tdbc::statement.html">tdbc::statement</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>TDBC, SQL, Postgres, database, connectivity, connection</p>
+<h1 id="copyright">COPYRIGHT</h1>
+<p>Copyright (c) 2009 by Slawomir Cygan</p>

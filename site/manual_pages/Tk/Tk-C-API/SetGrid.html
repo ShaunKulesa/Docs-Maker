@@ -1,0 +1,43 @@
+<h1 id="name">NAME</h1>
+<p>Tk_SetGrid, Tk_UnsetGrid - control the grid for interactive
+resizing</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tk.h&gt;
+
+Tk_SetGrid(tkwin, reqWidth, reqHeight, widthInc, heightInc)
+
+Tk_UnsetGrid(tkwin)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Token for window.</p>
+<p>Width in grid units that corresponds to the pixel dimension
+<em>tkwin</em> has requested via
+<strong>Tk_GeometryRequest</strong>.</p>
+<p>Height in grid units that corresponds to the pixel dimension
+<em>tkwin</em> has requested via
+<strong>Tk_GeometryRequest</strong>.</p>
+<p>Width of one grid unit, in pixels.</p>
+<p>Height of one grid unit, in pixels.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p><strong>Tk_SetGrid</strong> turns on gridded geometry management for
+<em>tkwin</em>'s toplevel window and specifies the geometry of the grid.
+<strong>Tk_SetGrid</strong> is typically invoked by a widget when its
+<strong>setGrid</strong> option is true. It restricts interactive
+resizing of <em>tkwin</em>'s toplevel window so that the space allocated
+to the toplevel is equal to its requested size plus or minus even
+multiples of <em>widthInc</em> and <em>heightInc</em>. Furthermore, the
+<em>reqWidth</em> and <em>reqHeight</em> values are passed to the window
+manager so that it can report the window's size in grid units during
+interactive resizes. If <em>tkwin</em>'s configuration changes (e.g.,
+the size of a grid unit changes) then the widget should invoke
+<strong>Tk_SetGrid</strong> again with the new information.</p>
+<p><strong>Tk_UnsetGrid</strong> cancels gridded geometry management for
+<em>tkwin</em>'s toplevel window.</p>
+<p>For each toplevel window there can be at most one internal window
+with gridding enabled. If <strong>Tk_SetGrid</strong> or
+<strong>Tk_UnsetGrid</strong> is invoked when some other window is
+already controlling gridding for <em>tkwin</em>'s toplevel, the calls
+for the new window have no effect.</p>
+<p>See the <strong>wm</strong> manual entry for additional information
+on gridded geometry management.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>grid, window, window manager</p>

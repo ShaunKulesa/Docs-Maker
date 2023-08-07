@@ -1,0 +1,67 @@
+<h1 id="name">NAME</h1>
+<p>Tcl_CreateFileHandler, Tcl_DeleteFileHandler - associate procedure
+callbacks with files or devices (Unix only)</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tcl.h&gt;
+
+Tcl_CreateFileHandler(fd, mask, proc, clientData)
+
+Tcl_DeleteFileHandler(fd)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Unix file descriptor for an open file or device.</p>
+<p>Conditions under which <em>proc</em> should be called: OR-ed
+combination of <strong>TCL_READABLE</strong>,
+<strong>TCL_WRITABLE</strong>, and <strong>TCL_EXCEPTION</strong>. May
+be set to 0 to temporarily disable a handler.</p>
+<p>Procedure to invoke whenever the file or device indicated by
+<em>file</em> meets the conditions specified by <em>mask</em>.</p>
+<p>Arbitrary one-word value to pass to <em>proc</em>.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p><strong>Tcl_CreateFileHandler</strong> arranges for <em>proc</em> to
+be invoked in the future whenever I/O becomes possible on a file or an
+exceptional condition exists for the file. The file is indicated by
+<em>fd</em>, and the conditions of interest are indicated by
+<em>mask</em>. For example, if <em>mask</em> is
+<strong>TCL_READABLE</strong>, <em>proc</em> will be called when the
+file is readable. The callback to <em>proc</em> is made by
+<strong>Tcl_DoOneEvent</strong>, so
+<strong>Tcl_CreateFileHandler</strong> is only useful in programs that
+dispatch events through <strong>Tcl_DoOneEvent</strong> or through Tcl
+commands such as <strong>vwait</strong>.</p>
+<p><em>Proc</em> should have arguments and result that match the type
+<strong>Tcl_FileProc</strong>:</p>
+<pre><code>typedef void Tcl_FileProc(
+        ClientData clientData,
+        int mask);</code></pre>
+<p>The <em>clientData</em> parameter to <em>proc</em> is a copy of the
+<em>clientData</em> argument given to
+<strong>Tcl_CreateFileHandler</strong> when the callback was created.
+Typically, <em>clientData</em> points to a data structure containing
+application-specific information about the file. <em>Mask</em> is an
+integer mask indicating which of the requested conditions actually
+exists for the file; it will contain a subset of the bits in the
+<em>mask</em> argument to <strong>Tcl_CreateFileHandler</strong>.</p>
+<p>There may exist only one handler for a given file at a given time. If
+<strong>Tcl_CreateFileHandler</strong> is called when a handler already
+exists for <em>fd</em>, then the new callback replaces the information
+that was previously recorded.</p>
+<p><strong>Tcl_DeleteFileHandler</strong> may be called to delete the
+file handler for <em>fd</em>; if no handler exists for the file given by
+<em>fd</em> then the procedure has no effect.</p>
+<p>The purpose of file handlers is to enable an application to respond
+to events while waiting for files to become ready for I/O. For this to
+work correctly, the application may need to use non-blocking I/O
+operations on the files for which handlers are declared. Otherwise the
+application may block if it reads or writes too much data; while waiting
+for the I/O to complete the application will not be able to service
+other events. Use <strong>Tcl_SetChannelOption</strong> with
+<strong>-blocking</strong> to set the channel into blocking or
+nonblocking mode as required.</p>
+<p>Note that these interfaces are only supported by the Unix
+implementation of the Tcl notifier.</p>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-Commands/fileevent.html">fileevent</a>, <a
+href="../Tcl-C-API/Tcl_CreateTimerHandler.html">Tcl_CreateTimerHandler</a>,
+<a href="../Tcl-C-API/Tcl_DoWhenIdle.html">Tcl_DoWhenIdle</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>callback, file, handler</p>

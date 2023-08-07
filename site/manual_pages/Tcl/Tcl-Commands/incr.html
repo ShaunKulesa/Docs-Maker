@@ -1,0 +1,32 @@
+<h1 id="name">NAME</h1>
+<p>incr - Increment the value of a variable</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>incr</strong> <em>varName</em> ?<em>increment</em>?</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>Increments the value stored in the variable whose name is
+<em>varName</em>. The value of the variable must be an integer. If
+<em>increment</em> is supplied then its value (which must be an integer)
+is added to the value of variable <em>varName</em>; otherwise 1 is added
+to <em>varName</em>. The new value is stored as a decimal string in
+variable <em>varName</em> and also returned as result.</p>
+<p>Starting with the Tcl 8.5 release, the variable <em>varName</em>
+passed to <strong>incr</strong> may be unset, and in that case, it will
+be set to the value <em>increment</em> or to the default increment value
+of <strong>1</strong>.</p>
+<h1 id="examples">EXAMPLES</h1>
+<p>Add one to the contents of the variable <em>x</em>:</p>
+<pre><code>incr x</code></pre>
+<p>Add 42 to the contents of the variable <em>x</em>:</p>
+<pre><code>incr x 42</code></pre>
+<p>Add the contents of the variable <em>y</em> to the contents of the
+variable <em>x</em>:</p>
+<pre><code>incr x $y</code></pre>
+<p>Add nothing at all to the variable <em>x</em> (often useful for
+checking whether an argument to a procedure is actually integral and
+generating an error if it is not):</p>
+<pre><code>incr x 0</code></pre>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-Commands/expr.html">expr</a>, <a
+href="../Tcl-Commands/set.html">set</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>add, increment, variable, value</p>

@@ -1,0 +1,150 @@
+<h1 id="name">NAME</h1>
+<p>transchan - command handler API of channel transforms</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>cmdPrefix</strong> <em>option</em> ?<em>arg arg ...</em>?</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>The Tcl-level handler for a channel transformation has to be a
+command with subcommands (termed an <em>ensemble</em> despite not
+implying that it must be created with <strong>namespace ensemble
+create</strong>; this mechanism is not tied to <strong>namespace
+ensemble</strong> in any way). Note that <em>cmdPrefix</em> is whatever
+was specified in the call to <strong>chan push</strong>, and may consist
+of multiple arguments; this will be expanded to multiple words in place
+of the prefix.</p>
+<p>Of all the possible subcommands, the handler <em>must</em> support
+<strong>initialize</strong> and <strong>finalize</strong>.
+Transformations for writable channels must also support
+<strong>write</strong>, and transformations for readable channels must
+also support <strong>read</strong>.</p>
+<p>Note that in the descriptions below <em>cmdPrefix</em> may be more
+than one word, and <em>handle</em> is the value returned by the
+<strong>chan push</strong> call used to create the transformation.</p>
+<h2 id="generic-subcommands">GENERIC SUBCOMMANDS</h2>
+<p>The following subcommands are relevant to all types of channel.</p>
+<dl>
+<dt><em>cmdPrefix</em> <strong>clear</strong> <em>handle</em></dt>
+<dd>
+<p>This optional subcommand is called to signify to the transformation
+that any data stored in internal buffers (either incoming or outgoing)
+must be cleared. It is called when a <strong>chan seek</strong> is
+performed on the channel being transformed.</p>
+</dd>
+<dt><em>cmdPrefix</em> <strong>finalize</strong> <em>handle</em></dt>
+<dd>
+<p>This mandatory subcommand is called last for the given
+<em>handle</em>, and then never again, and it exists to allow for
+cleaning up any Tcl-level data structures associated with the
+transformation. <em>Warning!</em> Any errors thrown by this subcommand
+will be ignored. It is not guaranteed to be called if the interpreter is
+deleted.</p>
+</dd>
+<dt><em>cmdPrefix</em> <strong>initialize</strong> <em>handle
+mode</em></dt>
+<dd>
+<p>This mandatory subcommand is called first, and then never again (for
+the given <em>handle</em>). Its responsibility is to initialize all
+parts of the transformation at the Tcl level. The <em>mode</em> is a
+list containing any of <strong>read</strong> and
+<strong>write</strong>.</p>
+<dl>
+<dt><strong>write</strong></dt>
+<dd>
+<p>implies that the channel is writable.</p>
+</dd>
+<dt><strong>read</strong></dt>
+<dd>
+<p>implies that the channel is readable.</p>
+</dd>
+</dl>
+<p>The return value of the subcommand should be a list containing the
+names of all subcommands supported by this handler. Any error thrown by
+the subcommand will prevent the creation of the transformation. The
+thrown error will appear as error thrown by <strong>chan
+push</strong>.</p>
+</dd>
+</dl>
+<h2 id="read-related-subcommands">READ-RELATED SUBCOMMANDS</h2>
+<p>These subcommands are used for handling transformations applied to
+readable channels; though strictly <strong>read</strong> is optional, it
+must be supported if any of the others is or the channel will be made
+non-readable.</p>
+<dl>
+<dt><em>cmdPrefix</em> <strong>drain</strong> <em>handle</em></dt>
+<dd>
+<p>This optional subcommand is called whenever data in the
+transformation input (i.e. read) buffer has to be forced upward,
+i.e. towards the user or script. The result returned by the method is
+taken as the <em>binary</em> data to push upward to the level above this
+transformation (the reader or a higher-level transformation).</p>
+<p>In other words, when this method is called the transformation cannot
+defer the actual transformation operation anymore and has to transform
+all data waiting in its internal read buffers and return the result of
+that action.</p>
+</dd>
+<dt><em>cmdPrefix</em> <strong>limit?</strong> <em>handle</em></dt>
+<dd>
+<p>This optional subcommand is called to allow the Tcl I/O engine to
+determine how far ahead it should read. If present, it should return an
+integer number greater than zero which indicates how many bytes ahead
+should be read, or an integer less than zero to indicate that the I/O
+engine may read as far ahead as it likes.</p>
+</dd>
+<dt><em>cmdPrefix</em> <strong>read</strong> <em>handle buffer</em></dt>
+<dd>
+<p>This subcommand, which must be present if the transformation is to
+work with readable channels, is called whenever the base channel, or a
+transformation below this transformation, pushes data upward. The
+<em>buffer</em> contains the binary data which has been given to us from
+below. It is the responsibility of this subcommand to actually transform
+the data. The result returned by the subcommand is taken as the binary
+data to push further upward to the transformation above this
+transformation. This can also be the user or script that originally read
+from the channel.</p>
+<p>Note that the result is allowed to be empty, or even less than the
+data we received; the transformation is not required to transform
+everything given to it right now. It is allowed to store incoming data
+in internal buffers and to defer the actual transformation until it has
+more data.</p>
+</dd>
+</dl>
+<h2 id="write-related-subcommands">WRITE-RELATED SUBCOMMANDS</h2>
+<p>These subcommands are used for handling transformations applied to
+writable channels; though strictly <strong>write</strong> is optional,
+it must be supported if any of the others is or the channel will be made
+non-writable.</p>
+<dl>
+<dt><em>cmdPrefix</em> <strong>flush</strong> <em>handle</em></dt>
+<dd>
+<p>This optional subcommand is called whenever data in the
+transformation 'write' buffer has to be forced downward, i.e. towards
+the base channel. The result returned by the subcommand is taken as the
+binary data to write to the transformation below the current
+transformation. This can be the base channel as well.</p>
+<p>In other words, when this subcommand is called the transformation
+cannot defer the actual transformation operation anymore and has to
+transform all data waiting in its internal write buffers and return the
+result of that action.</p>
+</dd>
+<dt><em>cmdPrefix</em> <strong>write</strong> <em>handle
+buffer</em></dt>
+<dd>
+<p>This subcommand, which must be present if the transformation is to
+work with writable channels, is called whenever the user, or a
+transformation above this transformation, writes data downward. The
+<em>buffer</em> contains the binary data which has been written to us.
+It is the responsibility of this subcommand to actually transform the
+data.</p>
+<p>The result returned by the subcommand is taken as the binary data to
+write to the transformation below this transformation. This can be the
+base channel as well. Note that the result is allowed to be empty, or
+less than the data we got; the transformation is not required to
+transform everything which was written to it right now. It is allowed to
+store this data in internal buffers and to defer the actual
+transformation until it has more data.</p>
+</dd>
+</dl>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-Commands/chan.html">chan</a>, <a
+href="../Tcl-Commands/refchan.html">refchan</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>API, channel, ensemble, prefix, transformation</p>

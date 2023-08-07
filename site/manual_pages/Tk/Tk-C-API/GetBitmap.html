@@ -1,0 +1,294 @@
+<h1 id="name">NAME</h1>
+<p>Tk_AllocBitmapFromObj, Tk_GetBitmap, Tk_GetBitmapFromObj,
+Tk_DefineBitmap, Tk_NameOfBitmap, Tk_SizeOfBitmap, Tk_FreeBitmapFromObj,
+Tk_FreeBitmap - maintain database of single-plane pixmaps</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tk.h&gt;
+
+Pixmap
+Tk_AllocBitmapFromObj(interp, tkwin, objPtr)
+
+Pixmap
+Tk_GetBitmap(interp, tkwin, info)
+
+Pixmap
+Tk_GetBitmapFromObj(tkwin, objPtr)
+
+int
+Tk_DefineBitmap(interp, name, source, width, height)
+
+const char *
+Tk_NameOfBitmap(display, bitmap)
+
+Tk_SizeOfBitmap(display, bitmap, widthPtr, heightPtr)
+
+Tk_FreeBitmapFromObj(tkwin, objPtr)
+
+Tk_FreeBitmap(display, bitmap)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Interpreter to use for error reporting; if NULL then no error message
+is left after errors.</p>
+<p>Token for window in which the bitmap will be used.</p>
+<p>String value describes desired bitmap; internal rep will be modified
+to cache pointer to corresponding Pixmap.</p>
+<p>Same as <em>objPtr</em> except description of bitmap is passed as a
+string and resulting Pixmap is not cached.</p>
+<p>Name for new bitmap to be defined.</p>
+<p>Data for bitmap, in standard bitmap format. Must be stored in static
+memory whose value will never change.</p>
+<p>Width of bitmap.</p>
+<p>Height of bitmap.</p>
+<p>Pointer to word to fill in with <em>bitmap</em>'s width.</p>
+<p>Pointer to word to fill in with <em>bitmap</em>'s height.</p>
+<p>Display for which <em>bitmap</em> was allocated.</p>
+<p>Identifier for a bitmap allocated by
+<strong>Tk_AllocBitmapFromObj</strong> or
+<strong>Tk_GetBitmap</strong>.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>These procedures manage a collection of bitmaps (one-plane pixmaps)
+being used by an application. The procedures allow bitmaps to be re-used
+efficiently, thereby avoiding server overhead, and also allow bitmaps to
+be named with character strings.</p>
+<p><strong>Tk_AllocBitmapFromObj</strong> returns a Pixmap identifier
+for a bitmap that matches the description in <em>objPtr</em> and is
+suitable for use in <em>tkwin</em>. It re-uses an existing bitmap, if
+possible, and creates a new one otherwise. <em>ObjPtr</em>'s value must
+have one of the following forms:</p>
+<dl>
+<dt><strong><span class="citation"
+data-cites="*">@*</span></strong>fileName*</dt>
+<dd>
+<p><em>FileName</em> must be the name of a file containing a bitmap
+description in the standard X11 format.</p>
+</dd>
+<dt><em>name</em></dt>
+<dd>
+<p><em>Name</em> must be the name of a bitmap defined previously with a
+call to <strong>Tk_DefineBitmap</strong>. The following names are
+pre-defined by Tk:</p>
+<dl>
+<dt><strong>error</strong></dt>
+<dd>
+<p>The international symbol: a circle with a diagonal line across
+it.</p>
+</dd>
+<dt><strong>gray75</strong></dt>
+<dd>
+<p>75% gray: a checkerboard pattern where three out of four bits are
+on.</p>
+</dd>
+<dt><strong>gray50</strong></dt>
+<dd>
+<p>50% gray: a checkerboard pattern where every other bit is on.</p>
+</dd>
+<dt><strong>gray25</strong></dt>
+<dd>
+<p>25% gray: a checkerboard pattern where one out of every four bits is
+on.</p>
+</dd>
+<dt><strong>gray12</strong></dt>
+<dd>
+<p>12.5% gray: a pattern where one-eighth of the bits are on, consisting
+of every fourth pixel in every other row.</p>
+</dd>
+<dt><strong>hourglass</strong></dt>
+<dd>
+<p>An hourglass symbol.</p>
+</dd>
+<dt><strong>info</strong></dt>
+<dd>
+<p>A large letter</p>
+</dd>
+<dt><strong>questhead</strong></dt>
+<dd>
+<p>The silhouette of a human head, with a question mark in it.</p>
+</dd>
+<dt><strong>question</strong></dt>
+<dd>
+<p>A large question-mark.</p>
+</dd>
+<dt><strong>warning</strong></dt>
+<dd>
+<p>A large exclamation point.</p>
+</dd>
+</dl>
+<p>In addition, the following pre-defined names are available only on
+the <strong>Macintosh</strong> platform:</p>
+<dl>
+<dt><strong>document</strong></dt>
+<dd>
+<p>A generic document.</p>
+</dd>
+<dt><strong>stationery</strong></dt>
+<dd>
+<p>Document stationery.</p>
+</dd>
+<dt><strong>edition</strong></dt>
+<dd>
+<p>The <em>edition</em> symbol.</p>
+</dd>
+<dt><strong>application</strong></dt>
+<dd>
+<p>Generic application icon.</p>
+</dd>
+<dt><strong>accessory</strong></dt>
+<dd>
+<p>A desk accessory.</p>
+</dd>
+<dt><strong>folder</strong></dt>
+<dd>
+<p>Generic folder icon.</p>
+</dd>
+<dt><strong>pfolder</strong></dt>
+<dd>
+<p>A locked folder.</p>
+</dd>
+<dt><strong>trash</strong></dt>
+<dd>
+<p>A trash can.</p>
+</dd>
+<dt><strong>floppy</strong></dt>
+<dd>
+<p>A floppy disk.</p>
+</dd>
+<dt><strong>ramdisk</strong></dt>
+<dd>
+<p>A floppy disk with chip.</p>
+</dd>
+<dt><strong>cdrom</strong></dt>
+<dd>
+<p>A cd disk icon.</p>
+</dd>
+<dt><strong>preferences</strong></dt>
+<dd>
+<p>A folder with prefs symbol.</p>
+</dd>
+<dt><strong>querydoc</strong></dt>
+<dd>
+<p>A database document icon.</p>
+</dd>
+<dt><strong>stop</strong></dt>
+<dd>
+<p>A stop sign.</p>
+</dd>
+<dt><strong>note</strong></dt>
+<dd>
+<p>A face with balloon words.</p>
+</dd>
+<dt><strong>caution</strong></dt>
+<dd>
+<p>A triangle with an exclamation point.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p>Under normal conditions, <strong>Tk_AllocBitmapFromObj</strong>
+returns an identifier for the requested bitmap. If an error occurs in
+creating the bitmap, such as when <em>objPtr</em> refers to a
+non-existent file, then <strong>None</strong> is returned and an error
+message is left in <em>interp</em>'s result if <em>interp</em> is not
+NULL. <strong>Tk_AllocBitmapFromObj</strong> caches information about
+the return value in <em>objPtr</em>, which speeds up future calls to
+procedures such as <strong>Tk_AllocBitmapFromObj</strong> and
+<strong>Tk_GetBitmapFromObj</strong>.</p>
+<p><strong>Tk_GetBitmap</strong> is identical to
+<strong>Tk_AllocBitmapFromObj</strong> except that the description of
+the bitmap is specified with a string instead of an object. This
+prevents <strong>Tk_GetBitmap</strong> from caching the return value, so
+<strong>Tk_GetBitmap</strong> is less efficient than
+<strong>Tk_AllocBitmapFromObj</strong>.</p>
+<p><strong>Tk_GetBitmapFromObj</strong> returns the token for an
+existing bitmap, given the window and description used to create the
+bitmap. <strong>Tk_GetBitmapFromObj</strong> does not actually create
+the bitmap; the bitmap must already have been created with a previous
+call to <strong>Tk_AllocBitmapFromObj</strong> or
+<strong>Tk_GetBitmap</strong>. The return value is cached in
+<em>objPtr</em>, which speeds up future calls to
+<strong>Tk_GetBitmapFromObj</strong> with the same <em>objPtr</em> and
+<em>tkwin</em>.</p>
+<p><strong>Tk_DefineBitmap</strong> associates a name with in-memory
+bitmap data so that the name can be used in later calls to
+<strong>Tk_AllocBitmapFromObj</strong> or <strong>Tk_GetBitmap</strong>.
+The <em>nameId</em> argument gives a name for the bitmap; it must not
+previously have been used in a call to <strong>Tk_DefineBitmap</strong>.
+The arguments <em>source</em>, <em>width</em>, and <em>height</em>
+describe the bitmap. <strong>Tk_DefineBitmap</strong> normally returns
+<strong>TCL_OK</strong>; if an error occurs (e.g. a bitmap named
+<em>nameId</em> has already been defined) then
+<strong>TCL_ERROR</strong> is returned and an error message is left in
+interpreter <em>interp</em>'s result. Note:
+<strong>Tk_DefineBitmap</strong> expects the memory pointed to by
+<em>source</em> to be static: <strong>Tk_DefineBitmap</strong> does not
+make a private copy of this memory, but uses the bytes pointed to by
+<em>source</em> later in calls to <strong>Tk_AllocBitmapFromObj</strong>
+or <strong>Tk_GetBitmap</strong>.</p>
+<p>Typically <strong>Tk_DefineBitmap</strong> is used by
+<strong>#include</strong>-ing a bitmap file directly into a C program
+and then referencing the variables defined by the file. For example,
+suppose there exists a file <strong>stip.bitmap</strong>, which was
+created by the <strong>bitmap</strong> program and contains a stipple
+pattern. The following code uses <strong>Tk_DefineBitmap</strong> to
+define a new bitmap named <strong>foo</strong>:</p>
+<pre><code>Pixmap bitmap;
+#include &quot;stip.bitmap&quot;
+Tk_DefineBitmap(interp, &quot;foo&quot;, stip_bits,
+    stip_width, stip_height);
+...
+bitmap = Tk_GetBitmap(interp, tkwin, &quot;foo&quot;);</code></pre>
+<p>This code causes the bitmap file to be read at compile-time and
+incorporates the bitmap information into the program's executable image.
+The same bitmap file could be read at run-time using
+<strong>Tk_GetBitmap</strong>:</p>
+<pre><code>Pixmap bitmap;
+bitmap = Tk_GetBitmap(interp, tkwin, &quot;@stip.bitmap&quot;);</code></pre>
+<p>The second form is a bit more flexible (the file could be modified
+after the program has been compiled, or a different string could be
+provided to read a different file), but it is a little slower and
+requires the bitmap file to exist separately from the program.</p>
+<p>Tk maintains a database of all the bitmaps that are currently in use.
+Whenever possible, it will return an existing bitmap rather than
+creating a new one. When a bitmap is no longer used, Tk will release it
+automatically. This approach can substantially reduce server overhead,
+so <strong>Tk_AllocBitmapFromObj</strong> and
+<strong>Tk_GetBitmap</strong> should generally be used in preference to
+Xlib procedures like <strong>XReadBitmapFile</strong>.</p>
+<p>The bitmaps returned by <strong>Tk_AllocBitmapFromObj</strong> and
+<strong>Tk_GetBitmap</strong> are shared, so callers should never modify
+them. If a bitmap must be modified dynamically, then it should be
+created by calling Xlib procedures such as
+<strong>XReadBitmapFile</strong> or <strong>XCreatePixmap</strong>
+directly.</p>
+<p>The procedure <strong>Tk_NameOfBitmap</strong> is roughly the inverse
+of <strong>Tk_GetBitmap</strong>. Given an X Pixmap argument, it returns
+the textual description that was passed to <strong>Tk_GetBitmap</strong>
+when the bitmap was created. <em>Bitmap</em> must have been the return
+value from a previous call to <strong>Tk_AllocBitmapFromObj</strong> or
+<strong>Tk_GetBitmap</strong>.</p>
+<p><strong>Tk_SizeOfBitmap</strong> returns the dimensions of its
+<em>bitmap</em> argument in the words pointed to by the
+<em>widthPtr</em> and <em>heightPtr</em> arguments. As with
+<strong>Tk_NameOfBitmap</strong>, <em>bitmap</em> must have been created
+by <strong>Tk_AllocBitmapFromObj</strong> or
+<strong>Tk_GetBitmap</strong>.</p>
+<p>When a bitmap is no longer needed,
+<strong>Tk_FreeBitmapFromObj</strong> or <strong>Tk_FreeBitmap</strong>
+should be called to release it. For
+<strong>Tk_FreeBitmapFromObj</strong> the bitmap to release is specified
+with the same information used to create it; for
+<strong>Tk_FreeBitmap</strong> the bitmap to release is specified with
+its Pixmap token. There should be exactly one call to
+<strong>Tk_FreeBitmapFromObj</strong> or <strong>Tk_FreeBitmap</strong>
+for each call to <strong>Tk_AllocBitmapFromObj</strong> or
+<strong>Tk_GetBitmap</strong>.</p>
+<h1 id="bugs">BUGS</h1>
+<p>In determining whether an existing bitmap can be used to satisfy a
+new request, <strong>Tk_AllocBitmapFromObj</strong> and
+<strong>Tk_GetBitmap</strong> consider only the immediate value of the
+string description. For example, when a file name is passed to
+<strong>Tk_GetBitmap</strong>, <strong>Tk_GetBitmap</strong> will assume
+it is safe to re-use an existing bitmap created from the same file name:
+it will not check to see whether the file itself has changed, or whether
+the current directory has changed, thereby causing the name to refer to
+a different file.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>bitmap, pixmap</p>

@@ -1,0 +1,50 @@
+<h1 id="name">NAME</h1>
+<p>Tk_Main - main program for Tk-based applications</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tk.h&gt;
+
+Tk_Main(argc, argv, appInitProc)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Number of elements in <em>argv</em>.</p>
+<p>Array of strings containing command-line arguments. On Windows, when
+using -DUNICODE, the parameter type changes to wchar_t *.</p>
+<p>Address of an application-specific initialization procedure. The
+value for this argument is usually <strong>Tcl_AppInit</strong>.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p><strong>Tk_Main</strong> acts as the main program for most Tk-based
+applications. Starting with Tk 4.0 it is not called
+<strong>main</strong> anymore because it is part of the Tk library and
+having a function <strong>main</strong> in a library (particularly a
+shared library) causes problems on many systems. Having
+<strong>main</strong> in the Tk library would also make it hard to use
+Tk in C++ programs, since C++ programs must have special C++
+<strong>main</strong> functions.</p>
+<p>Normally each application contains a small <strong>main</strong>
+function that does nothing but invoke <strong>Tk_Main</strong>.
+<strong>Tk_Main</strong> then does all the work of creating and running
+a <strong>wish</strong>-like application.</p>
+<p>When it is has finished its own initialization, but before it
+processes commands, <strong>Tk_Main</strong> calls the procedure given
+by the <em>appInitProc</em> argument. This procedure provides a for the
+application to perform its own initialization, such as defining
+application-specific commands. The procedure must have an interface that
+matches the type <strong>Tcl_AppInitProc</strong>:</p>
+<pre><code>typedef int Tcl_AppInitProc(
+        Tcl_Interp *interp);</code></pre>
+<p><em>AppInitProc</em> is almost always a pointer to
+<strong>Tcl_AppInit</strong>; for more details on this procedure, see
+the documentation for <strong>Tcl_AppInit</strong>.</p>
+<p><strong>Tk_Main</strong> functions much the same as
+<strong>Tcl_Main</strong>. In particular, <strong>Tk_Main</strong>
+supports both an interactive mode and a startup script mode, with the
+file name and encoding of a startup script under the control of the
+<strong>Tcl_SetStartupScript</strong> and
+<strong>Tcl_GetStartupScript</strong> routines. However it calls
+<strong>Tk_MainLoop</strong> after processing any supplied script, and
+in interactive uses events registered with
+<strong>Tcl_CreateFileHandler</strong> to process user input.</p>
+<h1 id="see-also">SEE ALSO</h1>
+<p>Tcl_DoOneEvent(3)</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>application-specific initialization, command-line arguments, main
+program</p>

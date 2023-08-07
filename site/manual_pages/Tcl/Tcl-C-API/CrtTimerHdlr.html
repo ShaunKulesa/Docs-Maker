@@ -1,0 +1,54 @@
+<h1 id="name">NAME</h1>
+<p>Tcl_CreateTimerHandler, Tcl_DeleteTimerHandler - call a procedure at
+a given time</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tcl.h&gt;
+
+Tcl_TimerToken
+Tcl_CreateTimerHandler(milliseconds, proc, clientData)
+
+Tcl_DeleteTimerHandler(token)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>How many milliseconds to wait before invoking <em>proc</em>.</p>
+<p>Procedure to invoke after <em>milliseconds</em> have elapsed.</p>
+<p>Arbitrary one-word value to pass to <em>proc</em>.</p>
+<p>Token for previously created timer handler (the return value from
+some previous call to <strong>Tcl_CreateTimerHandler</strong>).</p>
+<h1 id="description">DESCRIPTION</h1>
+<p><strong>Tcl_CreateTimerHandler</strong> arranges for <em>proc</em> to
+be invoked at a time <em>milliseconds</em> milliseconds in the future.
+The callback to <em>proc</em> will be made by
+<strong>Tcl_DoOneEvent</strong>, so
+<strong>Tcl_CreateTimerHandler</strong> is only useful in programs that
+dispatch events through <strong>Tcl_DoOneEvent</strong> or through Tcl
+commands such as <strong>vwait</strong>. The call to <em>proc</em> may
+not be made at the exact time given by <em>milliseconds</em>: it will be
+made at the next opportunity after that time. For example, if
+<strong>Tcl_DoOneEvent</strong> is not called until long after the time
+has elapsed, or if there are other pending events to process before the
+call to <em>proc</em>, then the call to <em>proc</em> will be
+delayed.</p>
+<p><em>Proc</em> should have arguments and return value that match the
+type <strong>Tcl_TimerProc</strong>:</p>
+<pre><code>typedef void Tcl_TimerProc(
+        ClientData clientData);</code></pre>
+<p>The <em>clientData</em> parameter to <em>proc</em> is a copy of the
+<em>clientData</em> argument given to
+<strong>Tcl_CreateTimerHandler</strong> when the callback was created.
+Typically, <em>clientData</em> points to a data structure containing
+application-specific information about what to do in <em>proc</em>.</p>
+<p><strong>Tcl_DeleteTimerHandler</strong> may be called to delete a
+previously created timer handler. It deletes the handler indicated by
+<em>token</em> so that no call to <em>proc</em> will be made; if that
+handler no longer exists (e.g. because the time period has already
+elapsed and <em>proc</em> has been invoked then
+<strong>Tcl_DeleteTimerHandler</strong> does nothing. The tokens
+returned by <strong>Tcl_CreateTimerHandler</strong> never have a value
+of NULL, so if NULL is passed to <strong>Tcl_DeleteTimerHandler</strong>
+then the procedure does nothing.</p>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-Commands/after.html">after</a>, <a
+href="../Tcl-C-API/Tcl_CreateFileHandler.html">Tcl_CreateFileHandler</a>,
+<a href="../Tcl-C-API/Tcl_DoWhenIdle.html">Tcl_DoWhenIdle</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>callback, clock, handler, timer</p>

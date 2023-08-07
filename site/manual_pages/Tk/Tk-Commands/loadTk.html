@@ -1,0 +1,54 @@
+<h1 id="name">NAME</h1>
+<p>safe::loadTk - Load Tk into a safe interpreter.</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>safe::loadTk</strong> <em>child</em> ?<strong>-use</strong>
+<em>windowId</em>? ?<strong>-display</strong> <em>displayName</em>?</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>Safe Tk is based on Safe Tcl, which provides a mechanism that allows
+restricted and mediated access to auto-loading and packages for safe
+interpreters. Safe Tk adds the ability to configure the interpreter for
+safe Tk operations and load Tk into safe interpreters.</p>
+<p>The <strong>safe::loadTk</strong> command initializes the required
+data structures in the named safe interpreter and then loads Tk into it.
+The interpreter must have been created with
+<strong>safe::interpCreate</strong> or have been initialized with
+<strong>safe::interpInit</strong>. The command returns the name of the
+safe interpreter. If <strong>-use</strong> is specified, the window
+identified by the specified system dependent identifier
+<em>windowId</em> is used to contain the window of the safe interpreter;
+it can be any valid id, eventually referencing a window belonging to
+another application. As a convenience, if the window you plan to use is
+a Tk Window of the application you can use the window name (e.g.,
+instead of its window Id (e.g., from <strong>winfo id</strong>
+<strong>.x.y</strong>). When <strong>-use</strong> is not specified, a
+new toplevel window is created for the window of the safe interpreter.
+On X11 if you want the embedded window to use another display than the
+default one, specify it with <strong>-display</strong>. See the
+<strong>SECURITY ISSUES</strong> section below for implementation
+details.</p>
+<h1 id="security-issues">SECURITY ISSUES</h1>
+<p>Please read the <strong>safe</strong> manual page for Tcl to learn
+about the basic security considerations for Safe Tcl.</p>
+<p><strong>safe::loadTk</strong> adds the value of
+<strong>tk_library</strong> taken from the parent interpreter to the
+virtual access path of the safe interpreter so that auto-loading will
+work in the safe interpreter.</p>
+<p>Tk initialization is now safe with respect to not trusting the
+child's state for startup. <strong>safe::loadTk</strong> registers the
+child's name so when the Tk initialization
+(<strong>Tk_SafeInit</strong>) is called and in turn calls the parent's
+<strong>safe::InitTk</strong> it will return the desired
+<strong>argv</strong> equivalent (<strong>-use</strong>
+<em>windowId</em>, correct <strong>-display</strong>, etc.)</p>
+<p>When <strong>-use</strong> is not used, the new toplevel created is
+specially decorated so the user is always aware that the user interface
+presented comes from a potentially unsafe code and can easily delete the
+corresponding interpreter.</p>
+<p>On X11, conflicting <strong>-use</strong> and
+<strong>-display</strong> are likely to generate a fatal X error.</p>
+<h1 id="see-also">SEE ALSO</h1>
+<p>safe(n), interp(n), library(n), load(n), package(n), source(n),
+unknown(n)</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>alias, auto-loading, auto_mkindex, load, parent interpreter, safe
+interpreter, child interpreter, source</p>

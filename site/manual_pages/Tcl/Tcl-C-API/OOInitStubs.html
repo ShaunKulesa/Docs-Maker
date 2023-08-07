@@ -1,0 +1,38 @@
+<h1 id="name">NAME</h1>
+<p>Tcl_OOInitStubs - initialize library access to TclOO
+functionality</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tclOO.h&gt;
+
+const char *
+Tcl_OOInitStubs(interp)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>The Tcl interpreter that the TclOO API is integrated with and whose C
+interface is going to be used.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>When an extension library is going to use the C interface exposed by
+TclOO, it should use <strong>Tcl_OOInitStubs</strong> to initialize its
+access to that interface from within its
+<em>*</em><strong>_Init</strong> (or
+<em>*</em><strong>_SafeInit</strong>) function, passing in the
+<em>interp</em> that was passed into that routine as context. If the
+result of calling <strong>Tcl_OOInitStubs</strong> is NULL, the
+initialization failed and an error message will have been left in the
+interpreter's result. Otherwise, the initialization succeeded and the
+TclOO API may thereafter be used; the version of the TclOO API is
+returned.</p>
+<p>When using this function, either the C #define symbol
+<strong>USE_TCLOO_STUBS</strong> should be defined and your library code
+linked against the Tcl stub library, or that #define symbol should
+<em>not</em> be defined and your library code linked against the Tcl
+main library directly.</p>
+<h1 id="backward-compatibility-note">BACKWARD COMPATIBILITY NOTE</h1>
+<p>If you are linking against the Tcl 8.5 forward compatibility package
+for TclOO, <em>only</em> the stub-enabled configuration is supported and
+you should also link against the TclOO independent stub library; that
+library is an integrated part of the main Tcl stub library in Tcl
+8.6.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>stubs</p>
+<h1 id="see-also">SEE ALSO</h1>
+<p>Tcl_InitStubs(3)</p>

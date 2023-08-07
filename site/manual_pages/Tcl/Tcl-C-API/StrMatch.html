@@ -1,0 +1,32 @@
+<h1 id="name">NAME</h1>
+<p>Tcl_StringMatch, Tcl_StringCaseMatch - test whether a string matches
+a pattern</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tcl.h&gt;
+
+int
+Tcl_StringMatch(str, pattern)
+
+int
+Tcl_StringCaseMatch(str, pattern, flags)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>String to test.</p>
+<p>Pattern to match against string. May contain special characters from
+the set *?\[].</p>
+<p>OR-ed combination of match flags, currently only
+<strong>TCL_MATCH_NOCASE</strong>. 0 specifies a case-sensitive
+search.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>This utility procedure determines whether a string matches a given
+pattern. If it does, then <strong>Tcl_StringMatch</strong> returns 1.
+Otherwise <strong>Tcl_StringMatch</strong> returns 0. The algorithm used
+for matching is the same algorithm used in the <strong>string
+match</strong> Tcl command and is similar to the algorithm used by the
+C-shell for file name matching; see the Tcl manual entry for
+details.</p>
+<p>In <strong>Tcl_StringCaseMatch</strong>, the algorithm is the same,
+but you have the option to make the matching case-insensitive. If you
+choose this (by passing <strong>TCL_MATCH_NOCASE</strong>), then the
+string and pattern are essentially matched in the lower case.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>match, pattern, string</p>

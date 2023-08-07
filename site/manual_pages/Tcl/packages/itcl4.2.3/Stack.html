@@ -1,0 +1,43 @@
+<h1 id="name">NAME</h1>
+<p>Itcl_InitStack, Itcl_DeleteStack, Itcl_PushStack, Itcl_PopStack,
+Itcl_PeekStack, Itcl_GetStackValue, Itcl_GetStackSize - Manipulate an
+Itcl stack object.</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;itcl.h&gt;
+
+int
+Itcl_InitStack(stack)
+
+int
+Itcl_DeleteStack(stack)
+
+int
+Itcl_PushStack(cdata, stack)
+
+ClientData
+Itcl_PopStack(stack)
+
+ClientData
+Itcl_PeekStack(stack)
+
+ClientData
+Itcl_GetStackValue(stack, pos)
+
+int
+Itcl_GetStackSize(stack)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Stack info structure.</p>
+<p>position in stack order from the top.</p>
+<p>Arbitrary one-word value to save in the stack.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p><strong>Itcl_InitStack</strong> initializes a stack structure and
+<strong>Itcl_DeleteStack</strong> deletes it.
+<strong>Itcl_PushStack</strong> pushes the <em>cdata</em> value onto the
+stack. <strong>Itcl_PopStack</strong> removes and returns the top most
+<em>cdata</em> value. <strong>Itcl_PeekStack</strong> returns the top
+most value, but does not remove it. <strong>Itcl_GetStackValue</strong>
+gets a value at some index within the stack. Index "0" is the first
+value pushed onto the stack. <strong>Itcl_GetStackSize</strong> returns
+the count of entries on the stack.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>stack</p>

@@ -1,0 +1,24 @@
+<h1 id="name">NAME</h1>
+<p>destroy - Destroy one or more windows</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>destroy</strong> ?<em>window window ...</em>?</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>This command deletes the windows given by the <em>window</em>
+arguments, plus all of their descendants. If a <em>window</em> is
+deleted then all windows will be destroyed and the application will
+(normally) exit. The <em>window</em>s are destroyed in order, and if an
+error occurs in destroying a window the command aborts without
+destroying the remaining windows. No error is returned if
+<em>window</em> does not exist.</p>
+<h1 id="example">EXAMPLE</h1>
+<p>Destroy all checkbuttons that are direct children of the given
+widget:</p>
+<pre><code>proc killCheckbuttonChildren {parent} {
+   foreach w [winfo children $parent] {
+      if {[winfo class $w] eq &quot;Checkbutton&quot;} {
+         destroy $w
+      }
+   }
+}</code></pre>
+<h1 id="keywords">KEYWORDS</h1>
+<p>application, destroy, window</p>

@@ -1,0 +1,33 @@
+<h1 id="name">NAME</h1>
+<p>lappend - Append list elements onto a variable</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>lappend</strong> <em>varName</em> ?<em>value value value
+...</em>?</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>This command treats the variable given by <em>varName</em> as a list
+and appends each of the <em>value</em> arguments to that list as a
+separate element, with spaces between elements. If <em>varName</em> does
+not exist, it is created as a list with elements given by the
+<em>value</em> arguments. <strong>Lappend</strong> is similar to
+<strong>append</strong> except that the <em>value</em>s are appended as
+list elements rather than raw text. This command provides a relatively
+efficient way to build up large lists. For example, is much more
+efficient than when <strong>$a</strong> is long.</p>
+<h1 id="example">EXAMPLE</h1>
+<p>Using <strong>lappend</strong> to build up a list of numbers.</p>
+<pre><code>% set var 1
+1
+% lappend var 2
+1 2
+% lappend var 3 4 5
+1 2 3 4 5</code></pre>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-Commands/list.html">list</a>, <a
+href="../Tcl-Commands/lindex.html">lindex</a>, <a
+href="../Tcl-Commands/linsert.html">linsert</a>, <a
+href="../Tcl-Commands/llength.html">llength</a>, <a
+href="../Tcl-Commands/lset.html">lset</a>, <a
+href="../Tcl-Commands/lsort.html">lsort</a>, <a
+href="../Tcl-Commands/lrange.html">lrange</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>append, element, list, variable</p>

@@ -1,0 +1,306 @@
+<h1 id="name">NAME</h1>
+<p>return - Return from a procedure, or set return code of a script</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>return</strong> ?<em>result</em>?</p>
+<p><strong>return</strong> ?<strong>-code</strong> <em>code</em>?
+?<em>result</em>?</p>
+<p><strong>return</strong> ?<em>option value</em> ...?
+?<em>result</em>?</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>In its simplest usage, the <strong>return</strong> command is used
+without options in the body of a procedure to immediately return control
+to the caller of the procedure. If a <em>result</em> argument is
+provided, its value becomes the result of the procedure passed back to
+the caller. If <em>result</em> is not specified then an empty string
+will be returned to the caller as the result of the procedure.</p>
+<p>The <strong>return</strong> command serves a similar function within
+script files that are evaluated by the <strong>source</strong> command.
+When <strong>source</strong> evaluates the contents of a file as a
+script, an invocation of the <strong>return</strong> command will cause
+script evaluation to immediately cease, and the value <em>result</em>
+(or an empty string) will be returned as the result of the
+<strong>source</strong> command.</p>
+<h1 id="exceptional-return-codes">EXCEPTIONAL RETURN CODES</h1>
+<p>In addition to the result of a procedure, the return code of a
+procedure may also be set by <strong>return</strong> through use of the
+<strong>-code</strong> option. In the usual case where the
+<strong>-code</strong> option is not specified the procedure will return
+normally. However, the <strong>-code</strong> option may be used to
+generate an exceptional return from the procedure. <em>Code</em> may
+have any of the following values:</p>
+<dl>
+<dt><strong>ok</strong> (or <strong>0</strong>)</dt>
+<dd>
+<p>Normal return: same as if the option is omitted. The return code of
+the procedure is 0 (<strong>TCL_OK</strong>).</p>
+</dd>
+<dt><strong>error</strong> (or <strong>1</strong>)</dt>
+<dd>
+<p>Error return: the return code of the procedure is 1
+(<strong>TCL_ERROR</strong>). The procedure command behaves in its
+calling context as if it were the command <strong>error</strong>
+<em>result</em>. See below for additional options.</p>
+</dd>
+<dt><strong>return</strong> (or <strong>2</strong>)</dt>
+<dd>
+<p>The return code of the procedure is 2 (<strong>TCL_RETURN</strong>).
+The procedure command behaves in its calling context as if it were the
+command <strong>return</strong> (with no arguments).</p>
+</dd>
+<dt><strong>break</strong> (or <strong>3</strong>)</dt>
+<dd>
+<p>The return code of the procedure is 3 (<strong>TCL_BREAK</strong>).
+The procedure command behaves in its calling context as if it were the
+command <strong>break</strong>.</p>
+</dd>
+<dt><strong>continue</strong> (or <strong>4</strong>)</dt>
+<dd>
+<p>The return code of the procedure is 4
+(<strong>TCL_CONTINUE</strong>). The procedure command behaves in its
+calling context as if it were the command <strong>continue</strong>.</p>
+</dd>
+<dt><em>value</em></dt>
+<dd>
+<p><em>Value</em> must be an integer; it will be returned as the return
+code for the current procedure.</p>
+</dd>
+</dl>
+<p>When a procedure wants to signal that it has received invalid
+arguments from its caller, it may use <strong>return -code
+error</strong> with <em>result</em> set to a suitable error message.
+Otherwise usage of the <strong>return -code</strong> option is mostly
+limited to procedures that implement a new control structure.</p>
+<p>The <strong>return -code</strong> command acts similarly within
+script files that are evaluated by the <strong>source</strong> command.
+During the evaluation of the contents of a file as a script by
+<strong>source</strong>, an invocation of the <strong>return
+-code</strong> <em>code</em> command will cause the return code of
+<strong>source</strong> to be <em>code</em>.</p>
+<h1 id="return-options">RETURN OPTIONS</h1>
+<p>In addition to a result and a return code, evaluation of a command in
+Tcl also produces a dictionary of return options. In general usage, all
+<em>option value</em> pairs given as arguments to
+<strong>return</strong> become entries in the return options dictionary,
+and any values at all are acceptable except as noted below. The
+<strong>catch</strong> command may be used to capture all of this
+information — the return code, the result, and the return options
+dictionary — that arise from evaluation of a script.</p>
+<p>As documented above, the <strong>-code</strong> entry in the return
+options dictionary receives special treatment by Tcl. There are other
+return options also recognized and treated specially by Tcl. They
+are:</p>
+<dl>
+<dt><strong>-errorcode</strong> <em>list</em></dt>
+<dd>
+<p>The <strong>-errorcode</strong> option receives special treatment
+only when the value of the <strong>-code</strong> option is
+<strong>TCL_ERROR</strong>. Then the <em>list</em> value is meant to be
+additional information about the error, presented as a Tcl list for
+further processing by programs. If no <strong>-errorcode</strong> option
+is provided to <strong>return</strong> when the <strong>-code
+error</strong> option is provided, Tcl will set the value of the
+<strong>-errorcode</strong> entry in the return options dictionary to
+the default value of <strong>NONE</strong>. The
+<strong>-errorcode</strong> return option will also be stored in the
+global variable <strong>errorCode</strong>.</p>
+</dd>
+<dt><strong>-errorinfo</strong> <em>info</em></dt>
+<dd>
+<p>The <strong>-errorinfo</strong> option receives special treatment
+only when the value of the <strong>-code</strong> option is
+<strong>TCL_ERROR</strong>. Then <em>info</em> is the initial stack
+trace, meant to provide to a human reader additional information about
+the context in which the error occurred. The stack trace will also be
+stored in the global variable <strong>errorInfo</strong>. If no
+<strong>-errorinfo</strong> option is provided to
+<strong>return</strong> when the <strong>-code error</strong> option is
+provided, Tcl will provide its own initial stack trace value in the
+entry for <strong>-errorinfo</strong>. Tcl's initial stack trace will
+include only the call to the procedure, and stack unwinding will append
+information about higher stack levels, but there will be no information
+about the context of the error within the procedure. Typically the
+<em>info</em> value is supplied from the value of
+<strong>-errorinfo</strong> in a return options dictionary captured by
+the <strong>catch</strong> command (or from the copy of that information
+stored in the global variable <strong>errorInfo</strong>).</p>
+</dd>
+<dt><strong>-errorstack</strong> <em>list</em></dt>
+<dd>
+
+</dd>
+</dl>
+<p>The <strong>-errorstack</strong> option receives special treatment
+only when the value of the <strong>-code</strong> option is
+<strong>TCL_ERROR</strong>. Then <em>list</em> is the initial error
+stack, recording actual argument values passed to each proc level. The
+error stack will also be reachable through <strong>info
+errorstack</strong>. If no <strong>-errorstack</strong> option is
+provided to <strong>return</strong> when the <strong>-code
+error</strong> option is provided, Tcl will provide its own initial
+error stack in the entry for <strong>-errorstack</strong>. Tcl's initial
+error stack will include only the call to the procedure, and stack
+unwinding will append information about higher stack levels, but there
+will be no information about the context of the error within the
+procedure. Typically the <em>list</em> value is supplied from the value
+of <strong>-errorstack</strong> in a return options dictionary captured
+by the <strong>catch</strong> command (or from the copy of that
+information from <strong>info errorstack</strong>).</p>
+<dl>
+<dt><strong>-level</strong> <em>level</em></dt>
+<dd>
+<p>The <strong>-level</strong> and <strong>-code</strong> options work
+together to set the return code to be returned by one of the commands
+currently being evaluated. The <em>level</em> value must be a
+non-negative integer representing a number of levels on the call stack.
+It defines the number of levels up the stack at which the return code of
+a command currently being evaluated should be <em>code</em>. If no
+<strong>-level</strong> option is provided, the default value of
+<em>level</em> is 1, so that <strong>return</strong> sets the return
+code that the current procedure returns to its caller, 1 level up the
+call stack. The mechanism by which these options work is described in
+more detail below.</p>
+</dd>
+<dt><strong>-options</strong> <em>options</em></dt>
+<dd>
+<p>The value <em>options</em> must be a valid dictionary. The entries of
+that dictionary are treated as additional <em>option value</em> pairs
+for the <strong>return</strong> command.</p>
+</dd>
+</dl>
+<h1 id="return-code-handling-mechanisms">RETURN CODE HANDLING
+MECHANISMS</h1>
+<p>Return codes are used in Tcl to control program flow. A Tcl script is
+a sequence of Tcl commands. So long as each command evaluation returns a
+return code of <strong>TCL_OK</strong>, evaluation will continue to the
+next command in the script. Any exceptional return code
+(non-<strong>TCL_OK</strong>) returned by a command evaluation causes
+the flow on to the next command to be interrupted. Script evaluation
+ceases, and the exceptional return code from the command becomes the
+return code of the full script evaluation. This is the mechanism by
+which errors during script evaluation cause an interruption and
+unwinding of the call stack. It is also the mechanism by which commands
+like <strong>break</strong>, <strong>continue</strong>, and
+<strong>return</strong> cause script evaluation to terminate without
+evaluating all commands in sequence.</p>
+<p>Some of Tcl's built-in commands evaluate scripts as part of their
+functioning. These commands can make use of exceptional return codes to
+enable special features. For example, the built-in Tcl commands that
+provide loops — such as <strong>while</strong>, <strong>for</strong>,
+and <strong>foreach</strong> — evaluate a script that is the body of the
+loop. If evaluation of the loop body returns the return code of
+<strong>TCL_BREAK</strong> or <strong>TCL_CONTINUE</strong>, the loop
+command can react in such a way as to give the <strong>break</strong>
+and <strong>continue</strong> commands their documented interpretation
+in loops.</p>
+<p>Procedure invocation also involves evaluation of a script, the body
+of the procedure. Procedure invocation provides special treatment when
+evaluation of the procedure body returns the return code
+<strong>TCL_RETURN</strong>. In that circumstance, the
+<strong>-level</strong> entry in the return options dictionary is
+decremented. If after decrementing, the value of the
+<strong>-level</strong> entry is 0, then the value of the
+<strong>-code</strong> entry becomes the return code of the procedure.
+If after decrementing, the value of the <strong>-level</strong> entry is
+greater than zero, then the return code of the procedure is
+<strong>TCL_RETURN</strong>. If the procedure invocation occurred during
+the evaluation of the body of another procedure, the process will repeat
+itself up the call stack, decrementing the value of the
+<strong>-level</strong> entry at each level, so that the <em>code</em>
+will be the return code of the current command <em>level</em> levels up
+the call stack. The <strong>source</strong> command performs the same
+handling of the <strong>TCL_RETURN</strong> return code, which explains
+the similarity of <strong>return</strong> invocation during a
+<strong>source</strong> to <strong>return</strong> invocation within a
+procedure.</p>
+<p>The return code of the <strong>return</strong> command itself
+triggers this special handling by procedure invocation. If
+<strong>return</strong> is provided the option <strong>-level
+0</strong>, then the return code of the <strong>return</strong> command
+itself will be the value <em>code</em> of the <strong>-code</strong>
+option (or <strong>TCL_OK</strong> by default). Any other value for the
+<strong>-level</strong> option (including the default value of 1) will
+cause the return code of the <strong>return</strong> command itself to
+be <strong>TCL_RETURN</strong>, triggering a return from the enclosing
+procedure.</p>
+<h1 id="examples">EXAMPLES</h1>
+<p>First, a simple example of using <strong>return</strong> to return
+from a procedure, interrupting the procedure body.</p>
+<pre><code>proc printOneLine {} {
+    puts &quot;line 1&quot;    ;# This line will be printed.
+    return
+    puts &quot;line 2&quot;    ;# This line will not be printed.
+}</code></pre>
+<p>Next, an example of using <strong>return</strong> to set the value
+returned by the procedure.</p>
+<pre><code>proc returnX {} {return X}
+puts [returnX]    ;# prints &quot;X&quot;</code></pre>
+<p>Next, a more complete example, using <strong>return -code
+error</strong> to report invalid arguments.</p>
+<pre><code>proc factorial {n} {
+    if {![string is integer $n] || ($n &lt; 0)} {
+        return -code error \
+                &quot;expected non-negative integer,\
+                but got \&quot;$n\&quot;&quot;
+    }
+    if {$n &lt; 2} {
+        return 1
+    }
+    set m [expr {$n - 1}]
+    set code [catch {factorial $m} factor]
+    if {$code != 0} {
+        return -code $code $factor
+    }
+    set product [expr {$n * $factor}]
+    if {$product &lt; 0} {
+        return -code error \
+                &quot;overflow computing factorial of $n&quot;
+    }
+    return $product
+}</code></pre>
+<p>Next, a procedure replacement for <strong>break</strong>.</p>
+<pre><code>proc myBreak {} {
+    return -code break
+}</code></pre>
+<p>With the <strong>-level 0</strong> option, <strong>return</strong>
+itself can serve as a replacement for <strong>break</strong>, with the
+help of <strong>interp alias</strong>.</p>
+<pre><code>interp alias {} Break {} return -level 0 -code break</code></pre>
+<p>An example of using <strong>catch</strong> and <strong>return
+-options</strong> to re-raise a caught error:</p>
+<pre><code>proc doSomething {} {
+    set resource [allocate]
+    catch {
+        # Long script of operations
+        # that might raise an error
+    } result options
+    deallocate $resource
+    return -options $options $result
+}</code></pre>
+<p>Finally an example of advanced use of the <strong>return</strong>
+options to create a procedure replacement for <strong>return</strong>
+itself:</p>
+<pre><code>proc myReturn {args} {
+    set result &quot;&quot;
+    if {[llength $args] % 2} {
+        set result [lindex $args end]
+        set args [lrange $args 0 end-1]
+    }
+    set options [dict merge {-level 1} $args]
+    dict incr options -level
+    return -options $options $result
+}</code></pre>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-Commands/break.html">break</a>, <a
+href="../Tcl-Commands/catch.html">catch</a>, <a
+href="../Tcl-Commands/continue.html">continue</a>, <a
+href="../Tcl-Commands/dict.html">dict</a>, <a
+href="../Tcl-Commands/error.html">error</a>, <a
+href="../Tcl-Commands/errorCode.html">errorCode</a>, <a
+href="../Tcl-Commands/errorInfo.html">errorInfo</a>, <a
+href="../Tcl-Commands/proc.html">proc</a>, <a
+href="../Tcl-Commands/source.html">source</a>, <a
+href="../Tcl-Commands/throw.html">throw</a>, <a
+href="../Tcl-Commands/try.html">try</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>break, catch, continue, error, exception, procedure, result,
+return</p>

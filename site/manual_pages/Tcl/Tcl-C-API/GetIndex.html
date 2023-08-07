@@ -1,0 +1,83 @@
+<h1 id="name">NAME</h1>
+<p>Tcl_GetIndexFromObj, Tcl_GetIndexFromObjStruct - lookup string in
+table of keywords</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tcl.h&gt;
+
+int
+Tcl_GetIndexFromObj(interp, objPtr, tablePtr, msg, flags,
+indexPtr)
+
+int
+Tcl_GetIndexFromObjStruct(interp, objPtr, structTablePtr, offset,
+                          msg, flags, indexPtr)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Interpreter to use for error reporting; if NULL, then no message is
+provided on errors.</p>
+<p>The string value of this value is used to search through
+<em>tablePtr</em>. The internal representation is modified to hold the
+index of the matching table entry.</p>
+<p>An array of null-terminated strings. The end of the array is marked
+by a NULL string pointer. Note that references to the <em>tablePtr</em>
+may be retained in the internal representation of <em>objPtr</em>, so
+this should represent the address of a statically-allocated array.</p>
+<p>An array of arbitrary type, typically some <strong>struct</strong>
+type. The first member of the structure must be a null-terminated
+string. The size of the structure is given by <em>offset</em>. Note that
+references to the <em>structTablePtr</em> may be retained in the
+internal representation of <em>objPtr</em>, so this should represent the
+address of a statically-allocated array of structures.</p>
+<p>The offset to add to structTablePtr to get to the next entry. The end
+of the array is marked by a NULL string pointer.</p>
+<p>Null-terminated string describing what is being looked up, such as
+<strong>option</strong>. This string is included in error messages.</p>
+<p>OR-ed combination of bits providing additional information for
+operation. The only bit that is currently defined is
+<strong>TCL_EXACT</strong>.</p>
+<p>The index of the string in <em>tablePtr</em> that matches the value
+of <em>objPtr</em> is returned here.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>These procedures provide an efficient way for looking up keywords,
+switch names, option names, and similar things where the literal value
+of a Tcl value must be chosen from a predefined set.
+<strong>Tcl_GetIndexFromObj</strong> compares <em>objPtr</em> against
+each of the strings in <em>tablePtr</em> to find a match. A match occurs
+if <em>objPtr</em>'s string value is identical to one of the strings in
+<em>tablePtr</em>, or if it is a non-empty unique abbreviation for
+exactly one of the strings in <em>tablePtr</em> and the
+<strong>TCL_EXACT</strong> flag was not specified; in either case the
+index of the matching entry is stored at <em>*indexPtr</em> and
+<strong>TCL_OK</strong> is returned.</p>
+<p>If there is no matching entry, <strong>TCL_ERROR</strong> is returned
+and an error message is left in <em>interp</em>'s result if
+<em>interp</em> is not NULL. <em>Msg</em> is included in the error
+message to indicate what was being looked up. For example, if
+<em>msg</em> is <strong>option</strong> the error message will have a
+form like</p>
+<p>If <strong>Tcl_GetIndexFromObj</strong> completes successfully it
+modifies the internal representation of <em>objPtr</em> to hold the
+address of the table and the index of the matching entry. If
+<strong>Tcl_GetIndexFromObj</strong> is invoked again with the same
+<em>objPtr</em> and <em>tablePtr</em> arguments (e.g. during a
+reinvocation of a Tcl command), it returns the matching index
+immediately without having to redo the lookup operation. Note:
+<strong>Tcl_GetIndexFromObj</strong> assumes that the entries in
+<em>tablePtr</em> are static: they must not change between invocations.
+If the value of <em>objPtr</em> is the empty string,
+<strong>Tcl_GetIndexFromObj</strong> will treat it as a non-matching
+value and return <strong>TCL_ERROR</strong>.</p>
+<p><strong>Tcl_GetIndexFromObjStruct</strong> works just like
+<strong>Tcl_GetIndexFromObj</strong>, except that instead of treating
+<em>tablePtr</em> as an array of string pointers, it treats it as a
+pointer to the first string in a series of strings that have
+<em>offset</em> bytes between them (i.e. that there is a pointer to the
+first array of characters at <em>tablePtr</em>, a pointer to the second
+array of characters at <em>tablePtr</em>+<em>offset</em> bytes, etc.)
+This is particularly useful when processing things like
+<strong>Tk_ConfigurationSpec</strong>, whose string keys are in the same
+place in each of several array elements.</p>
+<h1 id="see-also">SEE ALSO</h1>
+<p>prefix(n), <a
+href="../Tcl-C-API/Tcl_WrongNumArgs.html">Tcl_WrongNumArgs</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>index, option, value, table lookup</p>

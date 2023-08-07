@@ -1,0 +1,71 @@
+<h1 id="name">NAME</h1>
+<p>Tcl_AppInit - perform application-specific initialization</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tcl.h&gt;
+
+int
+Tcl_AppInit(interp)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Interpreter for the application.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p><strong>Tcl_AppInit</strong> is a procedure that is invoked by the
+main programs for Tcl applications such as <strong>tclsh</strong> and
+<strong>wish</strong>. Its purpose is to allow new Tcl applications to
+be created without modifying the main programs provided as part of Tcl
+and Tk. To create a new application you write a new version of
+<strong>Tcl_AppInit</strong> to replace the default version provided by
+Tcl, then link your new <strong>Tcl_AppInit</strong> with the Tcl
+library.</p>
+<p><strong>Tcl_AppInit</strong> is invoked by <strong>Tcl_Main</strong>
+and <strong>Tk_Main</strong> after their own initialization and before
+entering the main loop to process commands. Here are some examples of
+things that <strong>Tcl_AppInit</strong> might do:</p>
+<dl>
+<dt>[1]</dt>
+<dd>
+<p>Call initialization procedures for various packages used by the
+application. Each initialization procedure adds new commands to
+<em>interp</em> for its package and performs other package-specific
+initialization.</p>
+</dd>
+<dt>[2]</dt>
+<dd>
+<p>Process command-line arguments, which can be accessed from the Tcl
+variables <strong>argv</strong> and <strong>argv0</strong> in
+<em>interp</em>.</p>
+</dd>
+<dt>[3]</dt>
+<dd>
+<p>Invoke a startup script to initialize the application.</p>
+</dd>
+<dt>[4]</dt>
+<dd>
+<p>Use the routines <strong>Tcl_SetStartupScript</strong> and
+<strong>Tcl_GetStartupScript</strong> to set or query the file and
+encoding that the active <strong>Tcl_Main</strong> or
+<strong>Tk_Main</strong> routine will use as a startup script.</p>
+</dd>
+</dl>
+<p><strong>Tcl_AppInit</strong> returns <strong>TCL_OK</strong> or
+<strong>TCL_ERROR</strong>. If it returns <strong>TCL_ERROR</strong>
+then it must leave an error message in for the interpreter's result;
+otherwise the result is ignored.</p>
+<p>In addition to <strong>Tcl_AppInit</strong>, your application should
+also contain a procedure <strong>main</strong> that calls
+<strong>Tcl_Main</strong> as follows:</p>
+<pre><code>Tcl_Main(argc, argv, Tcl_AppInit);</code></pre>
+<p>The third argument to <strong>Tcl_Main</strong> gives the address of
+the application-specific initialization procedure to invoke. This means
+that you do not have to use the name <strong>Tcl_AppInit</strong> for
+the procedure, but in practice the name is nearly always
+<strong>Tcl_AppInit</strong> (in versions before Tcl 7.4 the name
+<strong>Tcl_AppInit</strong> was implicit; there was no way to specify
+the procedure explicitly). The best way to get started is to make a copy
+of the file <strong>tclAppInit.c</strong> from the Tcl library or source
+directory. It already contains a <strong>main</strong> procedure and a
+template for <strong>Tcl_AppInit</strong> that you can modify for your
+application.</p>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-C-API/Tcl_Main.html">Tcl_Main</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>application, argument, command, initialization, interpreter</p>

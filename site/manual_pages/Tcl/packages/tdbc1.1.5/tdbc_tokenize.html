@@ -1,0 +1,50 @@
+<p><br />
+</p>
+<h1 id="name">NAME</h1>
+<p>tdbc::tokenize - TDBC SQL tokenizer</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>package require tdbc 1.0
+
+tdbc::tokenize string</code></pre>
+<p><br />
+</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>As a convenience to database drivers, Tcl Database Connectivity
+(TDBC) provides a command to break SQL code apart into tokens so that
+bound variables can readily be identified and substituted.</p>
+<p>The <strong>tdbc::tokenize</strong> command accepts as its parameter
+a string that is expected to contain one or more SQL statements. It
+returns a list of substrings; concatenating these substrings together
+will yield the original string. Each substring is one of the
+following:</p>
+<dl>
+<dt>[1]</dt>
+<dd>
+<p>A bound variable, which begins with one of the characters
+'<strong>:</strong>', '**<span class="citation"
+data-cites="*">@*</span>*', or '<strong>$</strong>'. The remainder of
+the string is the variable name and will consist of alphanumeric
+characters and underscores. (The leading character will be be
+non-numeric.)</p>
+</dd>
+<dt>[2]</dt>
+<dd>
+<p>A semicolon that separates two SQL statements.</p>
+</dd>
+<dt>[3]</dt>
+<dd>
+<p>Something else in a SQL statement. The tokenizer does not attempt to
+parse SQL; it merely identifies bound variables (distinguishing them
+from similar strings appearing inside quotes or comments) and statement
+delimiters.</p>
+</dd>
+</dl>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../tdbc1.1.5/tdbc.html">tdbc</a>, <a
+href="../tdbc1.1.5/tdbc::connection.html">tdbc::connection</a>, <a
+href="../tdbc1.1.5/tdbc::statement.html">tdbc::statement</a>, <a
+href="../tdbc1.1.5/tdbc::resultset.html">tdbc::resultset</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>TDBC, SQL, database, tokenize</p>
+<h1 id="copyright">COPYRIGHT</h1>
+<p>Copyright (c) 2008 by Kevin B. Kenny.</p>

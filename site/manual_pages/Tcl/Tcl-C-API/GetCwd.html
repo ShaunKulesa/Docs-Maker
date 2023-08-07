@@ -1,0 +1,33 @@
+<h1 id="name">NAME</h1>
+<p>Tcl_GetCwd, Tcl_Chdir - manipulate the current working directory</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tcl.h&gt;
+
+char *
+Tcl_GetCwd(interp, bufferPtr)
+
+int
+Tcl_Chdir(dirName)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Interpreter in which to report an error, if any.</p>
+<p>This dynamic string is used to store the current working directory.
+At the time of the call it should be uninitialized or free. The caller
+must eventually call <strong>Tcl_DStringFree</strong> to free up
+anything stored here.</p>
+<p>File path in UTF-8 format.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>These procedures may be used to manipulate the current working
+directory for the application. They provide C-level access to the same
+functionality as the Tcl <strong>pwd</strong> command.</p>
+<p><strong>Tcl_GetCwd</strong> returns a pointer to a string specifying
+the current directory, or NULL if the current directory could not be
+determined. If NULL is returned, an error message is left in the
+<em>interp</em>'s result. Storage for the result string is allocated in
+bufferPtr; the caller must call <strong>Tcl_DStringFree()</strong> when
+the result is no longer needed. The format of the path is UTF-8.</p>
+<p><strong>Tcl_Chdir</strong> changes the applications current working
+directory to the value specified in <em>dirName</em>. The format of the
+passed in string must be UTF-8. The function returns -1 on error or 0 on
+success.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>pwd</p>

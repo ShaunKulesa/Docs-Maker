@@ -1,0 +1,35 @@
+<h1 id="name">NAME</h1>
+<p>Tk_AddOption - Add an option to the option database</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tk.h&gt;
+
+void
+Tk_AddOption(tkwin, name, value, priority)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Token for window.</p>
+<p>Multi-element name of option.</p>
+<p>Value of option.</p>
+<p>Overall priority level to use for option.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>This procedure is invoked to add an option to the database associated
+with <em>tkwin</em>'s main window. <em>Name</em> contains the option
+being specified and consists of names and/or classes separated by
+asterisks or dots, in the usual X format. <em>Value</em> contains the
+text string to associate with <em>name</em>; this value will be returned
+in calls to <strong>Tk_GetOption</strong>. <em>Priority</em> specifies
+the priority of the value; when options are queried using
+<strong>Tk_GetOption</strong>, the value with the highest priority is
+returned. <em>Priority</em> must be between 0 and
+<strong>TK_MAX_PRIO</strong>. Some common priority values are:</p>
+<ol start="20" type="1">
+<li><p>Used for default values hard-coded into widgets.</p></li>
+<li><p>Used for options specified in application-specific startup
+files.</p></li>
+<li><p>Used for options specified in user-specific defaults files, such
+as <strong>.Xdefaults</strong>, resource databases loaded into the X
+server, or user-specific startup files.</p></li>
+<li><p>Used for options specified interactively after the application
+starts running.</p></li>
+</ol>
+<h1 id="keywords">KEYWORDS</h1>
+<p>class, name, option, add</p>

@@ -1,0 +1,292 @@
+<h1 id="name">NAME</h1>
+<p>pack - Geometry manager that packs around edges of cavity</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>pack</strong> <em>option arg</em> ?<em>arg ...</em>?</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>The <strong>pack</strong> command is used to communicate with the
+packer, a geometry manager that arranges the children of a parent by
+packing them in order around the edges of the parent. The
+<strong>pack</strong> command can have any of several forms, depending
+on the <em>option</em> argument:</p>
+<dl>
+<dt><strong>pack</strong> <em>window</em> ?<em>window ...</em>?
+?<em>options</em>?</dt>
+<dd>
+<p>If the first argument to <strong>pack</strong> is a window name (any
+value starting with then the command is processed in the same way as
+<strong>pack configure</strong>.</p>
+</dd>
+<dt><strong>pack configure</strong> <em>window</em> ?<em>window
+...</em>? ?<em>options</em>?</dt>
+<dd>
+<p>The arguments consist of the names of one or more content windows
+followed by pairs of arguments that specify how to manage the content.
+See <strong>THE PACKER ALGORITHM</strong> below for details on how the
+options are used by the packer. The following options are supported:</p>
+<dl>
+<dt><strong>-after</strong> <em>other</em></dt>
+<dd>
+<p><em>Other</em> must the name of another window. Use its container as
+the container for the content, and insert the content just after
+<em>other</em> in the packing order.</p>
+</dd>
+<dt><strong>-anchor</strong> <em>anchor</em></dt>
+<dd>
+<p><em>Anchor</em> must be a valid anchor position such as
+<strong>n</strong> or <strong>sw</strong>; it specifies where to
+position each content in its parcel. Defaults to
+<strong>center</strong>.</p>
+</dd>
+<dt><strong>-before</strong> <em>other</em></dt>
+<dd>
+<p><em>Other</em> must the name of another window. Use its container as
+the container for the content, and insert the content just before
+<em>other</em> in the packing order.</p>
+</dd>
+<dt><strong>-expand</strong> <em>boolean</em></dt>
+<dd>
+<p>Specifies whether the content should be expanded to consume extra
+space in their container. <em>Boolean</em> may have any proper boolean
+value, such as <strong>1</strong> or <strong>no</strong>. Defaults to
+0.</p>
+</dd>
+<dt><strong>-fill</strong> <em>style</em></dt>
+<dd>
+<p>If a content's parcel is larger than its requested dimensions, this
+option may be used to stretch the content. <em>Style</em> must have one
+of the following values:</p>
+<dl>
+<dt><strong>none</strong></dt>
+<dd>
+<p>Give the content its requested dimensions plus any internal padding
+requested with <strong>-ipadx</strong> or <strong>-ipady</strong>. This
+is the default.</p>
+</dd>
+<dt><strong>x</strong></dt>
+<dd>
+<p>Stretch the content horizontally to fill the entire width of its
+parcel (except leave external padding as specified by
+<strong>-padx</strong>).</p>
+</dd>
+<dt><strong>y</strong></dt>
+<dd>
+<p>Stretch the content vertically to fill the entire height of its
+parcel (except leave external padding as specified by
+<strong>-pady</strong>).</p>
+</dd>
+<dt><strong>both</strong></dt>
+<dd>
+<p>Stretch the content both horizontally and vertically.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>-in</strong> <em>container</em></dt>
+<dd>
+<p>Insert the window at the end of the packing order for the container
+window given by <em>container</em>.</p>
+</dd>
+<dt><strong>-ipadx</strong> <em>amount</em></dt>
+<dd>
+<p><em>Amount</em> specifies how much horizontal internal padding to
+leave on each side of the content. <em>Amount</em> must be a valid
+screen distance, such as <strong>2</strong> or <strong>.5c</strong>. It
+defaults to 0.</p>
+</dd>
+<dt><strong>-ipady</strong> <em>amount</em></dt>
+<dd>
+<p><em>Amount</em> specifies how much vertical internal padding to leave
+on each side of the content. <em>Amount</em> defaults to 0.</p>
+</dd>
+<dt><strong>-padx</strong> <em>amount</em></dt>
+<dd>
+<p><em>Amount</em> specifies how much horizontal external padding to
+leave on each side of the content. <em>Amount</em> may be a list of two
+values to specify padding for left and right separately. <em>Amount</em>
+defaults to 0.</p>
+</dd>
+<dt><strong>-pady</strong> <em>amount</em></dt>
+<dd>
+<p><em>Amount</em> specifies how much vertical external padding to leave
+on each side of the content. <em>Amount</em> may be a list of two values
+to specify padding for top and bottom separately. <em>Amount</em>
+defaults to 0.</p>
+</dd>
+<dt><strong>-side</strong> <em>side</em></dt>
+<dd>
+<p>Specifies which side of the container the content will be packed
+against. Must be <strong>left</strong>, <strong>right</strong>,
+<strong>top</strong>, or <strong>bottom</strong>. Defaults to
+<strong>top</strong>.</p>
+</dd>
+</dl>
+<p>If no <strong>-in</strong>, <strong>-after</strong> or
+<strong>-before</strong> option is specified then each of the content
+will be inserted at the end of the packing list for its parent unless it
+is already managed by the packer (in which case it will be left where it
+is). If one of these options is specified then all the content will be
+inserted at the specified point. If any of the content are already
+managed by the geometry manager then any unspecified options for them
+retain their previous values rather than receiving default values.</p>
+</dd>
+<dt><strong>pack forget</strong> <em>window</em> ?<em>window
+...</em>?</dt>
+<dd>
+<p>Removes each of the <em>window</em>s from the packing order for its
+container and unmaps their windows. The content will no longer be
+managed by the packer.</p>
+</dd>
+<dt><strong>pack info</strong> <em>window</em></dt>
+<dd>
+<p>Returns a list whose elements are the current configuration state of
+the window given by <em>window</em> in the same option-value form that
+might be specified to <strong>pack configure</strong>. The first two
+elements of the list are where <em>container</em> is the window's
+container.</p>
+</dd>
+<dt><strong>pack propagate</strong> <em>container</em>
+?<em>boolean</em>?</dt>
+<dd>
+<p>If <em>boolean</em> has a true boolean value such as
+<strong>1</strong> or <strong>on</strong> then propagation is enabled
+for <em>container</em>, which must be a window name (see
+<strong>GEOMETRY PROPAGATION</strong> below). If <em>boolean</em> has a
+false boolean value then propagation is disabled for <em>container</em>.
+In either of these cases an empty string is returned. If
+<em>boolean</em> is omitted then the command returns <strong>0</strong>
+or <strong>1</strong> to indicate whether propagation is currently
+enabled for <em>container</em>. Propagation is enabled by default.</p>
+</dd>
+<dt><strong>pack slaves</strong> <em>window</em></dt>
+<dd>
+<p>Returns a list of all of the content windows in the packing order for
+<em>window</em>. The order of the content windows in the list is the
+same as their order in the packing order. If <em>window</em> has no
+content then an empty string is returned.</p>
+</dd>
+</dl>
+<!-- -->
+<dl>
+<dt><strong>pack content</strong> <em>window</em></dt>
+<dd>
+<p>Synonym for <strong>pack slaves</strong> <em>window</em>.</p>
+</dd>
+</dl>
+<h1 id="the-packer-algorithm">THE PACKER ALGORITHM</h1>
+<p>For each container the packer maintains an ordered list of content
+windows called the <em>packing list</em>. The <strong>-in</strong>,
+<strong>-after</strong>, and <strong>-before</strong> configuration
+options are used to specify the container for each content and the
+content's position in the packing list. If none of these options is
+given for a content then the content is added to the end of the packing
+list for its parent.</p>
+<p>The packer arranges the content windows for a container by scanning
+the packing list in order. At the time it processes each content, a
+rectangular area within the container is still unallocated. This area is
+called the <em>cavity</em>; for the first content it is the entire area
+of the container.</p>
+<p>For each content the packer carries out the following steps:</p>
+<dl>
+<dt>[1]</dt>
+<dd>
+<p>The packer allocates a rectangular <em>parcel</em> for the content
+along the side of the cavity given by the content's
+<strong>-side</strong> option. If the side is top or bottom then the
+width of the parcel is the width of the cavity and its height is the
+requested height of the content plus the <strong>-ipady</strong> and
+<strong>-pady</strong> options. For the left or right side the height of
+the parcel is the height of the cavity and the width is the requested
+width of the content plus the <strong>-ipadx</strong> and
+<strong>-padx</strong> options. The parcel may be enlarged further
+because of the <strong>-expand</strong> option (see
+<strong>EXPANSION</strong> below)</p>
+</dd>
+<dt>[2]</dt>
+<dd>
+<p>The packer chooses the dimensions of the content. The width will
+normally be the content's requested width plus twice its
+<strong>-ipadx</strong> option and the height will normally be the
+content's requested height plus twice its <strong>-ipady</strong>
+option. However, if the <strong>-fill</strong> option is
+<strong>x</strong> or <strong>both</strong> then the width of the
+content is expanded to fill the width of the parcel, minus twice the
+<strong>-padx</strong> option. If the <strong>-fill</strong> option is
+<strong>y</strong> or <strong>both</strong> then the height of the
+content is expanded to fill the width of the parcel, minus twice the
+<strong>-pady</strong> option.</p>
+</dd>
+<dt>[3]</dt>
+<dd>
+<p>The packer positions the content over its parcel. If the content is
+smaller than the parcel then the <strong>-anchor</strong> option
+determines where in the parcel the content will be placed. If
+<strong>-padx</strong> or <strong>-pady</strong> is non-zero, then the
+given amount of external padding will always be left between the content
+and the edges of the parcel.</p>
+</dd>
+</dl>
+<p>Once a given content has been packed, the area of its parcel is
+subtracted from the cavity, leaving a smaller rectangular cavity for the
+next content. If a content does not use all of its parcel, the unused
+space in the parcel will not be used by subsequent content. If the
+cavity should become too small to meet the needs of a content then the
+content will be given whatever space is left in the cavity. If the
+cavity shrinks to zero size, then all remaining content on the packing
+list will be unmapped from the screen until the container window becomes
+large enough to hold them again.</p>
+<h2 id="expansion">EXPANSION</h2>
+<p>If a container window is so large that there will be extra space left
+over after all of its content have been packed, then the extra space is
+distributed uniformly among all of the content for which the
+<strong>-expand</strong> option is set. Extra horizontal space is
+distributed among the expandable content whose <strong>-side</strong> is
+<strong>left</strong> or <strong>right</strong>, and extra vertical
+space is distributed among the expandable content whose
+<strong>-side</strong> is <strong>top</strong> or
+<strong>bottom</strong>.</p>
+<h2 id="geometry-propagation">GEOMETRY PROPAGATION</h2>
+<p>The packer normally computes how large a container must be to just
+exactly meet the needs of its content, and it sets the requested width
+and height of the container to these dimensions. This causes geometry
+information to propagate up through a window hierarchy to a top-level
+window so that the entire sub-tree sizes itself to fit the needs of the
+leaf windows. However, the <strong>pack propagate</strong> command may
+be used to turn off propagation for one or more containers. If
+propagation is disabled then the packer will not set the requested width
+and height of the packer. This may be useful if, for example, you wish
+for a container window to have a fixed size that you specify.</p>
+<h1 id="restrictions-on-container-windows">RESTRICTIONS ON CONTAINER
+WINDOWS</h1>
+<p>The container for each content must either be the content's parent
+(the default) or a descendant of the content's parent. This restriction
+is necessary to guarantee that the content can be placed over any part
+of its container that is visible without danger of the content being
+clipped by its parent.</p>
+<h1 id="packing-order">PACKING ORDER</h1>
+<p>If the container for a content is not its parent then you must make
+sure that the content is higher in the stacking order than the
+container. Otherwise the container will obscure the content and it will
+appear as if the content has not been packed correctly. The easiest way
+to make sure the content is higher than the container is to create the
+container window first: the most recently created window will be highest
+in the stacking order. Or, you can use the <strong>raise</strong> and
+<strong>lower</strong> commands to change the stacking order of either
+the container or the content.</p>
+<h1 id="example">EXAMPLE</h1>
+<pre><code># Make the widgets
+label .t -text &quot;This widget is at the top&quot;    -bg red
+label .b -text &quot;This widget is at the bottom&quot; -bg green
+label .l -text &quot;Left\nHand\nSide&quot;
+label .r -text &quot;Right\nHand\nSide&quot;
+text .mid
+.mid insert end &quot;This layout is like Java&#39;s BorderLayout&quot;
+# Lay them out
+pack .t   -side top    -fill x
+pack .b   -side bottom -fill x
+pack .l   -side left   -fill y
+pack .r   -side right  -fill y
+pack .mid -expand 1    -fill both</code></pre>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tk-Commands/grid.html">grid</a>, <a
+href="../Tk-Commands/place.html">place</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>geometry manager, location, packer, parcel, propagation, size</p>

@@ -1,0 +1,98 @@
+<h1 id="name">NAME</h1>
+<p>itcl::body - change the body for a class method/proc</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>itcl::body</strong>
+<em>className</em><strong>::</strong><em>function args body</em></p>
+<h1 id="description">DESCRIPTION</h1>
+<p>The <strong>body</strong> command is used outside of an <strong>[incr
+Tcl]</strong> class definition to define or redefine the body of a class
+method or proc. This facility allows a class definition to have separate
+"interface" and "implementation" parts. The "interface" part is a
+<strong>class</strong> command with declarations for methods, procs,
+instance variables and common variables. The "implementation" part is a
+series of <strong>body</strong> and <strong>configbody</strong>
+commands. If the "implementation" part is kept in a separate file, it
+can be sourced again and again as bugs are fixed, to support interactive
+development. When using the "tcl" mode in the <strong>emacs</strong>
+editor, the "interface" and "implementation" parts can be kept in the
+same file; as bugs are fixed, individual bodies can be highlighted and
+sent to the test application.</p>
+<p>The name "<em>className</em><strong>::</strong><em>function</em>"
+identifies the method/proc being changed.</p>
+<p>If an <em>args</em> list was specified when the <em>function</em> was
+defined in the class definition, the <em>args</em> list for the
+<strong>body</strong> command must match in meaning. Variable names can
+change, but the argument lists must have the same required arguments and
+the same default values for optional arguments. The special
+<strong>args</strong> argument acts as a wildcard when included in the
+<em>args</em> list in the class definition; it will match zero or more
+arguments of any type when the body is redefined.</p>
+<p>If the <em>body</em> string starts with "<strong><span
+class="citation" data-cites="*">@*</span><em>", it is treated as the
+symbolic name for a C procedure. The </em>args* list has little meaning
+for the C procedure, except to document the expected usage. (The C
+procedure is not guaranteed to use arguments in this manner.) If
+<em>body</em> does not start with "</strong>@**", it is treated as a Tcl
+command script. When the function is invoked, command line arguments are
+matched against the <em>args</em> list, and local variables are created
+to represent each argument. This is the usual behavior for a Tcl-style
+proc.</p>
+<p>Symbolic names for C procedures are established by registering
+procedures via <strong>Itcl_RegisterC()</strong>. This is usually done
+in the <strong>Tcl_AppInit()</strong> procedure, which is automatically
+called when the interpreter starts up. In the following example, the
+procedure <code>My_FooCmd()</code> is registered with the symbolic name
+"foo". This procedure can be referenced in the <strong>body</strong>
+command as "<code>@foo</code>".</p>
+<pre><code>int
+Tcl_AppInit(interp)
+    Tcl_Interp *interp;     /* Interpreter for application. */
+{
+    if (Itcl_Init(interp) == TCL_ERROR) {
+        return TCL_ERROR;
+    }
+
+    if (Itcl_RegisterC(interp, &quot;foo&quot;, My_FooCmd) != TCL_OK) {
+        return TCL_ERROR;
+    }
+}</code></pre>
+<h1 id="example">EXAMPLE</h1>
+<p>In the following example, a "File" class is defined to represent open
+files. The method bodies are included below the class definition via the
+<strong>body</strong> command. Note that the bodies of the
+constructor/destructor must be included in the class definition, but
+they can be redefined via the <strong>body</strong> command as well.</p>
+<pre><code>itcl::class File {
+    private variable fid &quot;&quot;
+    constructor {name access} {
+        set fid [open $name $access]
+    }
+    destructor {
+        close $fid
+    }
+
+    method get {}
+    method put {line}
+    method eof {}
+}
+
+itcl::body File::get {} {
+    return [gets $fid]
+}
+itcl::body File::put {line} {
+    puts $fid $line
+}
+itcl::body File::eof {} {
+    return [::eof $fid]
+}
+
+#
+# See the File class in action:
+#
+File x /etc/passwd &quot;r&quot;
+while {![x eof]} {
+    puts &quot;=&gt; [x get]&quot;
+}
+itcl::delete object x</code></pre>
+<h1 id="keywords">KEYWORDS</h1>
+<p>class, object, procedure</p>

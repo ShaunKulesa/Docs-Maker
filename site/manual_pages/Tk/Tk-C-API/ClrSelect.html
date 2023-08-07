@@ -1,0 +1,20 @@
+<h1 id="name">NAME</h1>
+<p>Tk_ClearSelection - Deselect a selection</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tk.h&gt;
+
+Tk_ClearSelection(tkwin, selection)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>The selection will be cleared from the display containing this
+window.</p>
+<p>The name of selection to be cleared.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p><strong>Tk_ClearSelection</strong> cancels the selection specified by
+the atom <em>selection</em> for the display containing <em>tkwin</em>.
+The selection need not be in <em>tkwin</em> itself or even in
+<em>tkwin</em>'s application. If there is a window anywhere on
+<em>tkwin</em>'s display that owns <em>selection</em>, the window will
+be notified and the selection will be cleared. If there is no owner for
+<em>selection</em> on the display, then the procedure has no effect.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>clear, selection</p>

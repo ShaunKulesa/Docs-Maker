@@ -1,0 +1,192 @@
+<p><br />
+</p>
+<h1 id="name">NAME</h1>
+<p>tdbc::odbc - TDBC-ODBC bridge</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p>package require <strong>tdbc::odbc 1.0</strong></p>
+<p><strong>tdbc::odbc::connection create</strong> <em>db</em>
+<em>connectionString</em> ?<em>-option value...</em>?<br />
+<strong>tdbc::odbc::connection new</strong> <em>connectionString</em>
+?<em>-option value...</em>?</p>
+<p><strong>tdbc::odbc::datasources</strong>
+?<strong>-system</strong>|<strong>-user</strong>?</p>
+<p><strong>tdbc::odbc::drivers</strong></p>
+<p><strong>tdbc::odbc::datasource</strong> <em>command</em>
+<em>driverName</em> ?<em>keyword</em>-<em>value</em>?...</p>
+<p><br />
+</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>The <strong>tdbc::odbc</strong> driver provides a database interface
+that conforms to Tcl DataBase Connectivity (TDBC) and allows a Tcl
+script to connect to any SQL database presenting an ODBC interface. It
+is also provided as a worked example of how to write a database driver
+in C, so that driver authors have a starting point for further
+development.</p>
+<p>Connection to an ODBC database is established by invoking
+<strong>tdbc::odbc::connection create</strong>, passing it the name to
+be used as a connection handle, followed by a standard ODBC connection
+string. As an alternative, <strong>tdbc::odbc::connection new</strong>
+may be used to create a database connection with an automatically
+assigned name. The return value from <strong>tdbc::odbc::connection
+new</strong> is the name that was chosen for the connection handle.</p>
+<p>The connection string will include at least a <strong>DRIVER</strong>
+or <strong>DSN</strong> keyword, and may include others that are defined
+by a particular ODBC driver. (If the local ODBC system supports a
+graphical user interface, the <strong>-parent</strong> option (see
+below) may allow calling <strong>tdbc::odbc::connection create</strong>
+with an empty connection string.)</p>
+<p>The side effect of <strong>tdbc::odbc::connection create</strong> is
+to create a new database connection.. See
+<strong>tdbc::connection(n)</strong> for the details of how to use the
+connection to manipulate a database.</p>
+<p>In addition to a standard TDBC interface, <strong>tdbc::odbc</strong>
+supports three additional ccommands. The first of these,
+<strong>tdbc::odbc::datasources</strong>, which returns a Tcl list
+enumerating the named data sources available to the program (for
+connection with the <strong>DSN</strong> keyword in the connection
+string). The result of <strong>tdbc::odbc::datasources</strong> may be
+constrained to only system data sources or only user data sources by
+including the <strong>-system</strong> or <strong>-user</strong>
+options, respectively.</p>
+<p>The <strong>tdbc::odbc::drivers</strong> command returns a dictionary
+whose keys are the names of drivers available for the
+<strong>DRIVER</strong> keyword in the connection string, and whose
+values are descriptions of the drivers.</p>
+<p>The <strong>tdbc::odbc::datasource</strong> command allows
+configuration of named data sources on those systems that support the
+ODBC Installer application programming interface. It accepts a
+<em>command</em>, which specifies the operation to be performed, the
+name of a <em>driver</em> for the database in question, and a set of
+keyword-value pairs that are interpreted by the given driver. The
+<em>command</em> must be one of the following:</p>
+<dl>
+<dt>add</dt>
+<dd>
+<p>Adds a user data source. The keyword-value pairs must include at
+least a <strong>DSN</strong> option naming the data source</p>
+</dd>
+<dt>add_system</dt>
+<dd>
+<p>Adds a system data source. The keyword-value pairs must include at
+least a <strong>DSN</strong> option naming the data source</p>
+</dd>
+<dt>configure</dt>
+<dd>
+<p>Configures a user data source. The keyword-value pairs will usually
+include a <strong>DSN</strong> option naming the data source. Some
+drivers will support other options, such as the
+<strong>CREATE_DB</strong> option to the Microsoft Access driver on
+Windows.</p>
+</dd>
+<dt>configure_system</dt>
+<dd>
+<p>Configures a system data source.</p>
+</dd>
+<dt>remove</dt>
+<dd>
+<p>Removes a user data source. The keyword-value pairs must include a
+<strong>DSN</strong> option specifying the data source to remove.</p>
+</dd>
+<dt>remove_system</dt>
+<dd>
+<p>Removes a system data source. The keyword-value pairs must include a
+<strong>DSN</strong> option specifying the data source to remove.</p>
+</dd>
+</dl>
+<h1 id="connection-options">CONNECTION OPTIONS</h1>
+<p>The <strong>tdbc::odbc::connection create</strong> object command
+supports the <strong>-encoding</strong>, <strong>-isolation</strong>,
+<strong>-readonly</strong> and <strong>-timeout</strong> options common
+to all TDBC drivers. The <strong>-encoding</strong> option will succeed
+only if the requested encoding is the same as the system encoding;
+<strong>tdbc::odbc</strong> does not attempt to specify alternative
+encodings to an ODBC driver. (Some drivers accept encoding
+specifications in the connection string.)</p>
+<p>In addition, if Tk is present in the requesting interpreter, and the
+local system's ODBC driver manager supports a graphical user interface,
+the <strong>tdbc::odbc::connection create</strong> object command
+supports a <strong>-parent</strong> option, whose value is the path name
+of a Tk window. If this option is specified, and a connection string
+does not specify all the information needed to connect to an interface,
+the ODBC driver manager will display a dialog box to request whatever
+additional information is required. The requesting interpreter will
+block until the user dismisses the dialog, at which point the connection
+is made.</p>
+<h1 id="examples">EXAMPLES</h1>
+<p>Sincs ODBC connection strings are driver specific, it is often
+difficult to find the documentation needed to compose them. The
+following examples are known to work on most Windows systems and provide
+at least a few useful things that a program can do.</p>
+<blockquote>
+<pre><code>tdbc::odbc::connection create db \
+    &quot;DSN={PAYROLL};UID={aladdin};PWD={Sesame}&quot;</code></pre>
+</blockquote>
+<p>Connects to a named data source "PAYROLL", providing "aladdin" as a
+user name and "Sesame" as a password. Uses <strong>db</strong> as the
+name of the connection.</p>
+<blockquote>
+<pre><code>set connString {DRIVER={Microsoft Access Driver (*.htmlb)};}
+append connString {FIL={MS Access}\;}
+append connString {DBQ=} \
+    [file nativename [file normalize $fileName]]
+tdbc::odbc::connection create db2 -readonly 1 $connString</code></pre>
+</blockquote>
+<p>Opens a connection to a Microsoft Access database file whose name is
+in <em>$fileName</em>. The database is opened in read-only mode. The
+resulting connection is called "db2".</p>
+<blockquote>
+<pre><code>tdbc::odbc::connection create db3 \
+    &quot;DRIVER=SQLite3;DATABASE=$fileName&quot;</code></pre>
+</blockquote>
+<p>Opens a connection to a SQLite3 database whose name is in
+"$fileName".</p>
+<blockquote>
+<pre><code>tdbc::odbc::datasource add \
+    {Microsoft Access Driver (*.htmlb)} \
+    DSN=MyTestDatabase \
+    DBQ=[file native [file normalize $fileName]]</code></pre>
+</blockquote>
+<p>Creates a new user data source with the name, "MyTestDatabase" bound
+to a Microsoft Access file whose path name is in "$fileName". No
+connection is made to the data source until the program calls
+<strong>tdbc::odbc::connection create</strong>.</p>
+<blockquote>
+<pre><code>tdbc::odbc::datasource configure \
+    {Microsoft Access Driver (*.htmlb)} \
+    CREATE_DB=[file native [file normalize $fileName]] \
+    General</code></pre>
+</blockquote>
+<p>Creates a new, empty Microsoft Access database in the file identified
+by "$fileName". No connection is made to the database until the program
+calls <strong>tdbc::odbc::connection create</strong>.</p>
+<h1 id="additional-connection-methods">ADDITIONAL CONNECTION
+METHODS</h1>
+<p>In addition to the usual methods on the tdbc::connection(n) object,
+connections to an ODBC database support one additional method:</p>
+<dl>
+<dt>$connection</dt>
+<dd>
+<p>This method takes the given driver-native SQL code
+<em>sqlStatement</em> and evaluates it without preparing it. The
+statement is not tokenized and must not contain variable substitutions.
+Evaluating the <em>sqlStatement</em> produces a result set of zero or
+more rows. The result of the command is a list of dictionaries, with one
+list element per row in the result set (in a similar format to the list
+returned by <em>$connection allrows -as dicts</em>). <em>This command is
+not recommended</em> for anything where the usual <em>prepare</em> or
+<em>preparecall</em> methods work correctly. It is provided so that data
+management language statements that are not implemented by the driver's
+prepared statement API (such as <strong>CREATE</strong> DATABASE or
+<strong>CREATE PROCEDURE</strong>), or that contain characters that are
+reserved by the tokenizer, can be executed.</p>
+</dd>
+</dl>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../tdbc1.1.5/tdbc.html">tdbc</a>, <a
+href="../tdbc1.1.5/tdbc::connection.html">tdbc::connection</a>, <a
+href="../tdbc1.1.5/tdbc::resultset.html">tdbc::resultset</a>, <a
+href="../tdbc1.1.5/tdbc::statement.html">tdbc::statement</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>TDBC, SQL, ODBC, database, connectivity, connection</p>
+<h1 id="copyright">COPYRIGHT</h1>
+<p>Copyright (c) 2008 by Kevin B. Kenny.</p>

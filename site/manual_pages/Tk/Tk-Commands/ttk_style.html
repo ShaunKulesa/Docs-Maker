@@ -1,0 +1,160 @@
+<h1 id="name">NAME</h1>
+<p>ttk::style - Manipulate style database</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>ttk::style</strong> <em>option</em> ?<em>args</em>?</p>
+<h1 id="notes">NOTES</h1>
+<p>See also the Tcl'2004 conference presentation, available at
+http://tktable.sourceforge.net/tile/tile-tcl2004.pdf</p>
+<h1 id="definitions">DEFINITIONS</h1>
+<p>Each widget is assigned a <em>style</em>, which specifies the set of
+elements making up the widget and how they are arranged, along with
+dynamic and default settings for element options. By default, the style
+name is the same as the widget's class; this may be overridden by the
+<strong>-style</strong> option.</p>
+<p>A <em>theme</em> is a collection of elements and styles which
+controls the overall look and feel of an application.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>The <strong>ttk::style</strong> command takes the following
+arguments:</p>
+<dl>
+<dt><strong>ttk::style configure</strong> <em>style</em>
+?<em>-option</em> ?<em>value option value...</em>? ?</dt>
+<dd>
+<p>Sets the default value of the specified option(s) in
+<em>style</em>.</p>
+</dd>
+<dt><strong>ttk::style element</strong> <em>args</em></dt>
+<dd>
+<dl>
+<dt><strong>ttk::style element create</strong> <em>elementName</em>
+<em>type</em> ?<em>args...</em>?</dt>
+<dd>
+<p>Creates a new element in the current theme of type <em>type</em>. The
+only cross-platform built-in element type is <em>image</em> (see
+<strong>ttk_image</strong>(n)) but themes may define other element types
+(see <strong>Ttk_RegisterElementFactory</strong>). On suitable versions
+of Windows an element factory is registered to create Windows theme
+elements (see <strong>ttk_vsapi</strong>(n)).</p>
+</dd>
+<dt><strong>ttk::style element names</strong></dt>
+<dd>
+<p>Returns the list of elements defined in the current theme.</p>
+</dd>
+<dt><strong>ttk::style element options</strong> <em>element</em></dt>
+<dd>
+<p>Returns the list of <em>element</em>'s options.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>ttk::style layout</strong> <em>style</em>
+?<em>layoutSpec</em>?</dt>
+<dd>
+<p>Define the widget layout for style <em>style</em>. See
+<strong>LAYOUTS</strong> below for the format of <em>layoutSpec</em>. If
+<em>layoutSpec</em> is omitted, return the layout specification for
+style <em>style</em>.</p>
+</dd>
+<dt><strong>ttk::style lookup</strong> <em>style</em> <em>-option</em>
+?<em>state</em> ?<em>default</em>??</dt>
+<dd>
+<p>Returns the value specified for <em>-option</em> in style
+<em>style</em> in state <em>state</em>, using the standard lookup rules
+for element options. <em>state</em> is a list of state names; if
+omitted, it defaults to all bits off (the state). If the
+<em>default</em> argument is present, it is used as a fallback value in
+case no specification for <em>-option</em> is found.</p>
+</dd>
+<dt><strong>ttk::style map</strong> <em>style</em> ?<em>-option</em>
+<strong>{</strong> <em>statespec value...</em> <strong>}</strong>?</dt>
+<dd>
+<p>Sets dynamic values of the specified option(s) in <em>style</em>.
+Each <em>statespec / value</em> pair is examined in order; the value
+corresponding to the first matching <em>statespec</em> is used.</p>
+</dd>
+<dt><strong>ttk::style theme</strong> <em>args</em></dt>
+<dd>
+<dl>
+<dt><strong>ttk::style theme create</strong> <em>themeName</em>
+?<strong>-parent</strong> <em>basedon</em>? ?<strong>-settings</strong>
+<em>script...</em> ?</dt>
+<dd>
+<p>Creates a new theme. It is an error if <em>themeName</em> already
+exists. If <strong>-parent</strong> is specified, the new theme will
+inherit styles, elements, and layouts from the parent theme
+<em>basedon</em>. If <strong>-settings</strong> is present,
+<em>script</em> is evaluated in the context of the new theme as per
+<strong>ttk::style theme settings</strong>.</p>
+</dd>
+<dt><strong>ttk::style theme names</strong></dt>
+<dd>
+<p>Returns a list of all known themes.</p>
+</dd>
+<dt><strong>ttk::style theme settings</strong> <em>themeName</em>
+<em>script</em></dt>
+<dd>
+<p>Temporarily sets the current theme to <em>themeName</em>, evaluate
+<em>script</em>, then restore the previous theme. Typically
+<em>script</em> simply defines styles and elements, though arbitrary Tcl
+code may appear.</p>
+</dd>
+<dt><strong>ttk::style theme use</strong> ?<em>themeName</em>?</dt>
+<dd>
+<p>Without an argument the result is the name of the current theme.
+Otherwise this command sets the current theme to <em>themeName</em>, and
+refreshes all widgets.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<h1 id="layouts">LAYOUTS</h1>
+<p>A <em>layout</em> specifies a list of elements, each followed by one
+or more options specifying how to arrange the element. The layout
+mechanism uses a simplified version of the <strong>pack</strong>
+geometry manager: given an initial cavity, each element is allocated a
+parcel. Then the parcel actually used by the element is adjusted within
+the allocated parcel. Valid options are:</p>
+<dl>
+<dt><strong>-children {</strong> <em>sublayout...</em>
+<strong>}</strong></dt>
+<dd>
+<p>Specifies a list of elements to place inside the element.</p>
+</dd>
+<dt><strong>-expand</strong> <em>boolean</em></dt>
+<dd>
+<p>Specifies whether the allocated parcel is the entire cavity. If so,
+simultaneous specification of <strong>-side</strong> is ignored.
+Defaults to 0.</p>
+</dd>
+<dt><strong>-side</strong> <em>side</em></dt>
+<dd>
+<p>Specifies which side of the cavity to place the element; one of
+<strong>left</strong>, <strong>right</strong>, <strong>top</strong>, or
+<strong>bottom</strong>. For instance, <strong>-side top</strong>
+allocates the parcel along the top of the cavity having width and height
+respectively the width of the cavity and the height of the element. If
+omitted, the allocated parcel is the entire cavity (same effect as
+<strong>-expand</strong> 1).</p>
+</dd>
+<dt><strong>-sticky</strong>
+<strong>[</strong><em>nswe</em><strong>]</strong></dt>
+<dd>
+<p>Specifies the actual parcel position and size inside the allocated
+parcel. If specified as an empty string then the actual parcel is
+centered in the allocated parcel. Default is <strong>nswe</strong>.</p>
+</dd>
+</dl>
+<p>For example:</p>
+<pre><code>ttk::style layout Horizontal.TScrollbar {
+    Scrollbar.trough -children {
+        Scrollbar.leftarrow -side left
+        Scrollbar.rightarrow -side right
+        Horizontal.Scrollbar.thumb -side left -sticky ew
+    }
+}</code></pre>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tk-Commands/ttk::intro.html">ttk::intro</a>, <a
+href="../Tk-Commands/ttk::widget.html">ttk::widget</a>, <a
+href="../Tk-Commands/photo.html">photo</a>, <a
+href="../Tk-Commands/ttk_image.html">ttk_image</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>style, theme, appearance</p>

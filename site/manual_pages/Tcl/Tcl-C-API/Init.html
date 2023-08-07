@@ -1,0 +1,20 @@
+<h1 id="name">NAME</h1>
+<p>Tcl_Init - find and source initialization script</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tcl.h&gt;
+
+int
+Tcl_Init(interp)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Interpreter to initialize.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p><strong>Tcl_Init</strong> is a helper procedure that finds and
+<strong>source</strong>s the <strong>init.tcl</strong> script, which
+should exist somewhere on the Tcl library path.</p>
+<p><strong>Tcl_Init</strong> is typically called from
+<strong>Tcl_AppInit</strong> procedures.</p>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-C-API/Tcl_AppInit.html">Tcl_AppInit</a>, <a
+href="../Tcl-C-API/Tcl_Main.html">Tcl_Main</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>application, initialization, interpreter</p>

@@ -1,0 +1,35 @@
+<h1 id="name">NAME</h1>
+<p>tk_chooseColor - pops up a dialog box for the user to select a
+color.</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>tk_chooseColor</strong> ?<em>option value ...</em>?</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>The procedure <strong>tk_chooseColor</strong> pops up a dialog box
+for the user to select a color. The following <em>option-value</em>
+pairs are possible as command line arguments:</p>
+<dl>
+<dt><strong>-initialcolor</strong> <em>color</em></dt>
+<dd>
+<p>Specifies the color to display in the color dialog when it pops up.
+<em>color</em> must be in a form acceptable to the
+<strong>Tk_GetColor</strong> function.</p>
+</dd>
+<dt><strong>-parent</strong> <em>window</em></dt>
+<dd>
+<p>Makes <em>window</em> the logical parent of the color dialog. The
+color dialog is displayed on top of its parent window.</p>
+</dd>
+<dt><strong>-title</strong> <em>titleString</em></dt>
+<dd>
+<p>Specifies a string to display as the title of the dialog box. If this
+option is not specified, then a default title will be displayed.</p>
+</dd>
+</dl>
+<p>If the user selects a color, <strong>tk_chooseColor</strong> will
+return the name of the color in a form acceptable to
+<strong>Tk_GetColor</strong>. If the user cancels the operation, both
+commands will return the empty string.</p>
+<h1 id="example">EXAMPLE</h1>
+<pre><code>button .b -bg [tk_chooseColor -initialcolor gray -title &quot;Choose color&quot;]</code></pre>
+<h1 id="keywords">KEYWORDS</h1>
+<p>color, color selection, dialog</p>

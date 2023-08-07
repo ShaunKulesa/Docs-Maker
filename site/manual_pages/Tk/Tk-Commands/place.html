@@ -1,0 +1,239 @@
+<h1 id="name">NAME</h1>
+<p>place - Geometry manager for fixed or rubber-sheet placement</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>place</strong> <em>option arg</em> ?<em>arg ...</em>?</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>The placer is a geometry manager for Tk. It provides simple fixed
+placement of windows, where you specify the exact size and location of
+one window, called the <em>content</em>, within another window, called
+the <em>container</em>. The placer also provides rubber-sheet placement,
+where you specify the size and location of the content in terms of the
+dimensions of the container, so that the content changes size and
+location in response to changes in the size of the container. Lastly,
+the placer allows you to mix these styles of placement so that, for
+example, the content has a fixed width and height but is centered inside
+the container.</p>
+<dl>
+<dt><strong>place</strong> <em>window option value</em> ?<em>option
+value ...</em>?</dt>
+<dd>
+<p>Arrange for the placer to manage the geometry of a content whose
+pathName is <em>window</em>. The remaining arguments consist of one or
+more <em>option-value</em> pairs that specify the way in which
+<em>window</em>'s geometry is managed. <em>Option</em> may have any of
+the values accepted by the <strong>place configure</strong> command.</p>
+</dd>
+<dt><strong>place configure</strong> <em>window</em> ?<em>option</em>?
+?<em>value option value ...</em>?</dt>
+<dd>
+<p>Query or modify the geometry options of the content given by
+<em>window</em>. If no <em>option</em> is specified, this command
+returns a list describing the available options (see
+<strong>Tk_ConfigureInfo</strong> for information on the format of this
+list). If <em>option</em> is specified with no <em>value</em>, then the
+command returns a list describing the one named option (this list will
+be identical to the corresponding sublist of the value returned if no
+<em>option</em> is specified). If one or more <em>option-value</em>
+pairs are specified, then the command modifies the given option(s) to
+have the given value(s); in this case the command returns an empty
+string.</p>
+<p>The following <em>option-value</em> pairs are supported:</p>
+<dl>
+<dt><strong>-anchor</strong> <em>where</em></dt>
+<dd>
+<p><em>Where</em> specifies which point of <em>window</em> is to be
+positioned at the (x,y) location selected by the <strong>-x</strong>,
+<strong>-y</strong>, <strong>-relx</strong>, and <strong>-rely</strong>
+options. The anchor point is in terms of the outer area of
+<em>window</em> including its border, if any. Thus if <em>where</em> is
+<strong>se</strong> then the lower-right corner of <em>window</em>'s
+border will appear at the given (x,y) location in the container. The
+anchor position defaults to <strong>nw</strong>.</p>
+</dd>
+<dt><strong>-bordermode</strong> <em>mode</em></dt>
+<dd>
+<p><em>Mode</em> determines the degree to which borders within the
+container are used in determining the placement of the content. The
+default and most common value is <strong>inside</strong>. In this case
+the placer considers the area of the container to be the innermost area
+of the container, inside any border: an option of <strong>-x 0</strong>
+corresponds to an x-coordinate just inside the border and an option of
+<strong>-relwidth 1.0</strong> means <em>window</em> will fill the area
+inside the container's border.</p>
+<p>If <em>mode</em> is <strong>outside</strong> then the placer
+considers the area of the container to include its border; this mode is
+typically used when placing <em>window</em> outside its container, as
+with the options <strong>-x 0 -y 0 -anchor ne</strong>. Lastly,
+<em>mode</em> may be specified as <strong>ignore</strong>, in which case
+borders are ignored: the area of the container is considered to be its
+official X area, which includes any internal border but no external
+border. A bordermode of <strong>ignore</strong> is probably not very
+useful.</p>
+</dd>
+<dt><strong>-height</strong> <em>size</em></dt>
+<dd>
+<p><em>Size</em> specifies the height for <em>window</em> in screen
+units (i.e. any of the forms accepted by <strong>Tk_GetPixels</strong>).
+The height will be the outer dimension of <em>window</em> including its
+border, if any. If <em>size</em> is an empty string, or if no
+<strong>-height</strong> or <strong>-relheight</strong> option is
+specified, then the height requested internally by the window will be
+used.</p>
+</dd>
+<dt><strong>-in</strong> <em>container</em></dt>
+<dd>
+<p><em>Container</em> specifies the path name of the window relative to
+which <em>window</em> is to be placed. <em>Container</em> must either be
+<em>window</em>'s parent or a descendant of <em>window</em>'s parent. In
+addition, <em>container</em> and <em>window</em> must both be
+descendants of the same top-level window. These restrictions are
+necessary to guarantee that <em>window</em> is visible whenever
+<em>container</em> is visible. If this option is not specified then the
+other window defaults to <em>window</em>'s parent.</p>
+</dd>
+<dt><strong>-relheight</strong> <em>size</em></dt>
+<dd>
+<p><em>Size</em> specifies the height for <em>window</em>. In this case
+the height is specified as a floating-point number relative to the
+height of the container: 0.5 means <em>window</em> will be half as high
+as the container, 1.0 means <em>window</em> will have the same height as
+the container, and so on. If both <strong>-height</strong> and
+<strong>-relheight</strong> are specified for a content, their values
+are summed. For example, <strong>-relheight 1.0 -height -2</strong>
+makes the content 2 pixels shorter than the container.</p>
+</dd>
+<dt><strong>-relwidth</strong> <em>size</em></dt>
+<dd>
+<p><em>Size</em> specifies the width for <em>window</em>. In this case
+the width is specified as a floating-point number relative to the width
+of the container: 0.5 means <em>window</em> will be half as wide as the
+container, 1.0 means <em>window</em> will have the same width as the
+container, and so on. If both <strong>-width</strong> and
+<strong>-relwidth</strong> are specified for a content, their values are
+summed. For example, <strong>-relwidth 1.0 -width 5</strong> makes the
+content 5 pixels wider than the container.</p>
+</dd>
+<dt><strong>-relx</strong> <em>location</em></dt>
+<dd>
+<p><em>Location</em> specifies the x-coordinate within the container
+window of the anchor point for <em>window</em>. In this case the
+location is specified in a relative fashion as a floating-point number:
+0.0 corresponds to the left edge of the container and 1.0 corresponds to
+the right edge of the container. <em>Location</em> need not be in the
+range 0.0-1.0. If both <strong>-x</strong> and <strong>-relx</strong>
+are specified for a content then their values are summed. For example,
+<strong>-relx 0.5 -x -2</strong> positions the left edge of the content
+2 pixels to the left of the center of its container.</p>
+</dd>
+<dt><strong>-rely</strong> <em>location</em></dt>
+<dd>
+<p><em>Location</em> specifies the y-coordinate within the container
+window of the anchor point for <em>window</em>. In this case the value
+is specified in a relative fashion as a floating-point number: 0.0
+corresponds to the top edge of the container and 1.0 corresponds to the
+bottom edge of the container. <em>Location</em> need not be in the range
+0.0-1.0. If both <strong>-y</strong> and <strong>-rely</strong> are
+specified for a content then their values are summed. For example,
+<strong>-rely 0.5 -x 3</strong> positions the top edge of the content 3
+pixels below the center of its container.</p>
+</dd>
+<dt><strong>-width</strong> <em>size</em></dt>
+<dd>
+<p><em>Size</em> specifies the width for <em>window</em> in screen units
+(i.e. any of the forms accepted by <strong>Tk_GetPixels</strong>). The
+width will be the outer width of <em>window</em> including its border,
+if any. If <em>size</em> is an empty string, or if no
+<strong>-width</strong> or <strong>-relwidth</strong> option is
+specified, then the width requested internally by the window will be
+used.</p>
+</dd>
+<dt><strong>-x</strong> <em>location</em></dt>
+<dd>
+<p><em>Location</em> specifies the x-coordinate within the container
+window of the anchor point for <em>window</em>. The location is
+specified in screen units (i.e. any of the forms accepted by
+<strong>Tk_GetPixels</strong>) and need not lie within the bounds of the
+container window.</p>
+</dd>
+<dt><strong>-y</strong> <em>location</em></dt>
+<dd>
+<p><em>Location</em> specifies the y-coordinate within the container
+window of the anchor point for <em>window</em>. The location is
+specified in screen units (i.e. any of the forms accepted by
+<strong>Tk_GetPixels</strong>) and need not lie within the bounds of the
+container window.</p>
+</dd>
+</dl>
+<p>If the same value is specified separately with two different options,
+such as <strong>-x</strong> and <strong>-relx</strong>, then the most
+recent option is used and the older one is ignored.</p>
+</dd>
+<dt><strong>place forget</strong> <em>window</em></dt>
+<dd>
+<p>Causes the placer to stop managing the geometry of <em>window</em>.
+As a side effect of this command <em>window</em> will be unmapped so
+that it does not appear on the screen. If <em>window</em> is not
+currently managed by the placer then the command has no effect. This
+command returns an empty string.</p>
+</dd>
+<dt><strong>place info</strong> <em>window</em></dt>
+<dd>
+<p>Returns a list giving the current configuration of <em>window</em>.
+The list consists of <em>option-value</em> pairs in exactly the same
+form as might be specified to the <strong>place configure</strong>
+command.</p>
+</dd>
+<dt><strong>place slaves</strong> <em>window</em></dt>
+<dd>
+<p>Returns a list of all the content windows for which <em>window</em>
+is the container. If there is no content for <em>window</em> then an
+empty string is returned.</p>
+</dd>
+</dl>
+<!-- -->
+<dl>
+<dt><strong>place content</strong> <em>window</em></dt>
+<dd>
+<p>Synonym for <strong>place slaves</strong> <em>window</em>.</p>
+</dd>
+</dl>
+<p>If the configuration of a window has been retrieved with
+<strong>place info</strong>, that configuration can be restored later by
+first using <strong>place forget</strong> to erase any existing
+information for the window and then invoking <strong>place
+configure</strong> with the saved information.</p>
+<h1 id="fine-points">FINE POINTS</h1>
+<p>It is not necessary for the container window to be the parent of the
+content window. This feature is useful in at least two situations.
+First, for complex window layouts it means you can create a hierarchy of
+subwindows whose only purpose is to assist in the layout of the parent.
+The of the parent (i.e. the windows that are significant for the
+application's user interface) can be children of the parent yet be
+placed inside the windows of the geometry-management hierarchy. This
+means that the path names of the do not reflect the geometry-management
+hierarchy and users can specify options for the real children without
+being aware of the structure of the geometry-management hierarchy.</p>
+<p>A second reason for having a container different than the content's
+parent is to tie two siblings together. For example, the placer can be
+used to force a window always to be positioned centered just below one
+of its siblings by specifying the configuration</p>
+<pre><code>-in sibling -relx 0.5 -rely 1.0 -anchor n -bordermode outside</code></pre>
+<p>Whenever the sibling is repositioned in the future, the content will
+be repositioned as well.</p>
+<p>Unlike many other geometry managers (such as the packer) the placer
+does not make any attempt to manipulate the geometry of the container
+windows or the parents of content windows (i.e. it does not set their
+requested sizes). To control the sizes of these windows, make them
+windows like frames and canvases that provide configuration options for
+this purpose.</p>
+<h1 id="example">EXAMPLE</h1>
+<p>Make the label occupy the middle bit of the toplevel, no matter how
+it is resized:</p>
+<pre><code>label .l -text &quot;In the\nMiddle!&quot; -bg black -fg white
+place .l -relwidth .3 -relx .35 -relheight .3 -rely .35</code></pre>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tk-Commands/grid.html">grid</a>, <a
+href="../Tk-Commands/pack.html">pack</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>geometry manager, height, location, container, place, rubber sheet,
+content, width</p>

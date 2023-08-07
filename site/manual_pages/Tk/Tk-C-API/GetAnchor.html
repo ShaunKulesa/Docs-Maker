@@ -1,0 +1,58 @@
+<h1 id="name">NAME</h1>
+<p>Tk_GetAnchorFromObj, Tk_GetAnchor, Tk_NameOfAnchor - translate
+between strings and anchor positions</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tk.h&gt;
+
+int
+Tk_GetAnchorFromObj(interp, objPtr, anchorPtr)
+
+int
+Tk_GetAnchor(interp, string, anchorPtr)
+
+const char *
+Tk_NameOfAnchor(anchor)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Interpreter to use for error reporting, or NULL.</p>
+<p>String value contains name of anchor point: or internal rep will be
+modified to cache corresponding Tk_Anchor. In the case of on input, a
+non-empty abbreviation of it may also be used on input.</p>
+<p>Same as <em>objPtr</em> except description of anchor point is passed
+as a string.</p>
+<p>Pointer to location in which to store anchor position corresponding
+to <em>objPtr</em> or <em>string</em>.</p>
+<p>Anchor position, e.g. <strong>TCL_ANCHOR_CENTER</strong>.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p><strong>Tk_GetAnchorFromObj</strong> places in <em>*anchorPtr</em> an
+anchor position (enumerated type <strong>Tk_Anchor</strong>)
+corresponding to <em>objPtr</em>'s value. The result will be one of
+<strong>TK_ANCHOR_N</strong>, <strong>TK_ANCHOR_NE</strong>,
+<strong>TK_ANCHOR_E</strong>, <strong>TK_ANCHOR_SE</strong>,
+<strong>TK_ANCHOR_S</strong>, <strong>TK_ANCHOR_SW</strong>,
+<strong>TK_ANCHOR_W</strong>, <strong>TK_ANCHOR_NW</strong>, or
+<strong>TK_ANCHOR_CENTER</strong>. Anchor positions are typically used
+for indicating a point on an object that will be used to position the
+object, e.g. <strong>TK_ANCHOR_N</strong> means position the top center
+point of the object at a particular place.</p>
+<p>Under normal circumstances the return value is
+<strong>TCL_OK</strong> and <em>interp</em> is unused. If
+<em>string</em> does not contain a valid anchor position or an
+abbreviation of one of these names, <strong>TCL_ERROR</strong> is
+returned, <em>*anchorPtr</em> is unmodified, and an error message is
+stored in <em>interp</em>'s result if <em>interp</em> is not NULL.
+<strong>Tk_GetAnchorFromObj</strong> caches information about the return
+value in <em>objPtr</em>, which speeds up future calls to
+<strong>Tk_GetAnchorFromObj</strong> with the same <em>objPtr</em>.</p>
+<p><strong>Tk_GetAnchor</strong> is identical to
+<strong>Tk_GetAnchorFromObj</strong> except that the description of the
+anchor is specified with a string instead of an object. This prevents
+<strong>Tk_GetAnchor</strong> from caching the return value, so
+<strong>Tk_GetAnchor</strong> is less efficient than
+<strong>Tk_GetAnchorFromObj</strong>.</p>
+<p><strong>Tk_NameOfAnchor</strong> is the logical inverse of
+<strong>Tk_GetAnchor</strong>. Given an anchor position such as
+<strong>TK_ANCHOR_N</strong> it returns a statically-allocated string
+corresponding to <em>anchor</em>. If <em>anchor</em> is not a legal
+anchor value, then is returned.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>anchor position</p>

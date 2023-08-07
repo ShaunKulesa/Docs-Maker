@@ -1,0 +1,119 @@
+<h1 id="name">NAME</h1>
+<p>Tcl_Exit, Tcl_Finalize, Tcl_CreateExitHandler, Tcl_DeleteExitHandler,
+Tcl_ExitThread, Tcl_FinalizeThread, Tcl_CreateThreadExitHandler,
+Tcl_DeleteThreadExitHandler, Tcl_SetExitProc - end the application or
+thread (and invoke exit handlers)</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tcl.h&gt;
+
+Tcl_Exit(status)
+
+Tcl_Finalize()
+
+Tcl_CreateExitHandler(proc, clientData)
+
+Tcl_DeleteExitHandler(proc, clientData)
+
+Tcl_ExitThread(status)
+
+Tcl_FinalizeThread()
+
+Tcl_CreateThreadExitHandler(proc, clientData)
+
+Tcl_DeleteThreadExitHandler(proc, clientData)
+
+Tcl_ExitProc *
+Tcl_SetExitProc(proc)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Provides information about why the application or thread exited.
+Exact meaning may be platform-specific. 0 usually means a normal exit,
+any nonzero value usually means that an error occurred.</p>
+<p>Procedure to invoke before exiting application, or (for
+<strong>Tcl_SetExitProc</strong>) NULL to uninstall the current
+application exit procedure.</p>
+<p>Arbitrary one-word value to pass to <em>proc</em>.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>The procedures described here provide a graceful mechanism to end the
+execution of a <strong>Tcl</strong> application. Exit handlers are
+invoked to cleanup the application's state before ending the execution
+of <strong>Tcl</strong> code.</p>
+<p>Invoke <strong>Tcl_Exit</strong> to end a <strong>Tcl</strong>
+application and to exit from this process. This procedure is invoked by
+the <strong>exit</strong> command, and can be invoked anyplace else to
+terminate the application. No-one should ever invoke the
+<strong>exit</strong> system procedure directly; always invoke
+<strong>Tcl_Exit</strong> instead, so that it can invoke exit handlers.
+Note that if other code invokes <strong>exit</strong> system procedure
+directly, or otherwise causes the application to terminate without
+calling <strong>Tcl_Exit</strong>, the exit handlers will not be run.
+<strong>Tcl_Exit</strong> internally invokes the <strong>exit</strong>
+system call, thus it never returns control to its caller. If an
+application exit handler has been installed (see
+<strong>Tcl_SetExitProc</strong>), that handler is invoked with an
+argument consisting of the exit status (cast to ClientData); the
+application exit handler should not return control to Tcl.</p>
+<p><strong>Tcl_Finalize</strong> is similar to <strong>Tcl_Exit</strong>
+except that it does not exit from the current process. It is useful for
+cleaning up when a process is finished using <strong>Tcl</strong> but
+wishes to continue executing, and when <strong>Tcl</strong> is used in a
+dynamically loaded extension that is about to be unloaded. Your code
+should always invoke <strong>Tcl_Finalize</strong> when
+<strong>Tcl</strong> is being unloaded, to ensure proper cleanup.
+<strong>Tcl_Finalize</strong> can be safely called more than once.</p>
+<p><strong>Tcl_ExitThread</strong> is used to terminate the current
+thread and invoke per-thread exit handlers. This finalization is done by
+<strong>Tcl_FinalizeThread</strong>, which you can call if you just want
+to clean up per-thread state and invoke the thread exit handlers.
+<strong>Tcl_Finalize</strong> calls <strong>Tcl_FinalizeThread</strong>
+for the current thread automatically.</p>
+<p><strong>Tcl_CreateExitHandler</strong> arranges for <em>proc</em> to
+be invoked by <strong>Tcl_Finalize</strong> and
+<strong>Tcl_Exit</strong>. <strong>Tcl_CreateThreadExitHandler</strong>
+arranges for <em>proc</em> to be invoked by
+<strong>Tcl_FinalizeThread</strong> and <strong>Tcl_ExitThread</strong>.
+This provides a hook for cleanup operations such as flushing buffers and
+freeing global memory. <em>Proc</em> should match the type
+<strong>Tcl_ExitProc</strong>:</p>
+<pre><code>typedef void Tcl_ExitProc(
+        ClientData clientData);</code></pre>
+<p>The <em>clientData</em> parameter to <em>proc</em> is a copy of the
+<em>clientData</em> argument given to
+<strong>Tcl_CreateExitHandler</strong> or
+<strong>Tcl_CreateThreadExitHandler</strong> when the callback was
+created. Typically, <em>clientData</em> points to a data structure
+containing application-specific information about what to do in
+<em>proc</em>.</p>
+<p><strong>Tcl_DeleteExitHandler</strong> and
+<strong>Tcl_DeleteThreadExitHandler</strong> may be called to delete a
+previously-created exit handler. It removes the handler indicated by
+<em>proc</em> and <em>clientData</em> so that no call to <em>proc</em>
+will be made. If no such handler exists then
+<strong>Tcl_DeleteExitHandler</strong> or
+<strong>Tcl_DeleteThreadExitHandler</strong> does nothing.</p>
+<p><strong>Tcl_Finalize</strong> and <strong>Tcl_Exit</strong> execute
+all registered exit handlers, in reverse order from the order in which
+they were registered. This matches the natural order in which extensions
+are loaded and unloaded; if extension <strong>A</strong> loads extension
+<strong>B</strong>, it usually unloads <strong>B</strong> before it
+itself is unloaded. If extension <strong>A</strong> registers its exit
+handlers before loading extension <strong>B</strong>, this ensures that
+any exit handlers for <strong>B</strong> will be executed before the
+exit handlers for <strong>A</strong>.</p>
+<p><strong>Tcl_Finalize</strong> and <strong>Tcl_Exit</strong> call
+<strong>Tcl_FinalizeThread</strong> and the thread exit handlers
+<em>after</em> the process-wide exit handlers. This is because thread
+finalization shuts down the I/O channel system, so any attempt at I/O by
+the global exit handlers will vanish into the bitbucket.</p>
+<p><strong>Tcl_SetExitProc</strong> installs an application exit
+handler, returning the previously-installed application exit handler or
+NULL if no application handler was installed. If an application exit
+handler is installed, that exit handler takes over complete
+responsibility for finalization of Tcl's subsystems via
+<strong>Tcl_Finalize</strong> at an appropriate time. The argument
+passed to <em>proc</em> when it is invoked will be the exit status code
+(as passed to <strong>Tcl_Exit</strong>) cast to a ClientData value.</p>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-Commands/exit.html">exit</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>abort, callback, cleanup, dynamic loading, end application, exit,
+unloading, thread</p>

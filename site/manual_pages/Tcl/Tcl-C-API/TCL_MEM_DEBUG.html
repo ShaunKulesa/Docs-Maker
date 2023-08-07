@@ -1,0 +1,69 @@
+<h1 id="name">NAME</h1>
+<p>TCL_MEM_DEBUG - Compile-time flag to enable Tcl memory debugging</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>When Tcl is compiled with <strong>TCL_MEM_DEBUG</strong> defined, a
+powerful set of memory debugging aids is included in the compiled
+binary. This includes C and Tcl functions which can aid with debugging
+memory leaks, memory allocation overruns, and other memory related
+errors.</p>
+<h1 id="enabling-memory-debugging">ENABLING MEMORY DEBUGGING</h1>
+<p>To enable memory debugging, Tcl should be recompiled from scratch
+with <strong>TCL_MEM_DEBUG</strong> defined (e.g. by passing the
+<em>--enable-symbols=mem</em> flag to the <em>configure</em> script when
+building). This will also compile in a non-stub version of
+<strong>Tcl_InitMemory</strong> to add the <strong>memory</strong>
+command to Tcl.</p>
+<p><strong>TCL_MEM_DEBUG</strong> must be either left defined for all
+modules or undefined for all modules that are going to be linked
+together. If they are not, link errors will occur, with either
+<strong>Tcl_DbCkfree</strong> and <strong>Tcl_DbCkalloc</strong> or
+<strong>Tcl_Alloc</strong> and <strong>Tcl_Free</strong> being
+undefined.</p>
+<p>Once memory debugging support has been compiled into Tcl, the C
+functions <strong>Tcl_ValidateAllMemory</strong>, and
+<strong>Tcl_DumpActiveMemory</strong>, and the Tcl
+<strong>memory</strong> command can be used to validate and examine
+memory usage.</p>
+<h1 id="guard-zones">GUARD ZONES</h1>
+<p>When memory debugging is enabled, whenever a call to
+<strong>ckalloc</strong> is made, slightly more memory than requested is
+allocated so the memory debugging code can keep track of the allocated
+memory, and eight-byte are placed in front of and behind the space that
+will be returned to the caller. (The sizes of the guard zones are
+defined by the C #define <strong>LOW_GUARD_SIZE</strong> and #define
+<strong>HIGH_GUARD_SIZE</strong> in the file
+<em>generic/tclCkalloc.c</em> — it can be extended if you suspect large
+overwrite problems, at some cost in performance.) A known pattern is
+written into the guard zones and, on a call to <strong>ckfree</strong>,
+the guard zones of the space being freed are checked to see if either
+zone has been modified in any way. If one has been, the guard bytes and
+their new contents are identified, and a or message is issued. The
+message includes the address of the memory packet and the file name and
+line number of the code that called <strong>ckfree</strong>. This allows
+you to detect the common sorts of one-off problems, where not enough
+space was allocated to contain the data written, for example.</p>
+<h1 id="debugging-difficult-memory-corruption-problems">DEBUGGING
+DIFFICULT MEMORY CORRUPTION PROBLEMS</h1>
+<p>Normally, Tcl compiled with memory debugging enabled will make it
+easy to isolate a corruption problem. Turning on memory validation with
+the memory command can help isolate difficult problems. If you suspect
+(or know) that corruption is occurring before the Tcl interpreter comes
+up far enough for you to issue commands, you can set
+<strong>MEM_VALIDATE</strong> define, recompile tclCkalloc.c and rebuild
+Tcl. This will enable memory validation from the first call to
+<strong>ckalloc</strong>, again, at a large performance impact.</p>
+<p>If you are desperate and validating memory on every call to
+<strong>ckalloc</strong> and <strong>ckfree</strong> is not enough, you
+can explicitly call <strong>Tcl_ValidateAllMemory</strong> directly at
+any point. It takes a <em>char</em> * and an <em>int</em> which are
+normally the filename and line number of the caller, but they can
+actually be anything you want. Remember to remove the calls after you
+find the problem.</p>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-C-API/ckalloc.html">ckalloc</a>, <a
+href="../Tcl-Commands/memory.html">memory</a>, <a
+href="../Tcl-C-API/Tcl_ValidateAllMemory.html">Tcl_ValidateAllMemory</a>,
+<a
+href="../Tcl-C-API/Tcl_DumpActiveMemory.html">Tcl_DumpActiveMemory</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>memory, debug</p>

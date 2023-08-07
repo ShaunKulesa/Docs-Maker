@@ -1,0 +1,97 @@
+<h1 id="name">NAME</h1>
+<p>ttk::checkbutton - On/off widget</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>ttk::checkbutton</strong> <em>pathName</em>
+?<em>options</em>?</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>A <strong>ttk::checkbutton</strong> widget is used to show or change
+a setting. It has two states, selected and deselected. The state of the
+checkbutton may be linked to a Tcl variable.</p>
+<h1 id="standard-options">STANDARD OPTIONS</h1>
+<pre><code>-class   -compound   -cursor
+-image  -state  -style
+-takefocus  -text   -textvariable
+-underline  -width</code></pre>
+<p>See the manual entry for details on the standard options.</p>
+<h1 id="widget-specific-options">WIDGET-SPECIFIC OPTIONS</h1>
+<pre><code>Command-Line Name:   -command
+Database Name:  command
+Database Class: Command</code></pre>
+<blockquote>
+<p>A Tcl script to execute whenever the widget is invoked.</p>
+</blockquote>
+<pre><code>Command-Line Name:   -offvalue
+Database Name:  offValue
+Database Class: OffValue</code></pre>
+<blockquote>
+<p>The value to store in the associated <strong>-variable</strong> when
+the widget is deselected. Defaults to <strong>0</strong>.</p>
+</blockquote>
+<pre><code>Command-Line Name:   -onvalue
+Database Name:  onValue
+Database Class: OnValue</code></pre>
+<blockquote>
+<p>The value to store in the associated <strong>-variable</strong> when
+the widget is selected. Defaults to <strong>1</strong>.</p>
+</blockquote>
+<pre><code>Command-Line Name:   -variable
+Database Name:  variable
+Database Class: Variable</code></pre>
+<blockquote>
+<p>The name of a global variable whose value is linked to the widget.
+Defaults to the widget pathname if not specified.</p>
+</blockquote>
+<h1 id="widget-command">WIDGET COMMAND</h1>
+<p>In addition to the standard <strong>cget</strong>,
+<strong>configure</strong>, <strong>identify</strong>,
+<strong>instate</strong>, and <strong>state</strong> commands,
+checkbuttons support the following additional widget commands:</p>
+<dl>
+<dt><em>pathname</em> <strong>invoke</strong></dt>
+<dd>
+<p>Toggles between the selected and deselected states and evaluates the
+associated <strong>-command</strong>. If the widget is currently
+selected, sets the <strong>-variable</strong> to the
+<strong>-offvalue</strong> and deselects the widget; otherwise, sets the
+<strong>-variable</strong> to the <strong>-onvalue</strong> Returns the
+result of the <strong>-command</strong>.</p>
+</dd>
+</dl>
+<h1 id="widget-states">WIDGET STATES</h1>
+<p>The widget does not respond to user input if the
+<strong>disabled</strong> state is set. The widget sets the
+<strong>selected</strong> state whenever the linked
+<strong>-variable</strong> is set to the widget's
+<strong>-onvalue</strong>, and clears it otherwise. The widget sets the
+<strong>alternate</strong> state whenever the linked
+<strong>-variable</strong> is unset. (The <strong>alternate</strong>
+state may be used to indicate a or selection.)</p>
+<h1 id="standard-styles">STANDARD STYLES</h1>
+<p><strong>Ttk::checkbutton</strong> widgets support the
+<strong>Toolbutton</strong> style in all standard themes, which is
+useful for creating widgets for toolbars.</p>
+<h1 id="styling-options">STYLING OPTIONS</h1>
+<p>The class name for a <strong>ttk::checkbutton</strong> is
+<strong>TCheckbutton</strong>.</p>
+<p>Dynamic states: <strong>active</strong>, <strong>alternate</strong>,
+<strong>disabled</strong>, <strong>pressed</strong>,
+<strong>selected</strong>, <strong>readonly</strong>.</p>
+<p><strong>TCheckbutton</strong> styling options configurable with
+<strong>ttk::style</strong> are:</p>
+<p><strong>-background</strong> <em>color</em><br />
+<strong>-compound</strong> <em>compound</em><br />
+<strong>-foreground</strong> <em>color</em><br />
+<strong>-indicatorbackground</strong> <em>color</em><br />
+<strong>-indicatorcolor</strong> <em>color</em><br />
+<strong>-indicatormargin</strong> <em>padding</em><br />
+<strong>-indicatorrelief</strong> <em>relief</em><br />
+<strong>-padding</strong> <em>padding</em></p>
+<p>Some options are only available for specific themes.</p>
+<p>See the <strong>ttk::style</strong> manual page for information on
+how to configure ttk styles.</p>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tk-Commands/ttk::widget.html">ttk::widget</a>, <a
+href="../Tk-Commands/ttk::radiobutton.html">ttk::radiobutton</a>, <a
+href="../Tk-Commands/checkbutton.html">checkbutton</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>widget, button, toggle, check, option</p>

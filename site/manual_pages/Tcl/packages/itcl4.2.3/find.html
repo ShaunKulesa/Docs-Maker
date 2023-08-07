@@ -1,0 +1,54 @@
+<h1 id="name">NAME</h1>
+<p>itcl::find - search for classes and objects</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>itcl::find</strong> <em>option</em> ?<em>arg arg
+...</em>?</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>The <strong>find</strong> command is used to find classes and objects
+that are available in the current interpreter. Classes and objects are
+reported first in the active namespace, then in all other namespaces in
+the interpreter.</p>
+<p>The <em>option</em> argument determines what action is carried out by
+the command. The legal <em>options</em> (which may be abbreviated)
+are:</p>
+<dl>
+<dt><strong>find classes ?</strong><em>pattern</em>?</dt>
+<dd>
+<p>Returns a list of [incr Tcl] classes. Classes in the current
+namespace are listed first, followed by classes in all other namespaces
+in the interpreter. If the optional <em>pattern</em> is specified, then
+the reported names are compared using the rules of the "<strong>string
+match</strong>" command, and only matching names are reported.</p>
+<p>If a class resides in the current namespace context, this command
+reports its simple name--without any qualifiers. However, if the
+<em>pattern</em> contains <strong>::</strong> qualifiers, or if the
+class resides in another context, this command reports its
+fully-qualified name. Therefore, you can use the following command to
+obtain a list where all names are fully-qualified:</p>
+<pre><code>itcl::find classes ::*</code></pre>
+</dd>
+<dt><strong>find objects ?</strong><em>pattern</em>?
+?<strong>-class</strong> <em>className</em>? ?<strong>-isa</strong>
+<em>className</em>?</dt>
+<dd>
+<p>Returns a list of [incr Tcl] objects. Objects in the current
+namespace are listed first, followed by objects in all other namespaces
+in the interpreter. If the optional <em>pattern</em> is specified, then
+the reported names are compared using the rules of the "<strong>string
+match</strong>" command, and only matching names are reported. If the
+optional "<strong>-class</strong>" parameter is specified, this list is
+restricted to objects whose most-specific class is <em>className</em>.
+If the optional "<strong>-isa</strong>" parameter is specified, this
+list is further restricted to objects having the given
+<em>className</em> anywhere in their heritage.</p>
+<p>If an object resides in the current namespace context, this command
+reports its simple name--without any qualifiers. However, if the
+<em>pattern</em> contains <strong>::</strong> qualifiers, or if the
+object resides in another context, this command reports its
+fully-qualified name. Therefore, you can use the following command to
+obtain a list where all names are fully-qualified:</p>
+<pre><code>itcl::find objects ::*</code></pre>
+</dd>
+</dl>
+<h1 id="keywords">KEYWORDS</h1>
+<p>class, object, search, import</p>

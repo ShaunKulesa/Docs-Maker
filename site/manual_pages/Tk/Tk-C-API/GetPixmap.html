@@ -1,0 +1,33 @@
+<h1 id="name">NAME</h1>
+<p>Tk_GetPixmap, Tk_FreePixmap - allocate and free pixmaps</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tk.h&gt;
+
+Pixmap
+Tk_GetPixmap(display, d, width, height, depth)
+
+Tk_FreePixmap(display, pixmap)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>X display for the pixmap.</p>
+<p>Pixmap or window where the new pixmap will be used for drawing.</p>
+<p>Width of pixmap.</p>
+<p>Height of pixmap.</p>
+<p>Number of bits per pixel in pixmap.</p>
+<p>Pixmap to destroy.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>These procedures are identical to the Xlib procedures
+<strong>XCreatePixmap</strong> and <strong>XFreePixmap</strong>, except
+that they have extra code to manage X resource identifiers so that
+identifiers for deleted pixmaps can be reused in the future. It is
+important for Tk applications to use these procedures rather than
+<strong>XCreatePixmap</strong> and <strong>XFreePixmap</strong>;
+otherwise long-running applications may run out of resource
+identifiers.</p>
+<p><strong>Tk_GetPixmap</strong> creates a pixmap suitable for drawing
+in <em>d</em>, with dimensions given by <em>width</em>, <em>height</em>,
+and <em>depth</em>, and returns its identifier.
+<strong>Tk_FreePixmap</strong> destroys the pixmap given by
+<em>pixmap</em> and makes its resource identifier available for
+reuse.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>pixmap, resource identifier</p>

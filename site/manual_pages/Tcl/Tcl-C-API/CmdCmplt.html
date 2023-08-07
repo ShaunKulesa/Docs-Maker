@@ -1,0 +1,17 @@
+<h1 id="name">NAME</h1>
+<p>Tcl_CommandComplete - Check for unmatched braces in a Tcl command</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tcl.h&gt;
+
+int
+Tcl_CommandComplete(cmd)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Command string to test for completeness.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p><strong>Tcl_CommandComplete</strong> takes a Tcl command string as
+argument and determines whether it contains one or more complete
+commands (i.e. there are no unclosed quotes, braces, brackets, or
+variable references). If the command string is complete then it returns
+1; otherwise it returns 0.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>complete command, partial command</p>

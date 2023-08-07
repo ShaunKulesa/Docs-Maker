@@ -1,0 +1,25 @@
+<h1 id="name">NAME</h1>
+<p>join - Create a string by joining together list elements</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>join</strong> <em>list</em> ?<em>joinString</em>?</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>The <em>list</em> argument must be a valid Tcl list. This command
+returns the string formed by joining all of the elements of
+<em>list</em> together with <em>joinString</em> separating each adjacent
+pair of elements. The <em>joinString</em> argument defaults to a space
+character.</p>
+<h1 id="examples">EXAMPLES</h1>
+<p>Making a comma-separated list:</p>
+<pre><code>set data {1 2 3 4 5}
+join $data &quot;, &quot;
+     → 1, 2, 3, 4, 5</code></pre>
+<p>Using <strong>join</strong> to flatten a list by a single level:</p>
+<pre><code>set data {1 {2 3} 4 {5 {6 7} 8}}
+join $data
+     → 1 2 3 4 5 {6 7} 8</code></pre>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-Commands/list.html">list</a>, <a
+href="../Tcl-Commands/lappend.html">lappend</a>, <a
+href="../Tcl-Commands/split.html">split</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>element, join, list, separator</p>

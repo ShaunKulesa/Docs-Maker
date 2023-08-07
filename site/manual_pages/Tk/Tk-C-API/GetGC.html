@@ -1,0 +1,51 @@
+<h1 id="name">NAME</h1>
+<p>Tk_GetGC, Tk_FreeGC - maintain database of read-only graphics
+contexts</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tk.h&gt;
+
+GC
+Tk_GetGC(tkwin, valueMask, valuePtr)
+
+Tk_FreeGC(display, gc)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Token for window in which the graphics context will be used.</p>
+<p>Mask of bits (such as <strong>GCForeground</strong> or
+<strong>GCStipple</strong>) indicating which fields of
+<em>*valuePtr</em> are valid.</p>
+<p>Pointer to structure describing the desired values for the graphics
+context.</p>
+<p>Display for which <em>gc</em> was allocated.</p>
+<p>X identifier for graphics context that is no longer needed. Must have
+been allocated by <strong>Tk_GetGC</strong>.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p><strong>Tk_GetGC</strong> and <strong>Tk_FreeGC</strong> manage a
+collection of graphics contexts being used by an application. The
+procedures allow graphics contexts to be shared, thereby avoiding the
+server overhead that would be incurred if a separate GC were created for
+each use. <strong>Tk_GetGC</strong> takes arguments describing the
+desired graphics context and returns an X identifier for a GC that fits
+the description. The graphics context that is returned will have default
+values in all of the fields not specified explicitly by
+<em>valueMask</em> and <em>valuePtr</em>.</p>
+<p><strong>Tk_GetGC</strong> maintains a database of all the graphics
+contexts it has created. Whenever possible, a call to
+<strong>Tk_GetGC</strong> will return an existing graphics context
+rather than creating a new one. This approach can substantially reduce
+server overhead, so <strong>Tk_GetGC</strong> should generally be used
+in preference to the Xlib procedure <strong>XCreateGC</strong>, which
+creates a new graphics context on each call.</p>
+<p>Since the return values of <strong>Tk_GetGC</strong> are shared,
+callers should never modify the graphics contexts returned by
+<strong>Tk_GetGC</strong>. If a graphics context must be modified
+dynamically, then it should be created by calling
+<strong>XCreateGC</strong> instead of <strong>Tk_GetGC</strong>.</p>
+<p>When a graphics context is no longer needed,
+<strong>Tk_FreeGC</strong> should be called to release it. There should
+be exactly one call to <strong>Tk_FreeGC</strong> for each call to
+<strong>Tk_GetGC</strong>. When a graphics context is no longer in use
+anywhere (i.e. it has been freed as many times as it has been gotten)
+<strong>Tk_FreeGC</strong> will release it to the X server and delete it
+from the database.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>graphics context</p>

@@ -1,0 +1,73 @@
+<h1 id="name">NAME</h1>
+<p>ttk::frame - Simple container widget</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>ttk::frame</strong> <em>pathName</em> ?<em>options</em>?</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>A <strong>ttk::frame</strong> widget is a container, used to group
+other widgets together.</p>
+<h1 id="standard-options">STANDARD OPTIONS</h1>
+<pre><code>-class   -cursor -padding    -style
+-takefocus</code></pre>
+<p>See the manual entry for details on the standard options.</p>
+<h1 id="widget-specific-options">WIDGET-SPECIFIC OPTIONS</h1>
+<pre><code>Command-Line Name:   -borderwidth
+Database Name:  borderWidth
+Database Class: BorderWidth</code></pre>
+<blockquote>
+<p>The desired width of the widget border. Defaults to 0. May be ignored
+depending on the theme used.</p>
+</blockquote>
+<pre><code>Command-Line Name:   -relief
+Database Name:  relief
+Database Class: Relief</code></pre>
+<blockquote>
+<p>One of the standard Tk border styles: <strong>flat</strong>,
+<strong>groove</strong>, <strong>raised</strong>,
+<strong>ridge</strong>, <strong>solid</strong>, or
+<strong>sunken</strong>. Defaults to <strong>flat</strong>.</p>
+</blockquote>
+<pre><code>Command-Line Name:   -width
+Database Name:  width
+Database Class: Width</code></pre>
+<blockquote>
+<p>If specified, the widget's requested width in pixels.</p>
+</blockquote>
+<pre><code>Command-Line Name:   -height
+Database Name:  height
+Database Class: Height</code></pre>
+<blockquote>
+<p>If specified, the widget's requested height in pixels.</p>
+</blockquote>
+<h1 id="widget-command">WIDGET COMMAND</h1>
+<p>Supports the standard widget commands <strong>configure</strong>,
+<strong>cget</strong>, <strong>identify</strong>,
+<strong>instate</strong>, and <strong>state</strong>; see
+<em>ttk::widget(n)</em>.</p>
+<h1 id="notes">NOTES</h1>
+<p>Note that if the <strong>pack</strong>, <strong>grid</strong>, or
+other geometry managers are used to manage the children of the
+<strong>frame</strong>, by the GM's requested size will normally take
+precedence over the <strong>frame</strong> widget's
+<strong>-width</strong> and <strong>-height</strong> options.
+<strong>pack propagate</strong> and <strong>grid propagate</strong> can
+be used to change this.</p>
+<h1 id="styling-options">STYLING OPTIONS</h1>
+<p>The class name for a <strong>ttk::frame</strong> is
+<strong>TFrame</strong>.</p>
+<p><strong>TFrame</strong> styling options configurable with
+<strong>ttk::style</strong> are:</p>
+<p><strong>-background</strong> <em>color</em><br />
+<strong>-relief</strong> <em>relief</em></p>
+<p>Some options are only available for specific themes.</p>
+<p>See the <strong>ttk::style</strong> manual page for information on
+how to configure ttk styles.</p>
+<h1 id="bindings">BINDINGS</h1>
+<p>When a new <strong>ttk::frame</strong> is created, it has no default
+event bindings; <strong>ttk::frame</strong>s are not intended to be
+interactive.</p>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tk-Commands/ttk::widget.html">ttk::widget</a>, <a
+href="../Tk-Commands/ttk::labelframe.html">ttk::labelframe</a>, <a
+href="../Tk-Commands/frame.html">frame</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>widget, frame, container</p>

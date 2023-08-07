@@ -1,0 +1,79 @@
+<h1 id="name">NAME</h1>
+<p>Tcl_NewByteArrayObj, Tcl_SetByteArrayObj, Tcl_GetByteArrayFromObj,
+Tcl_SetByteArrayLength - manipulate Tcl values as a arrays of bytes</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tcl.h&gt;
+
+Tcl_Obj *
+Tcl_NewByteArrayObj(bytes, length)
+
+void
+Tcl_SetByteArrayObj(objPtr, bytes, length)
+
+unsigned char *
+Tcl_GetByteArrayFromObj(objPtr, lengthPtr)
+
+unsigned char *
+Tcl_SetByteArrayLength(objPtr, length)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>The array of bytes used to initialize or set a byte-array value. May
+be NULL even if <em>length</em> is non-zero.</p>
+<p>The length of the array of bytes. It must be &gt;= 0.</p>
+<p>For <strong>Tcl_SetByteArrayObj</strong>, this points to the value to
+be converted to byte-array type. For
+<strong>Tcl_GetByteArrayFromObj</strong> and
+<strong>Tcl_SetByteArrayLength</strong>, this points to the value from
+which to get the byte-array value; if <em>objPtr</em> does not already
+point to a byte-array value, it will be converted to one.</p>
+<p>If non-NULL, filled with the length of the array of bytes in the
+value.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>These procedures are used to create, modify, and read Tcl byte-array
+values from C code. Byte-array values are typically used to hold the
+results of binary IO operations or data structures created with the
+<strong>binary</strong> command. In Tcl, an array of bytes is not
+equivalent to a string. Conceptually, a string is an array of Unicode
+characters, while a byte-array is an array of 8-bit quantities with no
+implicit meaning. Accessor functions are provided to get the string
+representation of a byte-array or to convert an arbitrary value to a
+byte-array. Obtaining the string representation of a byte-array value
+(by calling <strong>Tcl_GetStringFromObj</strong>) produces a properly
+formed UTF-8 sequence with a one-to-one mapping between the bytes in the
+internal representation and the UTF-8 characters in the string
+representation.</p>
+<p><strong>Tcl_NewByteArrayObj</strong> and
+<strong>Tcl_SetByteArrayObj</strong> will create a new value of
+byte-array type or modify an existing value to have a byte-array type.
+Both of these procedures set the value's type to be byte-array and set
+the value's internal representation to a copy of the array of bytes
+given by <em>bytes</em>. <strong>Tcl_NewByteArrayObj</strong> returns a
+pointer to a newly allocated value with a reference count of zero.
+<strong>Tcl_SetByteArrayObj</strong> invalidates any old string
+representation and, if the value is not already a byte-array value,
+frees any old internal representation. If <em>bytes</em> is NULL then
+the new byte array contains arbitrary values.</p>
+<p><strong>Tcl_GetByteArrayFromObj</strong> converts a Tcl value to
+byte-array type and returns a pointer to the value's new internal
+representation as an array of bytes. The length of this array is stored
+in <em>lengthPtr</em> if <em>lengthPtr</em> is non-NULL. The storage for
+the array of bytes is owned by the value and should not be freed. The
+contents of the array may be modified by the caller only if the value is
+not shared and the caller invalidates the string representation.</p>
+<p><strong>Tcl_SetByteArrayLength</strong> converts the Tcl value to
+byte-array type and changes the length of the value's internal
+representation as an array of bytes. If <em>length</em> is greater than
+the space currently allocated for the array, the array is reallocated to
+the new length; the newly allocated bytes at the end of the array have
+arbitrary values. If <em>length</em> is less than the space currently
+allocated for the array, the length of array is reduced to the new
+length. The return value is a pointer to the value's new array of
+bytes.</p>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a
+href="../Tcl-C-API/Tcl_GetStringFromObj.html">Tcl_GetStringFromObj</a>,
+<a href="../Tcl-C-API/Tcl_NewObj.html">Tcl_NewObj</a>, <a
+href="../Tcl-C-API/Tcl_IncrRefCount.html">Tcl_IncrRefCount</a>, <a
+href="../Tcl-C-API/Tcl_DecrRefCount.html">Tcl_DecrRefCount</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>value, binary data, byte array, utf, unicode,
+internationalization</p>

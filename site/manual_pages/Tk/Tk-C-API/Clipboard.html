@@ -1,0 +1,54 @@
+<h1 id="name">NAME</h1>
+<p>Tk_ClipboardClear, Tk_ClipboardAppend - Manage the clipboard</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tk.h&gt;
+
+int
+Tk_ClipboardClear(interp, tkwin)
+
+int
+Tk_ClipboardAppend(interp, tkwin, target, format, buffer)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Interpreter to use for reporting errors.</p>
+<p>Window that determines which display's clipboard to manipulate.</p>
+<p>Conversion type for this clipboard item; has same meaning as
+<em>target</em> argument to <strong>Tk_CreateSelHandler</strong>.</p>
+<p>Representation to use when data is retrieved; has same meaning as
+<em>format</em> argument to <strong>Tk_CreateSelHandler</strong>.</p>
+<p>Null terminated string containing the data to be appended to the
+clipboard.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>These two procedures manage the clipboard for Tk. The clipboard is
+typically managed by calling <strong>Tk_ClipboardClear</strong> once,
+then calling <strong>Tk_ClipboardAppend</strong> to add data for any
+number of targets.</p>
+<p><strong>Tk_ClipboardClear</strong> claims the CLIPBOARD selection and
+frees any data items previously stored on the clipboard in this
+application. It normally returns <strong>TCL_OK</strong>, but if an
+error occurs it returns <strong>TCL_ERROR</strong> and leaves an error
+message in interpreter <em>interp</em>'s result.
+<strong>Tk_ClipboardClear</strong> must be called before a sequence of
+<strong>Tk_ClipboardAppend</strong> calls can be issued.</p>
+<p><strong>Tk_ClipboardAppend</strong> appends a buffer of data to the
+clipboard. The first buffer for a given <em>target</em> determines the
+<em>format</em> for that <em>target</em>. Any successive appends for
+that <em>target</em> must have the same format or an error will be
+returned. <strong>Tk_ClipboardAppend</strong> returns
+<strong>TCL_OK</strong> if the buffer is successfully copied onto the
+clipboard. If the clipboard is not currently owned by the application,
+either because <strong>Tk_ClipboardClear</strong> has not been called or
+because ownership of the clipboard has changed since the last call to
+<strong>Tk_ClipboardClear</strong>, <strong>Tk_ClipboardAppend</strong>
+returns <strong>TCL_ERROR</strong> and leaves an error message in the
+result of interpreter <em>interp</em>.</p>
+<p>In order to guarantee atomicity, no event handling should occur
+between <strong>Tk_ClipboardClear</strong> and the following
+<strong>Tk_ClipboardAppend</strong> calls (otherwise someone could
+retrieve a partially completed clipboard or claim ownership away from
+this application).</p>
+<p><strong>Tk_ClipboardClear</strong> may invoke callbacks, including
+arbitrary Tcl scripts, as a result of losing the CLIPBOARD selection, so
+any calling function should take care to be re-entrant at the point
+<strong>Tk_ClipboardClear</strong> is invoked.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>append, clipboard, clear, format, type</p>

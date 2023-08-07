@@ -1,0 +1,17 @@
+<h1 id="name">NAME</h1>
+<p>Tk_NameOfImage - Return name of image.</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tk.h&gt;
+
+const char *
+Tk_NameOfImage(imageMaster)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Token for image, which was passed to image manager's
+<em>createProc</em> when the image was created.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>This procedure is invoked by image managers to find out the name of
+an image. Given the token for the image, it returns the string name for
+the image.</p>
+<p><em>Tk_ImageModel</em> is synonym for <em>Tk_ImageMaster</em></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>image manager, image name</p>

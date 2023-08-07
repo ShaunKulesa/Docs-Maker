@@ -1,0 +1,31 @@
+<h1 id="name">NAME</h1>
+<p>Tk_FreeXId - make X resource identifier available for reuse</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tk.h&gt;
+
+Tk_FreeXId(display, id)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Display for which <em>id</em> was allocated.</p>
+<p>Identifier of X resource (window, font, pixmap, cursor, graphics
+context, or colormap) that is no longer in use.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>The default allocator for resource identifiers provided by Xlib is
+very simple-minded and does not allow resource identifiers to be
+re-used. If a long-running application reaches the end of the resource
+id space, it will generate an X protocol error and crash. Tk replaces
+the default id allocator with its own allocator, which allows
+identifiers to be reused. In order for this to work,
+<strong>Tk_FreeXId</strong> must be called to tell the allocator about
+resources that have been freed. Tk automatically calls
+<strong>Tk_FreeXId</strong> whenever it frees a resource, so if you use
+procedures like <strong>Tk_GetFont</strong>, <strong>Tk_GetGC</strong>,
+and <strong>Tk_GetPixmap</strong> then you need not call
+<strong>Tk_FreeXId</strong>. However, if you allocate resources directly
+from Xlib, for example by calling <strong>XCreatePixmap</strong>, then
+you should call <strong>Tk_FreeXId</strong> when you call the
+corresponding Xlib free procedure, such as <strong>XFreePixmap</strong>.
+If you do not call <strong>Tk_FreeXId</strong> then the resource
+identifier will be lost, which could cause problems if the application
+runs long enough to lose all of the available identifiers.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>resource identifier</p>

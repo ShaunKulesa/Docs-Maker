@@ -1,0 +1,37 @@
+<h1 id="name">NAME</h1>
+<p>my - invoke any method of current object</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>package require TclOO
+
+my methodName ?arg ...?</code></pre>
+<h1 id="description">DESCRIPTION</h1>
+<p>The <strong>my</strong> command is used to allow methods of objects
+to invoke any method of the object (or its class). In particular, the
+set of valid values for <em>methodName</em> is the set of all methods
+supported by an object and its superclasses, including those that are
+not exported. The object upon which the method is invoked is always the
+one that is the current context of the method (i.e. the object that is
+returned by <strong>self object</strong>) from which the
+<strong>my</strong> command is invoked.</p>
+<p>Each object has its own <strong>my</strong> command, contained in its
+instance namespace.</p>
+<h1 id="examples">EXAMPLES</h1>
+<p>This example shows basic use of <strong>my</strong> to use the
+<strong>variables</strong> method of the <strong>oo::object</strong>
+class, which is not publicly visible by default:</p>
+<pre><code>oo::class create c {
+    method count {} {
+        my variable counter
+        puts [incr counter]
+    }
+}
+c create o
+o count              → prints &quot;1&quot;
+o count              → prints &quot;2&quot;
+o count              → prints &quot;3&quot;</code></pre>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-Commands/next.html">next</a>, <a
+href="../Tcl-Commands/oo::object.html">oo::object</a>, <a
+href="../Tcl-Commands/self.html">self</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>method, method visibility, object, private method, public method</p>

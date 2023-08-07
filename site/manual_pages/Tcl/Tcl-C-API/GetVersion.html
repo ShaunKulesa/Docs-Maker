@@ -1,0 +1,28 @@
+<h1 id="name">NAME</h1>
+<p>Tcl_GetVersion - get the version of the library at runtime</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tcl.h&gt;
+
+Tcl_GetVersion(major, minor, patchLevel, type)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Major version number of the Tcl library.</p>
+<p>Minor version number of the Tcl library.</p>
+<p>The patch level of the Tcl library (or alpha or beta number).</p>
+<p>The type of release, also indicates the type of patch level. Can be
+one of <strong>TCL_ALPHA_RELEASE</strong>,
+<strong>TCL_BETA_RELEASE</strong>, or
+<strong>TCL_FINAL_RELEASE</strong>.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p><strong>Tcl_GetVersion</strong> should be used to query the version
+number of the Tcl library at runtime. This is useful when using a
+dynamically loaded Tcl library or when writing a stubs-aware extension.
+For instance, if you write an extension that is linked against the Tcl
+stubs library, it could be loaded into a program linked to an older
+version of Tcl than you expected. Use <strong>Tcl_GetVersion</strong> to
+verify that fact, and possibly to change the behavior of your
+extension.</p>
+<p><strong>Tcl_GetVersion</strong> accepts NULL for any of the
+arguments. For instance if you do not care about the <em>patchLevel</em>
+of the library, pass a NULL for the <em>patchLevel</em> argument.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>version, patchlevel, major, minor, alpha, beta, release</p>

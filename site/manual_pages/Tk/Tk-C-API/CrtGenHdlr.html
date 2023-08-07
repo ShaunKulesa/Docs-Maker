@@ -1,0 +1,58 @@
+<h1 id="name">NAME</h1>
+<p>Tk_CreateGenericHandler, Tk_DeleteGenericHandler - associate
+procedure callback with all X events</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tk.h&gt;
+
+Tk_CreateGenericHandler(proc, clientData)
+
+Tk_DeleteGenericHandler(proc, clientData)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Procedure to invoke whenever any X event occurs on any display.</p>
+<p>Arbitrary one-word value to pass to <em>proc</em>.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p><strong>Tk_CreateGenericHandler</strong> arranges for <em>proc</em>
+to be invoked in the future whenever any X event occurs. This mechanism
+is <em>not</em> intended for dispatching X events on windows managed by
+Tk (you should use <strong>Tk_CreateEventHandler</strong> for this
+purpose). <strong>Tk_CreateGenericHandler</strong> is intended for other
+purposes, such as tracing X events, monitoring events on windows not
+owned by Tk, accessing X-related libraries that were not originally
+designed for use with Tk, and so on.</p>
+<p>The callback to <em>proc</em> will be made by
+<strong>Tk_HandleEvent</strong>; this mechanism only works in programs
+that dispatch events through <strong>Tk_HandleEvent</strong> (or through
+other Tk procedures that call <strong>Tk_HandleEvent</strong>, such as
+<strong>Tcl_DoOneEvent</strong> or <strong>Tk_MainLoop</strong>).</p>
+<p><em>Proc</em> should have arguments and result that match the type
+<strong>Tk_GenericProc</strong>:</p>
+<pre><code>typedef int Tk_GenericProc(
+        ClientData clientData,
+        XEvent *eventPtr);</code></pre>
+<p>The <em>clientData</em> parameter to <em>proc</em> is a copy of the
+<em>clientData</em> argument given to
+<strong>Tk_CreateGenericHandler</strong> when the callback was created.
+Typically, <em>clientData</em> points to a data structure containing
+application-specific information about how to handle events.
+<em>EventPtr</em> is a pointer to the X event.</p>
+<p>Whenever an X event is processed by <strong>Tk_HandleEvent</strong>,
+<em>proc</em> is called. The return value from <em>proc</em> is normally
+0. A non-zero return value indicates that the event is not to be handled
+further; that is, <em>proc</em> has done all processing that is to be
+allowed for the event.</p>
+<p>If there are multiple generic event handlers, each one is called for
+each event, in the order in which they were established.</p>
+<p><strong>Tk_DeleteGenericHandler</strong> may be called to delete a
+previously-created generic event handler: it deletes each handler it
+finds that matches the <em>proc</em> and <em>clientData</em> arguments.
+If no such handler exists, then <strong>Tk_DeleteGenericHandler</strong>
+returns without doing anything. Although Tk supports it, it's probably a
+bad idea to have more than one callback with the same <em>proc</em> and
+<em>clientData</em> arguments.</p>
+<p>Establishing a generic event handler does nothing to ensure that the
+process will actually receive the X events that the handler wants to
+process. For example, it is the caller's responsibility to invoke
+<strong>XSelectInput</strong> to select the desired events, if that is
+necessary.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>bind, callback, event, handler</p>

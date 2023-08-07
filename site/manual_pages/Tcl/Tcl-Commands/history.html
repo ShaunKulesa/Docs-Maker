@@ -1,0 +1,107 @@
+<h1 id="name">NAME</h1>
+<p>history - Manipulate the history list</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>history</strong> ?<em>option</em>? ?<em>arg arg ...</em>?</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>The <strong>history</strong> command performs one of several
+operations related to recently-executed commands recorded in a history
+list. Each of these recorded commands is referred to as an When
+specifying an event to the <strong>history</strong> command, the
+following forms may be used:</p>
+<dl>
+<dt>[1]</dt>
+<dd>
+<p>A number: if positive, it refers to the event with that number (all
+events are numbered starting at 1). If the number is negative, it
+selects an event relative to the current event (<strong>-1</strong>
+refers to the previous event, <strong>-2</strong> to the one before
+that, and so on). Event <strong>0</strong> refers to the current
+event.</p>
+</dd>
+<dt>[2]</dt>
+<dd>
+<p>A string: selects the most recent event that matches the string. An
+event is considered to match the string either if the string is the same
+as the first characters of the event, or if the string matches the event
+in the sense of the <strong>string match</strong> command.</p>
+</dd>
+</dl>
+<p>The <strong>history</strong> command can take any of the following
+forms:</p>
+<dl>
+<dt><strong>history</strong></dt>
+<dd>
+<p>Same as <strong>history info</strong>, described below.</p>
+</dd>
+<dt><strong>history add</strong> <em>command</em>
+?<strong>exec</strong>?</dt>
+<dd>
+<p>Adds the <em>command</em> argument to the history list as a new
+event. If <strong>exec</strong> is specified (or abbreviated) then the
+command is also executed and its result is returned. If
+<strong>exec</strong> is not specified then an empty string is returned
+as result.</p>
+</dd>
+<dt><strong>history change</strong> <em>newValue</em>
+?<em>event</em>?</dt>
+<dd>
+<p>Replaces the value recorded for an event with <em>newValue</em>.
+<em>Event</em> specifies the event to replace, and defaults to the
+<em>current</em> event (not event <strong>-1</strong>). This command is
+intended for use in commands that implement new forms of history
+substitution and wish to replace the current event (which invokes the
+substitution) with the command created through substitution. The return
+value is an empty string.</p>
+</dd>
+<dt><strong>history clear</strong></dt>
+<dd>
+<p>Erase the history list. The current keep limit is retained. The
+history event numbers are reset.</p>
+</dd>
+<dt><strong>history event</strong> ?<em>event</em>?</dt>
+<dd>
+<p>Returns the value of the event given by <em>event</em>.
+<em>Event</em> defaults to <strong>-1</strong>.</p>
+</dd>
+<dt><strong>history info</strong> ?<em>count</em>?</dt>
+<dd>
+<p>Returns a formatted string (intended for humans to read) giving the
+event number and contents for each of the events in the history list
+except the current event. If <em>count</em> is specified then only the
+most recent <em>count</em> events are returned.</p>
+</dd>
+<dt><strong>history keep</strong> ?<em>count</em>?</dt>
+<dd>
+<p>This command may be used to change the size of the history list to
+<em>count</em> events. Initially, 20 events are retained in the history
+list. If <em>count</em> is not specified, the current keep limit is
+returned.</p>
+</dd>
+<dt><strong>history nextid</strong></dt>
+<dd>
+<p>Returns the number of the next event to be recorded in the history
+list. It is useful for things like printing the event number in
+command-line prompts.</p>
+</dd>
+<dt><strong>history redo</strong> ?<em>event</em>?</dt>
+<dd>
+<p>Re-executes the command indicated by <em>event</em> and returns its
+result. <em>Event</em> defaults to <strong>-1</strong>. This command
+results in history revision: see below for details.</p>
+</dd>
+</dl>
+<h1 id="history-revision">HISTORY REVISION</h1>
+<p>Pre-8.0 Tcl had a complex history revision mechanism. The current
+mechanism is more limited, and the old history operations
+<strong>substitute</strong> and <strong>words</strong> have been
+removed. (As a consolation, the <strong>clear</strong> operation was
+added.)</p>
+<p>The history option <strong>redo</strong> results in much simpler When
+this option is invoked then the most recent event is modified to
+eliminate the history command and replace it with the result of the
+history command. If you want to redo an event without modifying history,
+then use the <strong>event</strong> operation to retrieve some event,
+and the <strong>add</strong> operation to add it to history and execute
+it.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>event, history, record</p>

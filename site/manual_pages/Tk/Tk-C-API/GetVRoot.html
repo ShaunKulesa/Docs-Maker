@@ -1,0 +1,27 @@
+<h1 id="name">NAME</h1>
+<p>Tk_GetVRootGeometry - Get location and size of virtual root for
+window</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tk.h&gt;
+
+Tk_GetVRootGeometry(tkwin, xPtr, yPtr, widthPtr, heightPtr)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Token for window whose virtual root is to be queried.</p>
+<p>Points to word in which to store x-offset of virtual root.</p>
+<p>Points to word in which to store y-offset of virtual root.</p>
+<p>Points to word in which to store width of virtual root.</p>
+<p>Points to word in which to store height of virtual root.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p><strong>Tk_GetVRootGeometry</strong> returns geometry information
+about the virtual root window associated with <em>tkwin</em>. The
+virtual root is the one in which <em>tkwin</em>'s nearest top-level
+ancestor (or <em>tkwin</em> itself if it is a top-level window) has been
+reparented by the window manager. This window is identified by a
+<strong>__SWM_ROOT</strong> or <strong>__WM_ROOT</strong> property
+placed on the top-level window by the window manager. If <em>tkwin</em>
+is not associated with a virtual root (e.g. because the window manager
+does not use virtual roots) then *<em>xPtr</em> and *<em>yPtr</em> will
+be set to 0 and *<em>widthPtr</em> and *<em>heightPtr</em> will be set
+to the dimensions of the screen containing <em>tkwin</em>.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>geometry, height, location, virtual root, width, window manager</p>

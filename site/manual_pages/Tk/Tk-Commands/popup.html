@@ -1,0 +1,32 @@
+<h1 id="name">NAME</h1>
+<p>tk_popup - Post a popup menu</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>tk_popup</strong> <em>menu x y</em> ?<em>entry</em>?</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>This procedure posts a menu at a given position on the screen and
+configures Tk so that the menu and its cascaded children can be
+traversed with the mouse or the keyboard. <em>Menu</em> is the name of a
+menu widget and <em>x</em> and <em>y</em> are the root coordinates at
+which to display the menu. If <em>entry</em> is omitted or an empty
+string, the menu's upper left corner is positioned at the given point.
+Otherwise <em>entry</em> gives the index of an entry in <em>menu</em>
+and the menu will be positioned so that the entry is positioned over the
+given point.</p>
+<h1 id="example">EXAMPLE</h1>
+<p>How to attach a simple popup menu to a widget.</p>
+<pre><code># Create a menu
+set m [menu .popupMenu]
+$m add command -label &quot;Example 1&quot; -command bell
+$m add command -label &quot;Example 2&quot; -command bell
+
+# Create something to attach it to
+pack [label .l -text &quot;Click me!&quot;]
+
+# Arrange for the menu to pop up when the label is clicked
+bind .l &lt;1&gt; {tk_popup .popupMenu %X %Y}</code></pre>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tk-Commands/bind.html">bind</a>, <a
+href="../Tk-Commands/menu.html">menu</a>, <a
+href="../Tk-Commands/tk_optionMenu.html">tk_optionMenu</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>menu, popup</p>

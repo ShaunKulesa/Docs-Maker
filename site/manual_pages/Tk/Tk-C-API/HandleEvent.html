@@ -1,0 +1,28 @@
+<h1 id="name">NAME</h1>
+<p>Tk_HandleEvent - invoke event handlers for window system events</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tk.h&gt;
+
+Tk_HandleEvent(eventPtr)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Pointer to X event to dispatch to relevant handler(s). It is
+important that all unused fields of the structure be set to zero.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p><strong>Tk_HandleEvent</strong> is a lower-level procedure that deals
+with window events. It is called by <strong>Tcl_ServiceEvent</strong>
+(and indirectly by <strong>Tcl_DoOneEvent</strong>), and in a few other
+cases within Tk. It makes callbacks to any window event handlers
+(created by calls to <strong>Tk_CreateEventHandler</strong>) that match
+<em>eventPtr</em> and then returns. In some cases it may be useful for
+an application to bypass the Tk event queue and call
+<strong>Tk_HandleEvent</strong> directly instead of calling
+<strong>Tcl_QueueEvent</strong> followed by
+<strong>Tcl_ServiceEvent</strong>.</p>
+<p>This procedure may be invoked recursively. For example, it is
+possible to invoke <strong>Tk_HandleEvent</strong> recursively from a
+handler called by <strong>Tk_HandleEvent</strong>. This sort of
+operation is useful in some modal situations, such as when a notifier
+has been popped up and an application wishes to wait for the user to
+click a button in the notifier before doing anything else.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>callback, event, handler, window</p>

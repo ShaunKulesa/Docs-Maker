@@ -1,0 +1,29 @@
+<h1 id="name">NAME</h1>
+<p>Tcl_AllowExceptions - allow all exceptions in next script
+evaluation</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tcl.h&gt;
+
+Tcl_AllowExceptions(interp)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Interpreter in which script will be evaluated.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>If a script is evaluated at top-level (i.e. no other scripts are
+pending evaluation when the script is invoked), and if the script
+terminates with a completion code other than <strong>TCL_OK</strong>,
+<strong>TCL_ERROR</strong> or <strong>TCL_RETURN</strong>, then Tcl
+normally converts this into a <strong>TCL_ERROR</strong> return with an
+appropriate message. The particular script evaluation procedures of Tcl
+that act in the manner are <strong>Tcl_EvalObjEx</strong>,
+<strong>Tcl_EvalObjv</strong>, <strong>Tcl_Eval</strong>,
+<strong>Tcl_EvalEx</strong>, <strong>Tcl_GlobalEval</strong>,
+<strong>Tcl_GlobalEvalObj</strong>, <strong>Tcl_VarEval</strong> and
+<strong>Tcl_VarEvalVA</strong>.</p>
+<p>However, if <strong>Tcl_AllowExceptions</strong> is invoked
+immediately before calling one of those a procedures, then arbitrary
+completion codes are permitted from the script, and they are returned
+without modification. This is useful in cases where the caller can deal
+with exceptions such as <strong>TCL_BREAK</strong> or
+<strong>TCL_CONTINUE</strong> in a meaningful way.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>continue, break, exception, interpreter</p>

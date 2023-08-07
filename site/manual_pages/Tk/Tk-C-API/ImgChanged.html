@@ -1,0 +1,42 @@
+<h1 id="name">NAME</h1>
+<p>Tk_ImageChanged - notify widgets that image needs to be redrawn</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tk.h&gt;
+
+Tk_ImageChanged(model, x, y, width, height, imageWidth, imageHeight)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Token for image, which was passed to image's <em>createProc</em> when
+the image was created.</p>
+<p>X-coordinate of upper-left corner of region that needs redisplay
+(measured from upper-left corner of image).</p>
+<p>Y-coordinate of upper-left corner of region that needs redisplay
+(measured from upper-left corner of image).</p>
+<p>Width of region that needs to be redrawn, in pixels.</p>
+<p>Height of region that needs to be redrawn, in pixels.</p>
+<p>Current width of image, in pixels.</p>
+<p>Current height of image, in pixels.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>An image manager calls <strong>Tk_ImageChanged</strong> for an image
+whenever anything happens that requires the image to be redrawn. As a
+result of calling <strong>Tk_ImageChanged</strong>, any widgets using
+the image are notified so that they can redisplay themselves
+appropriately. The <em>model</em> argument identifies the image, and
+<em>x</em>, <em>y</em>, <em>width</em>, and <em>height</em> specify a
+rectangular region within the image that needs to be redrawn.
+<em>imageWidth</em> and <em>imageHeight</em> specify the image's (new)
+size.</p>
+<p><em>Tk_ImageModel</em> is synonym for <em>Tk_ImageMaster</em></p>
+<p>An image manager should call <strong>Tk_ImageChanged</strong> during
+its <em>createProc</em> to specify the image's initial size and to force
+redisplay if there are existing instances for the image. If any of the
+pixel values in the image should change later on,
+<strong>Tk_ImageChanged</strong> should be called again with <em>x</em>,
+<em>y</em>, <em>width</em>, and <em>height</em> values that cover all
+the pixels that changed. If the size of the image should change, then
+<strong>Tk_ImageChanged</strong> must be called to indicate the new
+size, even if no pixels need to be redisplayed.</p>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a
+href="../Tk-C-API/Tk_CreateImageType.html">Tk_CreateImageType</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>images, redisplay, image size changes</p>

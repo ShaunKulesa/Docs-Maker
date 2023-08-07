@@ -1,0 +1,51 @@
+<h1 id="name">NAME</h1>
+<p>set - Read and write variables</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>set</strong> <em>varName</em> ?<em>value</em>?</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>Returns the value of variable <em>varName</em>. If <em>value</em> is
+specified, then set the value of <em>varName</em> to <em>value</em>,
+creating a new variable if one does not already exist, and return its
+value. If <em>varName</em> contains an open parenthesis and ends with a
+close parenthesis, then it refers to an array element: the characters
+before the first open parenthesis are the name of the array, and the
+characters between the parentheses are the index within the array.
+Otherwise <em>varName</em> refers to a scalar variable.</p>
+<p>If <em>varName</em> includes namespace qualifiers (in the array name
+if it refers to an array element), or if <em>varName</em> is unqualified
+(does not include the names of any containing namespaces) but no
+procedure is active, <em>varName</em> refers to a namespace variable
+resolved according to the rules described under <strong>NAME
+RESOLUTION</strong> in the <strong>namespace</strong> manual page.</p>
+<p>If a procedure is active and <em>varName</em> is unqualified, then
+<em>varName</em> refers to a parameter or local variable of the
+procedure, unless <em>varName</em> was declared to resolve differently
+through one of the <strong>global</strong>, <strong>variable</strong> or
+<strong>upvar</strong> commands.</p>
+<h1 id="examples">EXAMPLES</h1>
+<p>Store a random number in the variable <em>r</em>:</p>
+<pre><code>set r [expr {rand()}]</code></pre>
+<p>Store a short message in an array element:</p>
+<pre><code>set anAry(msg) &quot;Hello, World!&quot;</code></pre>
+<p>Store a short message in an array element specified by a
+variable:</p>
+<pre><code>set elemName &quot;msg&quot;
+set anAry($elemName) &quot;Hello, World!&quot;</code></pre>
+<p>Copy a value into the variable <em>out</em> from a variable whose
+name is stored in the <em>vbl</em> (note that it is often easier to use
+arrays in practice instead of doing double-dereferencing):</p>
+<pre><code>set in0 &quot;small random&quot;
+set in1 &quot;large random&quot;
+set vbl in[expr {rand() &gt;= 0.5}]
+set out [set $vbl]</code></pre>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-Commands/expr.html">expr</a>, <a
+href="../Tcl-Commands/global.html">global</a>, <a
+href="../Tcl-Commands/namespace.html">namespace</a>, <a
+href="../Tcl-Commands/proc.html">proc</a>, <a
+href="../Tcl-Commands/trace.html">trace</a>, <a
+href="../Tcl-Commands/unset.html">unset</a>, <a
+href="../Tcl-Commands/upvar.html">upvar</a>, <a
+href="../Tcl-Commands/variable.html">variable</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>read, write, variable</p>

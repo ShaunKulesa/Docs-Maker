@@ -1,0 +1,68 @@
+<h1 id="name">NAME</h1>
+<p>platform - System identification support code and utilities</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>package require platform ?1.0.10?
+
+platform::generic
+platform::identify
+platform::patterns identifier</code></pre>
+<h1 id="description">DESCRIPTION</h1>
+<p>The <strong>platform</strong> package provides several utility
+commands useful for the identification of the architecture of a machine
+running Tcl.</p>
+<p>Whilst Tcl provides the <strong>tcl_platform</strong> array for
+identifying the current architecture (in particular, the platform and
+machine elements) this is not always sufficient. This is because (on
+Unix machines) <strong>tcl_platform</strong> reflects the values
+returned by the <strong>uname</strong> command and these are not
+standardized across platforms and architectures. In addition, on at
+least one platform (AIX) the <strong>tcl_platform(machine)</strong>
+contains the CPU serial number.</p>
+<p>Consequently, individual applications need to manipulate the values
+in <strong>tcl_platform</strong> (along with the output of system
+specific utilities) - which is both inconvenient for developers, and
+introduces the potential for inconsistencies in identifying
+architectures and in naming conventions.</p>
+<p>The <strong>platform</strong> package prevents such fragmentation -
+i.e., it establishes a standard naming convention for architectures
+running Tcl and makes it more convenient for developers to identify the
+current architecture a Tcl program is running on.</p>
+<h1 id="commands">COMMANDS</h1>
+<dl>
+<dt><strong>platform::identify</strong></dt>
+<dd>
+<p>This command returns an identifier describing the platform the Tcl
+core is running on. The returned identifier has the general format
+<em>OS</em>-<em>CPU</em>. The <em>OS</em> part of the identifier may
+contain details like kernel version, libc version, etc., and this
+information may contain dashes as well. The <em>CPU</em> part will not
+contain dashes, making the preceding dash the last dash in the
+result.</p>
+</dd>
+<dt><strong>platform::generic</strong></dt>
+<dd>
+<p>This command returns a simplified identifier describing the platform
+the Tcl core is running on. In contrast to
+<strong>platform::identify</strong> it leaves out details like kernel
+version, libc version, etc. The returned identifier has the general
+format <em>OS</em>-<em>CPU</em>.</p>
+</dd>
+<dt><strong>platform::patterns</strong> <em>identifier</em></dt>
+<dd>
+<p>This command takes an identifier as returned by
+<strong>platform::identify</strong> and returns a list of identifiers
+describing compatible architectures.</p>
+</dd>
+</dl>
+<h1 id="example">EXAMPLE</h1>
+<p>This can be used to allow an application to be shipped with multiple
+builds of a shared library, so that the same package works on many
+versions of an operating system. For example:</p>
+<pre><code>package require platform
+# Assume that app script is .../theapp/bin/theapp.tcl
+set binDir [file dirname [file normalize [info script]]]
+set libDir [file join $binDir .. lib]
+set platLibDir [file join $libDir [platform::identify]]
+load [file join $platLibDir support[info sharedlibextension]]</code></pre>
+<h1 id="keywords">KEYWORDS</h1>
+<p>operating system, cpu architecture, platform, architecture</p>

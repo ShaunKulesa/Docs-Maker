@@ -1,0 +1,82 @@
+<h1 id="name">NAME</h1>
+<p>lindex - Retrieve an element from a list</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>lindex</strong> <em>list ?index ...?</em></p>
+<h1 id="description">DESCRIPTION</h1>
+<p>The <strong>lindex</strong> command accepts a parameter,
+<em>list</em>, which it treats as a Tcl list. It also accepts zero or
+more <em>indices</em> into the list. The indices may be presented either
+consecutively on the command line, or grouped in a Tcl list and
+presented as a single argument.</p>
+<p>If no indices are presented, the command takes the form:</p>
+<pre><code>lindex list</code></pre>
+<p>or</p>
+<pre><code>lindex list {}</code></pre>
+<p>In this case, the return value of <strong>lindex</strong> is simply
+the value of the <em>list</em> parameter.</p>
+<p>When presented with a single index, the <strong>lindex</strong>
+command treats <em>list</em> as a Tcl list and returns the
+<em>index</em>'th element from it (0 refers to the first element of the
+list). In extracting the element, <strong>lindex</strong> observes the
+same rules concerning braces and quotes and backslashes as the Tcl
+command interpreter; however, variable substitution and command
+substitution do not occur. If <em>index</em> is negative or greater than
+or equal to the number of elements in <em>value</em>, then an empty
+string is returned. The interpretation of each simple <em>index</em>
+value is the same as for the command <strong>string index</strong>,
+supporting simple index arithmetic and indices relative to the end of
+the list.</p>
+<p>If additional <em>index</em> arguments are supplied, then each
+argument is used in turn to select an element from the previous indexing
+operation, allowing the script to select elements from sublists. The
+command,</p>
+<pre><code>lindex $a 1 2 3</code></pre>
+<p>or</p>
+<pre><code>lindex $a {1 2 3}</code></pre>
+<p>is synonymous with</p>
+<pre><code>lindex [lindex [lindex $a 1] 2] 3</code></pre>
+<h1 id="examples">EXAMPLES</h1>
+<p>Lists can be indexed into from either end:</p>
+<pre><code>lindex {a b c} 0
+      → a
+lindex {a b c} 2
+      → c
+lindex {a b c} end
+      → c
+lindex {a b c} end-1
+      → b</code></pre>
+<p>Lists or sequences of indices allow selection into lists of
+lists:</p>
+<pre><code>lindex {a b c}
+      → a b c
+lindex {a b c} {}
+      → a b c
+lindex {{a b c} {d e f} {g h i}} 2 1
+      → h
+lindex {{a b c} {d e f} {g h i}} {2 1}
+      → h
+lindex {{{a b} {c d}} {{e f} {g h}}} 1 1 0
+      → g
+lindex {{{a b} {c d}} {{e f} {g h}}} {1 1 0}
+      → g</code></pre>
+<p>List indices may also perform limited computation, adding or
+subtracting fixed amounts from other indices:</p>
+<pre><code>set idx 1
+lindex {a b c d e f} $idx+2
+      → d
+set idx 3
+lindex {a b c d e f} $idx+2
+      → f</code></pre>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-Commands/list.html">list</a>, <a
+href="../Tcl-Commands/lappend.html">lappend</a>, <a
+href="../Tcl-Commands/linsert.html">linsert</a>, <a
+href="../Tcl-Commands/llength.html">llength</a>, <a
+href="../Tcl-Commands/lsearch.html">lsearch</a>, <a
+href="../Tcl-Commands/lset.html">lset</a>, <a
+href="../Tcl-Commands/lsort.html">lsort</a>, <a
+href="../Tcl-Commands/lrange.html">lrange</a>, <a
+href="../Tcl-Commands/lreplace.html">lreplace</a>, <a
+href="../Tcl-Commands/string.html">string</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>element, index, list</p>

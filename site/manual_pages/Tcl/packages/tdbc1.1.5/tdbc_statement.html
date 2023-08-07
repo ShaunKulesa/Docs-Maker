@@ -1,0 +1,179 @@
+<p><br />
+</p>
+<h1 id="name">NAME</h1>
+<p>tdbc::statement - TDBC statement object</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>package require tdbc 1.0
+package require tdbc::driver version
+
+tdbc::driver::connection create db ?-option value...?
+
+set stmt [db prepare sql-code]
+set stmt [db preparecall call]
+
+$stmt params
+$stmt paramtype ?direction? type ?precision? ?scale?
+$stmt execute ?dict?
+$stmt resultsets</code></pre>
+<p><em>$stmt</em> <strong>allrows</strong> ?<strong>-as
+lists|dicts</strong>? ?<strong>-columnsvariable</strong> <em>name</em>?
+?<strong>--</strong>? ?<em>dict</em><br />
+</p>
+<p><em>$stmt</em> <strong>foreach</strong> ?<strong>-as
+lists|dicts</strong>? ?<strong>-columnsvariable</strong> <em>name</em>?
+?<strong>--</strong>? <em>varName</em> ?<em>dict</em>?
+<em>script</em><br />
+</p>
+<p><em>$stmt</em> <strong>close</strong></p>
+<p><br />
+</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>Every database driver for TDBC (Tcl DataBase Connectivity) implements
+a <em>statement</em> object that represents a SQL statement in a
+database. Instances of this object are created by executing the
+<strong>prepare</strong> or <strong>preparecall</strong> object command
+on a database connection.</p>
+<p>The <strong>prepare</strong> object command against the connection
+accepts arbitrary SQL code to be executed against the database. The SQL
+code may contain <em>bound</em> variables, which are strings of
+alphanumeric characters or underscores (the first character of the
+string may not be numeric), prefixed with a colon (<strong>:</strong>).
+If a bound variable appears in the SQL statement, and is not in a string
+set off by single or double quotes, nor in a comment introduced by
+<strong>--</strong>, it becomes a value that is substituted when the
+statement is executed. A bound variable becomes a single value (string
+or numeric) in the resulting statement. <em>Drivers are responsible for
+ensuring that the mechanism</em> for binding variables prevents SQL
+injection.</p>
+<p>The <strong>preparecall</strong> object command against the
+connection accepts a stylized statement in the form:</p>
+<blockquote>
+<pre><code>procname (?:varname? ?,:varname...?)</code></pre>
+</blockquote>
+<p>or</p>
+<blockquote>
+<pre><code>varname = procname (?:varname? ?,:varname...?)</code></pre>
+</blockquote>
+<p>This statement represents a call to a stored procedure
+<em>procname</em> in the database. The variable name to the left of the
+equal sign (if present), and all variable names that are parameters
+inside parentheses, become bound variables.</p>
+<p>The <strong>params</strong> method against a statement object
+enumerates the bound variables that appear in the statement. The result
+returned from the <strong>params</strong> method is a dictionary whose
+keys are the names of bound variables (listed in the order in which the
+variables first appear in the statement), and whose values are
+dictionaries. The subdictionaries include at least the following keys
+(database drivers may add additional keys that are not in this
+list).</p>
+<dl>
+<dt>direction</dt>
+<dd>
+<p>Contains one of the keywords, <strong>in</strong>,
+<strong>out</strong> or <strong>inout</strong> according to whether the
+variable is an input to or output from the statement. Only stored
+procedure calls will have <strong>out</strong> or <strong>inout</strong>
+parameters.</p>
+</dd>
+<dt>type</dt>
+<dd>
+<p>Contains the data type of the column, and will generally be chosen
+from the set, <strong>bigint</strong>, <strong>binary</strong>,
+<strong>bit</strong>, <strong>char</strong>, <strong>date</strong>,
+<strong>decimal</strong>, <strong>double</strong>,
+<strong>float</strong>, <strong>integer</strong>,
+<strong>longvarbinary</strong>, <strong>longvarchar</strong>,
+<strong>numeric</strong>, <strong>real</strong>, <strong>time</strong>,
+<strong>timestamp</strong>, <strong>smallint</strong>,
+<strong>tinyint</strong>, <strong>varbinary</strong>, and
+<strong>varchar</strong>. (If the variable has a type that cannot be
+represented as one of the above, <strong>type</strong> will contain a
+driver-dependent description of the type.)</p>
+</dd>
+<dt>precision</dt>
+<dd>
+<p>Contains the precision of the column in bits, decimal digits, or the
+width in characters, according to the type.</p>
+</dd>
+<dt>scale</dt>
+<dd>
+<p>Contains the scale of the column (the number of digits after the
+radix point), for types that support the concept.</p>
+</dd>
+<dt>nullable</dt>
+<dd>
+<p>Contains 1 if the column can contain NULL values, and 0
+otherwise.</p>
+</dd>
+</dl>
+<p>The <strong>paramtype</strong> object command allows the script to
+specify the type and direction of parameter transmission of a variable
+in a statement. (Some databases provide no method to determine this
+information automatically and place the burden on the caller to do so.)
+The <em>direction</em>, <em>type</em>, <em>precision</em>,
+<em>scale</em>, and <em>nullable</em> arguments have the same meaning as
+the corresponding dictionary values in the <strong>params</strong>
+object command.</p>
+<p>The <strong>execute</strong> object command executes the statement.
+Prior to executing the statement, values are provided for the bound
+variables that appear in it. If the <em>dict</em> parameter is supplied,
+it is searched for a key whose name matches the name of the bound
+variable. If the key is present, its value becomes the substituted
+variable. If not, the value of the substituted variable becomes a SQL
+NULL. If the <em>dict</em> parameter is <em>not</em> supplied, the
+<strong>execute</strong> object command searches for a variable in the
+caller's scope whose name matches the name of the bound variable. If one
+is found, its value becomes the bound variable's value. If none is
+found, the bound variable is assigned a SQL NULL as its value. Once
+substitution is finished, the resulting statement is executed. The
+return value is a result set object (see
+<strong>tdbc::resultset</strong> for details).</p>
+<p>The <strong>resultsets</strong> method returns a list of all the
+result sets that have been returned by executing the statement and have
+not yet been closed.</p>
+<p>The <strong>allrows</strong> object command executes the statement as
+with the <strong>execute</strong> object command, accepting an optional
+<em>dict</em> parameter giving bind variables. After executing the
+statement, it uses the <em>allrows</em> object command on the result set
+(see <strong>tdbc::resultset</strong>) to construct a list of the
+results. Finally, the result set is closed. The return value is the list
+of results.</p>
+<p>The <strong>foreach</strong> object command executes the statement as
+with the <strong>execute</strong> object command, accepting an optional
+<em>dict</em> parameter giving bind variables. After executing the
+statement, it uses the <em>foreach</em> object command on the result set
+(see <strong>tdbc::resultset</strong>) to evaluate the given
+<em>script</em> for each row of the results. Finally, the result set is
+closed, even if the given <em>script</em> results in a
+<strong>return</strong>, an error, or an unusual return code.</p>
+<p>The <strong>close</strong> object command removes a statement and any
+result sets that it has created. All system resources associated with
+the objects are freed.</p>
+<h1 id="examples">EXAMPLES</h1>
+<p>The following code would look up a telephone number in a directory,
+assuming an appropriate SQL schema:</p>
+<blockquote>
+<pre><code>package require tdbc::sqlite3
+tdbc::sqlite3::connection create db phonebook.sqlite3
+set statement [db prepare {
+    select phone_num from directory
+    where first_name = :firstname and last_name = :lastname
+}]
+set firstname Fred
+set lastname Flintstone
+$statement foreach row {
+    puts [dict get $row phone_num]
+}
+$statement close
+db close</code></pre>
+</blockquote>
+<h1 id="see-also">SEE ALSO</h1>
+<p>encoding(n), <a href="../tdbc1.1.5/tdbc.html">tdbc</a>, <a
+href="../tdbc1.1.5/tdbc::connection.html">tdbc::connection</a>, <a
+href="../tdbc1.1.5/tdbc::resultset.html">tdbc::resultset</a>, <a
+href="../tdbc1.1.5/tdbc::tokenize.html">tdbc::tokenize</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>TDBC, SQL, database, connectivity, connection, resultset, statement,
+bound variable, stored procedure, call</p>
+<h1 id="copyright">COPYRIGHT</h1>
+<p>Copyright (c) 2008 by Kevin B. Kenny.</p>

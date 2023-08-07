@@ -1,0 +1,35 @@
+<h1 id="name">NAME</h1>
+<p>Tcl_SetRecursionLimit - set maximum allowable nesting depth in
+interpreter</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tcl.h&gt;
+
+int
+Tcl_SetRecursionLimit(interp, depth)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Interpreter whose recursion limit is to be set. Must be greater than
+zero.</p>
+<p>New limit for nested calls to <strong>Tcl_Eval</strong> for
+<em>interp</em>.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>At any given time Tcl enforces a limit on the number of recursive
+calls that may be active for <strong>Tcl_Eval</strong> and related
+procedures such as <strong>Tcl_GlobalEval</strong>. Any call to
+<strong>Tcl_Eval</strong> that exceeds this depth is aborted with an
+error. By default the recursion limit is 1000.</p>
+<p><strong>Tcl_SetRecursionLimit</strong> may be used to change the
+maximum allowable nesting depth for an interpreter. The <em>depth</em>
+argument specifies a new limit for <em>interp</em>, and
+<strong>Tcl_SetRecursionLimit</strong> returns the old limit. To read
+out the old limit without modifying it, invoke
+<strong>Tcl_SetRecursionLimit</strong> with <em>depth</em> equal to
+0.</p>
+<p>The <strong>Tcl_SetRecursionLimit</strong> only sets the size of the
+Tcl call stack: it cannot by itself prevent stack overflows on the C
+stack being used by the application. If your machine has a limit on the
+size of the C stack, you may get stack overflows before reaching the
+limit set by <strong>Tcl_SetRecursionLimit</strong>. If this happens,
+see if there is a mechanism in your system for increasing the maximum
+size of the C stack.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>nesting depth, recursion</p>

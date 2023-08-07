@@ -1,0 +1,92 @@
+<h1 id="name">NAME</h1>
+<p>Itcl_RegisterC, Itcl_RegisterObjC, Itcl_FindC - Associate a symbolic
+name with a C procedure.</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;itcl.h&gt;
+
+int
+Itcl_RegisterC(interp, cmdName, argProc, clientData, deleteProc)
+
+int
+Itcl_RegisterObjC(interp, cmdName, objProc, clientData, deleteProc)
+
+int
+Itcl_FindC(interp, cmdName, argProcPtr, objProcPtr, cDataPtr)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Interpreter in which to create new command.</p>
+<p>Name of command.</p>
+<p>Implementation of new command: <em>argProc</em> will be called
+whenever</p>
+<p>The Tcl_CmdProc * to receive the pointer.</p>
+<p>Implementation of the new command: <em>objProc</em> will be called
+whenever</p>
+<p>The Tcl_ObjCmdProc * to receive the pointer.</p>
+<p>Arbitrary one-word value to pass to <em>proc</em> and
+<em>deleteProc</em>.</p>
+<p>The ClientData to receive the pointer.</p>
+<p>Procedure to call before <em>cmdName</em> is deleted from the
+interpreter; allows for command-specific cleanup. If NULL, then no
+procedure is called before the command is deleted.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>Used to associate a symbolic name with an (argc,argv) C procedure
+that handles a Tcl command. Procedures that are registered in this
+manner can be referenced in the body of an [incr Tcl] class definition
+to specify C procedures to acting as methods/procs. Usually invoked in
+an initialization routine for an extension, called out in Tcl_AppInit()
+at the start of an application.</p>
+<p>Each symbolic procedure can have an arbitrary client data value
+associated with it. This value is passed into the command handler
+whenever it is invoked.</p>
+<p>A symbolic procedure name can be used only once for a given style
+(arg/obj) handler. If the name is defined with an arg-style handler, it
+can be redefined with an obj-style handler; or if the name is defined
+with an obj-style handler, it can be redefined with an arg-style
+handler. In either case, any previous client data is discarded and the
+new client data is remembered. However, if a name is redefined to a
+different handler of the same style, this procedure returns an
+error.</p>
+<p>Returns TCL_OK on success, or TCL_ERROR (along with an error message
+in interp-&gt;result) if anything goes wrong.</p>
+<p>C procedures can be integrated into an <strong>[incr Tcl]</strong>
+class definition to implement methods, procs, and the "config" code for
+public variables. Any body that starts with "**<span class="citation"
+data-cites="*">@*</span>*" is treated as the symbolic name for a C
+procedure.</p>
+<p>Symbolic names are established by registering procedures via
+<strong>Itcl_RegisterC()</strong>. This is usually done in the
+<strong>Tcl_AppInit()</strong> procedure, which is automatically called
+when the interpreter starts up. In the following example, the procedure
+<code>My_FooCmd()</code> is registered with the symbolic name "foo".
+This procedure can be referenced in the <strong>body</strong> command as
+"<code>@foo</code>".</p>
+<pre><code>int
+Tcl_AppInit(interp)
+    Tcl_Interp *interp;     /* Interpreter for application. */
+{
+    if (Itcl_Init(interp) == TCL_ERROR) {
+        return TCL_ERROR;
+    }
+
+    if (Itcl_RegisterC(interp, &quot;foo&quot;, My_FooCmd) != TCL_OK) {
+        return TCL_ERROR;
+    }
+}</code></pre>
+<p>C procedures are implemented just like ordinary Tcl commands. See the
+<strong>CrtCommand</strong> man page for details. Within the procedure,
+class data members can be accessed like ordinary variables using
+<strong>Tcl_SetVar()</strong>, <strong>Tcl_GetVar()</strong>,
+<strong>Tcl_TraceVar()</strong>, etc. Class methods and procs can be
+executed like ordinary commands using <strong>Tcl_Eval()</strong>.
+<strong>[incr Tcl]</strong> makes this possible by automatically setting
+up the context before executing the C procedure.</p>
+<p>This scheme provides a natural migration path for code development.
+Classes can be developed quickly using Tcl code to implement the bodies.
+An entire application can be built and tested. When necessary,
+individual bodies can be implemented with C code to improve
+performance.</p>
+<p>See the Archetype class in <strong>[incr Tk]</strong> for an example
+of how this C linking method is used.</p>
+<h1 id="see-also">SEE ALSO</h1>
+<p>Tcl_CreateCommand, Tcl_CreateObjCommand</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>class, object</p>

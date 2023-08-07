@@ -1,0 +1,49 @@
+<h1 id="name">NAME</h1>
+<p>lrange - Return one or more adjacent elements from a list</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>lrange</strong> <em>list first last</em></p>
+<h1 id="description">DESCRIPTION</h1>
+<p><em>List</em> must be a valid Tcl list. This command will return a
+new list consisting of elements <em>first</em> through <em>last</em>,
+inclusive. The index values <em>first</em> and <em>last</em> are
+interpreted the same as index values for the command <strong>string
+index</strong>, supporting simple index arithmetic and indices relative
+to the end of the list. If <em>first</em> is less than zero, it is
+treated as if it were zero. If <em>last</em> is greater than or equal to
+the number of elements in the list, then it is treated as if it were
+<strong>end</strong>. If <em>first</em> is greater than <em>last</em>
+then an empty string is returned. Note: does not always produce the same
+result as (although it often does for simple fields that are not
+enclosed in braces); it does, however, produce exactly the same results
+as</p>
+<h1 id="examples">EXAMPLES</h1>
+<p>Selecting the first two elements:</p>
+<pre><code>% lrange {a b c d e} 0 1
+a b</code></pre>
+<p>Selecting the last three elements:</p>
+<pre><code>% lrange {a b c d e} end-2 end
+c d e</code></pre>
+<p>Selecting everything except the first and last element:</p>
+<pre><code>% lrange {a b c d e} 1 end-1
+b c d</code></pre>
+<p>Selecting a single element with <strong>lrange</strong> is not the
+same as doing so with <strong>lindex</strong>:</p>
+<pre><code>% set var {some {elements to} select}
+some {elements to} select
+% lindex $var 1
+elements to
+% lrange $var 1 1
+{elements to}</code></pre>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-Commands/list.html">list</a>, <a
+href="../Tcl-Commands/lappend.html">lappend</a>, <a
+href="../Tcl-Commands/lindex.html">lindex</a>, <a
+href="../Tcl-Commands/linsert.html">linsert</a>, <a
+href="../Tcl-Commands/llength.html">llength</a>, <a
+href="../Tcl-Commands/lsearch.html">lsearch</a>, <a
+href="../Tcl-Commands/lset.html">lset</a>, <a
+href="../Tcl-Commands/lreplace.html">lreplace</a>, <a
+href="../Tcl-Commands/lsort.html">lsort</a>, <a
+href="../Tcl-Commands/string.html">string</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>element, list, range, sublist</p>

@@ -1,0 +1,36 @@
+<h1 id="name">NAME</h1>
+<p>Tk_CollapseMotionEvents, Tk_QueueWindowEvent - Add a window event to
+the Tcl event queue</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tk.h&gt;
+
+int
+Tk_CollapseMotionEvents(display, collapse)
+
+Tk_QueueWindowEvent(eventPtr, position)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Display for which to control motion event collapsing.</p>
+<p>Indicates whether motion events should be collapsed or not.</p>
+<p>An event to add to the event queue. It is important that all unused
+fields of the structure be set to zero.</p>
+<p>Where to add the new event in the queue:
+<strong>TCL_QUEUE_TAIL</strong>, <strong>TCL_QUEUE_HEAD</strong>, or
+<strong>TCL_QUEUE_MARK</strong>.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p><strong>Tk_QueueWindowEvent</strong> places a window event on Tcl's
+internal event queue for eventual servicing. It creates a Tcl_Event
+structure, copies the event into that structure, and calls
+<strong>Tcl_QueueEvent</strong> to add the event to the queue. When the
+event is eventually removed from the queue it is processed just like all
+window events.</p>
+<p>When multiple motion events are received for the same window in rapid
+succession, they are collapsed by default. This behavior can be
+controlled with <strong>Tk_CollapseMotionEvents</strong>.
+<strong>Tk_CollapseMotionEvents</strong> always returns the previous
+value for collapse behavior on the <em>display</em>.</p>
+<p>The <em>position</em> argument to
+<strong>Tk_QueueWindowEvent</strong> has the same significance as for
+<strong>Tcl_QueueEvent</strong>; see the documentation for
+<strong>Tcl_QueueEvent</strong> for details.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>callback, clock, handler, modal timeout, events</p>

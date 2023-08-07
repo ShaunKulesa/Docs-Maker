@@ -1,0 +1,43 @@
+<p><br />
+</p>
+<h1 id="name">NAME</h1>
+<p>tdbc - Tcl Database Connectivity</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>package require tdbc 1.0
+package require tdbc::driver version
+
+tdbc::driver::connection create db ?-option value...?</code></pre>
+<p><br />
+</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>Tcl Database Connectivity (TDBC) is a common interface for Tcl
+programs to access SQL databases. It is implemented by a series of
+database <em>drivers</em>: separate modules, each of which adapts Tcl to
+the interface of one particular database system. All of the drivers
+implement a common series of commands for manipulating the database.
+These commands are all named dynamically, since they all represent
+objects in the database system. They include
+<strong>connections,</strong> which represent connections to a database;
+<strong>statements,</strong> which represent SQL statements, and
+<strong>result sets,</strong> which represent the sets of rows that
+result from executing statements. All of these have manual pages of
+their own, listed under <strong>SEE ALSO</strong>.</p>
+<p>In addition, TDBC itself has a few service procedures that are
+chiefly of interest to driver writers. <strong>SEE ALSO</strong> also
+enumerates them.</p>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../tdbc1.1.5/Tdbc_Init.html">Tdbc_Init</a>, <a
+href="../tdbc1.1.5/tdbc::connection.html">tdbc::connection</a>, <a
+href="../tdbc1.1.5/tdbc::mapSqlState.html">tdbc::mapSqlState</a>, <a
+href="../tdbc1.1.5/tdbc::resultset.html">tdbc::resultset</a>, <a
+href="../tdbc1.1.5/tdbc::statement.html">tdbc::statement</a>, <a
+href="../tdbc1.1.5/tdbc::tokenize.html">tdbc::tokenize</a>, <a
+href="../tdbcmysql1.1.5/tdbc::mysql.html">tdbc::mysql</a>, <a
+href="../tdbcodbc1.1.5/tdbc::odbc.html">tdbc::odbc</a>, <a
+href="../tdbcpostgres1.1.5/tdbc::postgres.html">tdbc::postgres</a>, <a
+href="../tdbcsqlite3-1.1.5/tdbc::sqlite3.html">tdbc::sqlite3</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>TDBC, SQL, database, connectivity, connection, resultset,
+statement</p>
+<h1 id="copyright">COPYRIGHT</h1>
+<p>Copyright (c) 2008 by Kevin B. Kenny.</p>

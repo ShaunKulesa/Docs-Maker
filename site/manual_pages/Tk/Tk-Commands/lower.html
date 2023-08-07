@@ -1,0 +1,22 @@
+<h1 id="name">NAME</h1>
+<p>lower - Change a window's position in the stacking order</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>lower</strong> <em>window</em> ?<em>belowThis</em>?</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>If the <em>belowThis</em> argument is omitted then the command lowers
+<em>window</em> so that it is below all of its siblings in the stacking
+order (it will be obscured by any siblings that overlap it and will not
+obscure any siblings). If <em>belowThis</em> is specified then it must
+be the path name of a window that is either a sibling of <em>window</em>
+or the descendant of a sibling of <em>window</em>. In this case the
+<strong>lower</strong> command will insert <em>window</em> into the
+stacking order just below <em>belowThis</em> (or the ancestor of
+<em>belowThis</em> that is a sibling of <em>window</em>); this could end
+up either raising or lowering <em>window</em>.</p>
+<p>All <strong>toplevel</strong> windows may be restacked with respect
+to each other, whatever their relative path names, but the window
+manager is not obligated to strictly honor requests to restack.</p>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tk-Commands/raise.html">raise</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>lower, obscure, stacking order</p>

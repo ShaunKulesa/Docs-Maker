@@ -1,0 +1,30 @@
+<h1 id="name">NAME</h1>
+<p>Tk_InitConsoleChannels - Install the console channels as standard
+channels</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tk.h&gt;
+
+Tk_InitConsoleChannels(interp)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Interpreter in which the console channels are created.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p><strong>Tk_InitConsoleChannels</strong> is invoked to create a set of
+console channels and install them as the standard channels. All I/O on
+these channels will be discarded until
+<strong>Tk_CreateConsoleWindow</strong> is called to attach the console
+to a text widget.</p>
+<p>This function is for use by shell applications based on Tk, like
+<strong>wish</strong>, on platforms which have no standard channels in
+graphical mode, like Win32.</p>
+<p>The <em>interp</em> argument is the interpreter in which to create
+and install the console channels.</p>
+<p><strong>NOTE:</strong> If this function is used it has to be called
+before the first call to <strong>Tcl_RegisterChannel</strong>, directly,
+or indirectly through other channel functions. Because otherwise the
+standard channels will be already initialized to the system defaults,
+which will be nonsensical for the case
+<strong>Tk_InitConsoleChannels</strong> is for.</p>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tk-Commands/console.html">console</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>standard channels, console</p>

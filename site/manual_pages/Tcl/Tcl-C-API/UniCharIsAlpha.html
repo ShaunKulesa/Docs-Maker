@@ -1,0 +1,74 @@
+<h1 id="name">NAME</h1>
+<p>Tcl_UniCharIsAlnum, Tcl_UniCharIsAlpha, Tcl_UniCharIsControl,
+Tcl_UniCharIsDigit, Tcl_UniCharIsGraph, Tcl_UniCharIsLower,
+Tcl_UniCharIsPrint, Tcl_UniCharIsPunct, Tcl_UniCharIsSpace,
+Tcl_UniCharIsUpper, Tcl_UniCharIsWordChar - routines for classification
+of Tcl_UniChar characters</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tcl.h&gt;
+
+int
+Tcl_UniCharIsAlnum(ch)
+
+int
+Tcl_UniCharIsAlpha(ch)
+
+int
+Tcl_UniCharIsControl(ch)
+
+int
+Tcl_UniCharIsDigit(ch)
+
+int
+Tcl_UniCharIsGraph(ch)
+
+int
+Tcl_UniCharIsLower(ch)
+
+int
+Tcl_UniCharIsPrint(ch)
+
+int
+Tcl_UniCharIsPunct(ch)
+
+int
+Tcl_UniCharIsSpace(ch)
+
+int
+Tcl_UniCharIsUpper(ch)
+
+int
+Tcl_UniCharIsWordChar(ch)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>The Tcl_UniChar to be examined.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>All of the routines described examine Unicode characters and return a
+boolean value. A non-zero return value means that the character does
+belong to the character class associated with the called routine. The
+rest of this document just describes the character classes associated
+with the various routines.</p>
+<h1 id="character-classes">CHARACTER CLASSES</h1>
+<p><strong>Tcl_UniCharIsAlnum</strong> tests if the character is an
+alphanumeric Unicode character.</p>
+<p><strong>Tcl_UniCharIsAlpha</strong> tests if the character is an
+alphabetic Unicode character.</p>
+<p><strong>Tcl_UniCharIsControl</strong> tests if the character is a
+Unicode control character.</p>
+<p><strong>Tcl_UniCharIsDigit</strong> tests if the character is a
+numeric Unicode character.</p>
+<p><strong>Tcl_UniCharIsGraph</strong> tests if the character is any
+Unicode print character except space.</p>
+<p><strong>Tcl_UniCharIsLower</strong> tests if the character is a
+lowercase Unicode character.</p>
+<p><strong>Tcl_UniCharIsPrint</strong> tests if the character is a
+Unicode print character.</p>
+<p><strong>Tcl_UniCharIsPunct</strong> tests if the character is a
+Unicode punctuation character.</p>
+<p><strong>Tcl_UniCharIsSpace</strong> tests if the character is a
+whitespace Unicode character.</p>
+<p><strong>Tcl_UniCharIsUpper</strong> tests if the character is an
+uppercase Unicode character.</p>
+<p><strong>Tcl_UniCharIsWordChar</strong> tests if the character is
+alphanumeric or a connector punctuation mark.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>unicode, classification</p>

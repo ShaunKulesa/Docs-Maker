@@ -1,0 +1,70 @@
+<h1 id="name">NAME</h1>
+<p>Tcl_SplitPath, Tcl_JoinPath, Tcl_GetPathType - manipulate
+platform-dependent file paths</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tcl.h&gt;
+
+Tcl_SplitPath(path, argcPtr, argvPtr)
+
+char *
+Tcl_JoinPath(argc, argv, resultPtr)
+
+Tcl_PathType
+Tcl_GetPathType(path)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>File path in a form appropriate for the current platform (see the
+<strong>filename</strong> manual entry for acceptable forms for path
+names).</p>
+<p>Filled in with number of path elements in <em>path</em>.</p>
+<p><em>*argvPtr</em> will be filled in with the address of an array of
+pointers to the strings that are the extracted elements of
+<em>path</em>. There will be <em>*argcPtr</em> valid entries in the
+array, followed by a NULL entry.</p>
+<p>Number of elements in <em>argv</em>.</p>
+<p>Array of path elements to merge together into a single path.</p>
+<p>A pointer to an initialized <strong>Tcl_DString</strong> to which the
+result of <strong>Tcl_JoinPath</strong> will be appended.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>These procedures have been superseded by the Tcl-value-aware
+procedures in the <strong>FileSystem</strong> man page, which are more
+efficient.</p>
+<p>These procedures may be used to disassemble and reassemble file paths
+in a platform independent manner: they provide C-level access to the
+same functionality as the <strong>file split</strong>, <strong>file
+join</strong>, and <strong>file pathtype</strong> commands.</p>
+<p><strong>Tcl_SplitPath</strong> breaks a path into its constituent
+elements, returning an array of pointers to the elements using
+<em>argcPtr</em> and <em>argvPtr</em>. The area of memory pointed to by
+<em>*argvPtr</em> is dynamically allocated; in addition to the array of
+pointers, it also holds copies of all the path elements. It is the
+caller's responsibility to free all of this storage. For example,
+suppose that you have called <strong>Tcl_SplitPath</strong> with the
+following code:</p>
+<pre><code>int argc;
+char *path;
+char **argv;
+...
+Tcl_SplitPath(string, &amp;argc, &amp;argv);</code></pre>
+<p>Then you should eventually free the storage with a call like the
+following:</p>
+<pre><code>Tcl_Free((char *) argv);</code></pre>
+<p><strong>Tcl_JoinPath</strong> is the inverse of
+<strong>Tcl_SplitPath</strong>: it takes a collection of path elements
+given by <em>argc</em> and <em>argv</em> and generates a result string
+that is a properly constructed path. The result string is appended to
+<em>resultPtr</em>. <em>ResultPtr</em> must refer to an initialized
+<strong>Tcl_DString</strong>.</p>
+<p>If the result of <strong>Tcl_SplitPath</strong> is passed to
+<strong>Tcl_JoinPath</strong>, the result will refer to the same
+location, but may not be in the same form. This is because
+<strong>Tcl_SplitPath</strong> and <strong>Tcl_JoinPath</strong>
+eliminate duplicate path separators and return a normalized form for
+each platform.</p>
+<p><strong>Tcl_GetPathType</strong> returns the type of the specified
+<em>path</em>, where <strong>Tcl_PathType</strong> is one of
+<strong>TCL_PATH_ABSOLUTE</strong>, <strong>TCL_PATH_RELATIVE</strong>,
+or <strong>TCL_PATH_VOLUME_RELATIVE</strong>. See the
+<strong>filename</strong> manual entry for a description of the path
+types for each platform.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>file, filename, join, path, split, type</p>

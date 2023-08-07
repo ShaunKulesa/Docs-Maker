@@ -1,0 +1,114 @@
+<h1 id="name">NAME</h1>
+<p>Tcl_StandardChannels - How the Tcl library deals with the standard
+channels</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>This page explains the initialization and use of standard channels in
+the Tcl library.</p>
+<p>The term <em>standard channels</em> comes out of the Unix world and
+refers to the three channels automatically opened by the OS for each new
+application. They are <strong>stdin</strong>, <strong>stdout</strong>
+and <strong>stderr</strong>. The first is the standard input an
+application can read from, the other two refer to writable channels, one
+for regular output and the other for error messages.</p>
+<p>Tcl generalizes this concept in a cross-platform way and exposes
+standard channels to the script level.</p>
+<h2 id="application-programming-interfaces">APPLICATION PROGRAMMING
+INTERFACES</h2>
+<p>The public API procedures dealing directly with standard channels are
+<strong>Tcl_GetStdChannel</strong> and
+<strong>Tcl_SetStdChannel</strong>. Additional public APIs to consider
+are <strong>Tcl_RegisterChannel</strong>,
+<strong>Tcl_CreateChannel</strong> and
+<strong>Tcl_GetChannel</strong>.</p>
+<h1 id="initialization-of-tcl-standard-channels">INITIALIZATION OF TCL
+STANDARD CHANNELS</h1>
+<p>Standard channels are initialized by the Tcl library in three cases:
+when explicitly requested, when implicitly required before returning
+channel information, or when implicitly required during registration of
+a new channel.</p>
+<p>These cases differ in how they handle unavailable platform- specific
+standard channels. (A channel is not if it could not be successfully
+opened; for example, in a Tcl application run as a Windows NT
+service.)</p>
+<dl>
+<dt>1)</dt>
+<dd>
+<p>A single standard channel is initialized when it is explicitly
+specified in a call to <strong>Tcl_SetStdChannel</strong>. The states of
+the other standard channels are unaffected.</p>
+<p>Missing platform-specific standard channels do not matter here. This
+approach is not available at the script level.</p>
+</dd>
+<dt>2)</dt>
+<dd>
+<p>All uninitialized standard channels are initialized to
+platform-specific default values:</p>
+<dl>
+<dt>(a)</dt>
+<dd>
+<p>when open channels are listed with
+<strong>Tcl_GetChannelNames</strong> (or the <strong>file
+channels</strong> script command), or</p>
+</dd>
+<dt>(b)</dt>
+<dd>
+<p>when information about any standard channel is requested with a call
+to <strong>Tcl_GetStdChannel</strong>, or with a call to
+<strong>Tcl_GetChannel</strong> which specifies one of the standard
+names (<strong>stdin</strong>, <strong>stdout</strong> and
+<strong>stderr</strong>).</p>
+</dd>
+</dl>
+<p>In case of missing platform-specific standard channels, the Tcl
+standard channels are considered as initialized and then immediately
+closed. This means that the first three Tcl channels then opened by the
+application are designated as the Tcl standard channels.</p>
+</dd>
+<dt>3)</dt>
+<dd>
+<p>All uninitialized standard channels are initialized to
+platform-specific default values when a user-requested channel is
+registered with <strong>Tcl_RegisterChannel</strong>.</p>
+</dd>
+</dl>
+<p>In case of unavailable platform-specific standard channels the
+channel whose creation caused the initialization of the Tcl standard
+channels is made a normal channel. The next three Tcl channels opened by
+the application are designated as the Tcl standard channels. In other
+words, of the first four Tcl channels opened by the application the
+second to fourth are designated as the Tcl standard channels.</p>
+<h1 id="re-initialization-of-tcl-standard-channels">RE-INITIALIZATION OF
+TCL STANDARD CHANNELS</h1>
+<p>Once a Tcl standard channel is initialized through one of the methods
+above, closing this Tcl standard channel will cause the next call to
+<strong>Tcl_CreateChannel</strong> to make the new channel the new
+standard channel, too. If more than one Tcl standard channel was closed
+<strong>Tcl_CreateChannel</strong> will fill the empty slots in the
+order <strong>stdin</strong>, <strong>stdout</strong> and
+<strong>stderr</strong>.</p>
+<p><strong>Tcl_CreateChannel</strong> will not try to reinitialize an
+empty slot if that slot was not initialized before. It is this behavior
+which enables an application to employ method 1 of initialization,
+i.e. to create and designate their own Tcl standard channels.</p>
+<h1 id="shell-specific-details">SHELL-SPECIFIC DETAILS</h1>
+<h2 id="tclsh">tclsh</h2>
+<p>The Tcl shell (or rather the function <strong>Tcl_Main</strong>,
+which forms the core of the shell's implementation) uses method 2 to
+initialize the standard channels.</p>
+<h2 id="wish">wish</h2>
+<p>The windowing shell (or rather the function
+<strong>Tk_MainEx</strong>, which forms the core of the shell's
+implementation) uses method 1 to initialize the standard channels (See
+<strong>Tk_InitConsoleChannels</strong>) on non-Unix platforms. On Unix
+platforms, <strong>Tk_MainEx</strong> implicitly uses method 2 to
+initialize the standard channels.</p>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-C-API/Tcl_CreateChannel.html">Tcl_CreateChannel</a>,
+<a href="../Tcl-C-API/Tcl_RegisterChannel.html">Tcl_RegisterChannel</a>,
+<a href="../Tcl-C-API/Tcl_GetChannel.html">Tcl_GetChannel</a>, <a
+href="../Tcl-C-API/Tcl_GetStdChannel.html">Tcl_GetStdChannel</a>, <a
+href="../Tcl-C-API/Tcl_SetStdChannel.html">Tcl_SetStdChannel</a>,
+Tk_InitConsoleChannels(3), tclsh(1), wish(1), <a
+href="../Tcl-C-API/Tcl_Main.html">Tcl_Main</a>, Tk_MainEx(3)</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>standard channels</p>

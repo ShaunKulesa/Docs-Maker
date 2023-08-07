@@ -1,0 +1,96 @@
+<h1 id="name">NAME</h1>
+<p>ttk_vsapi - Define a Microsoft Visual Styles element</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>ttk::style element create</strong> <em>name</em>
+<strong>vsapi</strong> <em>className</em> <em>partId</em>
+?<em>stateMap</em>? ?<em>options</em>?</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>The <strong>vsapi</strong> element factory creates a new element in
+the current theme whose visual appearance is drawn using the Microsoft
+Visual Styles API which is responsible for the themed styles on Windows
+XP and Vista. This factory permits any of the Visual Styles parts to be
+declared as Ttk elements that can then be included in a style layout to
+modify the appearance of Ttk widgets.</p>
+<p><em>className</em> and <em>partId</em> are required parameters and
+specify the Visual Styles class and part as given in the Microsoft
+documentation. The <em>stateMap</em> may be provided to map Ttk states
+to Visual Styles API states (see <strong>STATE MAP</strong>).</p>
+<h1 id="options">OPTIONS</h1>
+<p>Valid <em>options</em> are:</p>
+<dl>
+<dt><strong>-padding</strong> <em>padding</em></dt>
+<dd>
+<p>Specify the element's interior padding. <em>padding</em> is a list of
+up to four integers specifying the left, top, right and bottom padding
+quantities respectively. If fewer than four elements are specified,
+<em>bottom</em> defaults to <em>top</em>, <em>right</em> defaults to
+<em>left</em>, and <em>top</em> defaults to <em>left</em>. In other
+words, a list of three numbers specify the left, vertical, and right
+padding; a list of two numbers specify the horizontal and the vertical
+padding; a single number specifies the same padding all the way around
+the widget. This option may not be mixed with any other options.</p>
+</dd>
+<dt><strong>-margins</strong> <em>padding</em></dt>
+<dd>
+<p>Specifies the elements exterior padding. <em>padding</em> is a list
+of up to four integers specifying the left, top, right and bottom
+padding quantities respectively. This option may not be mixed with any
+other options.</p>
+</dd>
+<dt><strong>-width</strong> <em>width</em></dt>
+<dd>
+<p>Specifies the height for the element. If this option is set then the
+Visual Styles API will not be queried for the recommended size or the
+part. If this option is set then <strong>-height</strong> should also be
+set. The <strong>-width</strong> and <strong>-height</strong> options
+cannot be mixed with the <strong>-padding</strong> or
+<strong>-margins</strong> options.</p>
+</dd>
+<dt><strong>-height</strong> <em>height</em></dt>
+<dd>
+<p>Specifies the height of the element. See the comments for
+<strong>-width</strong>.</p>
+</dd>
+</dl>
+<h1 id="state-map">STATE MAP</h1>
+<p>The <em>stateMap</em> parameter is a list of ttk states and the
+corresponding Visual Styles API state value. This permits the element
+appearance to respond to changes in the widget state such as becoming
+active or being pressed. The list should be as described for the
+<strong>ttk::style map</strong> command but note that the last pair in
+the list should be the default state and is typically an empty list and
+1. Unfortunately all the Visual Styles parts have different state values
+and these must be looked up either in the Microsoft documentation or
+more likely in the header files. The original header to use was
+<em>tmschema.h</em>, but in more recent versions of the Windows
+Development Kit this is <em>vssym32.h</em>.</p>
+<p>If no <em>stateMap</em> parameter is given there is an implicit
+default map of {{} 1}</p>
+<h1 id="example">EXAMPLE</h1>
+<p>Create a correctly themed close button by changing the layout of a
+<strong>ttk::button</strong>(n). This uses the WINDOW part
+WP_SMALLCLOSEBUTTON and as documented the states CBS_DISABLED, CBS_HOT,
+CBS_NORMAL and CBS_PUSHED are mapped from ttk states.</p>
+<pre><code>ttk::style element create smallclose vsapi WINDOW 19 \
+    {disabled 4 pressed 3 active 2 {} 1}
+ttk::style layout CloseButton {CloseButton.smallclose -sticky news}
+pack [ttk::button .close -style CloseButton]</code></pre>
+<p>Change the appearance of a <strong>ttk::checkbutton</strong>(n) to
+use the Explorer pin part EBP_HEADERPIN.</p>
+<pre><code>ttk::style element create pin vsapi EXPLORERBAR 3 {
+    {pressed !selected} 3
+    {active !selected} 2
+    {pressed selected} 6
+    {active selected} 5
+    {selected} 4
+    {} 1
+}
+ttk::style layout Explorer.Pin {Explorer.Pin.pin -sticky news}
+pack [ttk::checkbutton .pin -style Explorer.Pin]</code></pre>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tk-Commands/ttk::intro.html">ttk::intro</a>, <a
+href="../Tk-Commands/ttk::widget.html">ttk::widget</a>, <a
+href="../Tk-Commands/ttk::style.html">ttk::style</a>, <a
+href="../Tk-Commands/ttk_image.html">ttk_image</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>style, theme, appearance, windows</p>

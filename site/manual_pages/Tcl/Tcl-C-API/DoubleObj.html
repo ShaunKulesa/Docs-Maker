@@ -1,0 +1,54 @@
+<h1 id="name">NAME</h1>
+<p>Tcl_NewDoubleObj, Tcl_SetDoubleObj, Tcl_GetDoubleFromObj - manipulate
+Tcl values as floating-point values</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tcl.h&gt;
+
+Tcl_Obj *
+Tcl_NewDoubleObj(doubleValue)
+
+Tcl_SetDoubleObj(objPtr, doubleValue)
+
+int
+Tcl_GetDoubleFromObj(interp, objPtr, doublePtr)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>A double-precision floating-point value used to initialize or set a
+Tcl value.</p>
+<p>For <strong>Tcl_SetDoubleObj</strong>, this points to the value in
+which to store a double value. For
+<strong>Tcl_GetDoubleFromObj</strong>, this refers to the value from
+which to retrieve a double value.</p>
+<p>When non-NULL, an error message is left here when double value
+retrieval fails.</p>
+<p>Points to place to store the double value obtained from
+<em>objPtr</em>.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>These procedures are used to create, modify, and read Tcl values that
+hold double-precision floating-point values.</p>
+<p><strong>Tcl_NewDoubleObj</strong> creates and returns a new Tcl value
+initialized to the double value <em>doubleValue</em>. The returned Tcl
+value is unshared.</p>
+<p><strong>Tcl_SetDoubleObj</strong> sets the value of an existing Tcl
+value pointed to by <em>objPtr</em> to the double value
+<em>doubleValue</em>. The <em>objPtr</em> argument must point to an
+unshared Tcl value. Any attempt to set the value of a shared Tcl value
+violates Tcl's copy-on-write policy. Any existing string representation
+or internal representation in the unshared Tcl value will be freed as a
+consequence of setting the new value.</p>
+<p><strong>Tcl_GetDoubleFromObj</strong> attempts to retrieve a double
+value from the Tcl value <em>objPtr</em>. If the attempt succeeds, then
+<strong>TCL_OK</strong> is returned, and the double value is written to
+the storage pointed to by <em>doublePtr</em>. If the attempt fails, then
+<strong>TCL_ERROR</strong> is returned, and if <em>interp</em> is
+non-NULL, an error message is left in <em>interp</em>. The
+<strong>Tcl_ObjType</strong> of <em>objPtr</em> may be changed to make
+subsequent calls to <strong>Tcl_GetDoubleFromObj</strong> more
+efficient.</p>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-C-API/Tcl_NewObj.html">Tcl_NewObj</a>, <a
+href="../Tcl-C-API/Tcl_DecrRefCount.html">Tcl_DecrRefCount</a>, <a
+href="../Tcl-C-API/Tcl_IncrRefCount.html">Tcl_IncrRefCount</a>, <a
+href="../Tcl-C-API/Tcl_GetObjResult.html">Tcl_GetObjResult</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>double, double value, double type, internal representation, value,
+value type, string representation</p>

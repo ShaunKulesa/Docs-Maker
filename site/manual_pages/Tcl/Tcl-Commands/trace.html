@@ -1,0 +1,405 @@
+<h1 id="name">NAME</h1>
+<p>trace - Monitor variable accesses, command usages and command
+executions</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>trace</strong> <em>option</em> ?<em>arg arg ...</em>?</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>This command causes Tcl commands to be executed whenever certain
+operations are invoked. The legal <em>option</em>s (which may be
+abbreviated) are:</p>
+<dl>
+<dt><strong>trace add</strong> <em>type name ops ?args?</em></dt>
+<dd>
+<p>Where <em>type</em> is <strong>command</strong>,
+<strong>execution</strong>, or <strong>variable</strong>.</p>
+<dl>
+<dt><strong>trace add command</strong> <em>name ops
+commandPrefix</em></dt>
+<dd>
+<p>Arrange for <em>commandPrefix</em> to be executed (with additional
+arguments) whenever command <em>name</em> is modified in one of the ways
+given by the list <em>ops</em>. <em>Name</em> will be resolved using the
+usual namespace resolution rules used by commands. If the command does
+not exist, an error will be thrown.</p>
+<p><em>Ops</em> indicates which operations are of interest, and is a
+list of one or more of the following items:</p>
+<dl>
+<dt><strong>rename</strong></dt>
+<dd>
+<p>Invoke <em>commandPrefix</em> whenever the traced command is renamed.
+Note that renaming to the empty string is considered deletion, and will
+not be traced with</p>
+</dd>
+<dt><strong>delete</strong></dt>
+<dd>
+<p>Invoke <em>commandPrefix</em> when the traced command is deleted.
+Commands can be deleted explicitly by using the <strong>rename</strong>
+command to rename the command to an empty string. Commands are also
+deleted when the interpreter is deleted, but traces will not be invoked
+because there is no interpreter in which to execute them.</p>
+</dd>
+</dl>
+<p>When the trace triggers, depending on the operations being traced, a
+number of arguments are appended to <em>commandPrefix</em> so that the
+actual command is as follows:</p>
+<pre><code>commandPrefix oldName newName op</code></pre>
+<p><em>OldName</em> and <em>newName</em> give the traced command's
+current (old) name, and the name to which it is being renamed (the empty
+string if this is a operation). <em>Op</em> indicates what operation is
+being performed on the command, and is one of <strong>rename</strong> or
+<strong>delete</strong> as defined above. The trace operation cannot be
+used to stop a command from being deleted. Tcl will always remove the
+command once the trace is complete. Recursive renaming or deleting will
+not cause further traces of the same type to be evaluated, so a delete
+trace which itself deletes the command, or a rename trace which itself
+renames the command will not cause further trace evaluations to occur.
+Both <em>oldName</em> and <em>newName</em> are fully qualified with any
+namespace(s) in which they appear.</p>
+</dd>
+<dt><strong>trace add execution</strong> <em>name ops
+commandPrefix</em></dt>
+<dd>
+<p>Arrange for <em>commandPrefix</em> to be executed (with additional
+arguments) whenever command <em>name</em> is executed, with traces
+occurring at the points indicated by the list <em>ops</em>.
+<em>Name</em> will be resolved using the usual namespace resolution
+rules used by commands. If the command does not exist, an error will be
+thrown.</p>
+<p><em>Ops</em> indicates which operations are of interest, and is a
+list of one or more of the following items:</p>
+<dl>
+<dt><strong>enter</strong></dt>
+<dd>
+<p>Invoke <em>commandPrefix</em> whenever the command <em>name</em> is
+executed, just before the actual execution takes place.</p>
+</dd>
+<dt><strong>leave</strong></dt>
+<dd>
+<p>Invoke <em>commandPrefix</em> whenever the command <em>name</em> is
+executed, just after the actual execution takes place.</p>
+</dd>
+<dt><strong>enterstep</strong></dt>
+<dd>
+<p>Invoke <em>commandPrefix</em> for every Tcl command which is executed
+from the start of the execution of the procedure <em>name</em> until
+that procedure finishes. <em>CommandPrefix</em> is invoked just before
+the actual execution of the Tcl command being reported takes place. For
+example if we have then an <em>enterstep</em> trace would be invoked
+just before is executed. Setting an <em>enterstep</em> trace on a
+command <em>name</em> that does not refer to a procedure will not result
+in an error and is simply ignored.</p>
+</dd>
+<dt><strong>leavestep</strong></dt>
+<dd>
+<p>Invoke <em>commandPrefix</em> for every Tcl command which is executed
+from the start of the execution of the procedure <em>name</em> until
+that procedure finishes. <em>CommandPrefix</em> is invoked just after
+the actual execution of the Tcl command being reported takes place.
+Setting a <em>leavestep</em> trace on a command <em>name</em> that does
+not refer to a procedure will not result in an error and is simply
+ignored.</p>
+</dd>
+</dl>
+<p>When the trace triggers, depending on the operations being traced, a
+number of arguments are appended to <em>commandPrefix</em> so that the
+actual command is as follows:</p>
+<p>For <strong>enter</strong> and <strong>enterstep</strong>
+operations:</p>
+<pre><code>commandPrefix command-string op</code></pre>
+<p><em>Command-string</em> gives the complete current command being
+executed (the traced command for a <strong>enter</strong> operation, an
+arbitrary command for a <strong>enterstep</strong> operation), including
+all arguments in their fully expanded form. <em>Op</em> indicates what
+operation is being performed on the command execution, and is one of
+<strong>enter</strong> or <strong>enterstep</strong> as defined above.
+The trace operation can be used to stop the command from executing, by
+deleting the command in question. Of course when the command is
+subsequently executed, an error will occur.</p>
+<p>For <strong>leave</strong> and <strong>leavestep</strong>
+operations:</p>
+<pre><code>commandPrefix command-string code result op</code></pre>
+<p><em>Command-string</em> gives the complete current command being
+executed (the traced command for a <strong>enter</strong> operation, an
+arbitrary command for a <strong>enterstep</strong> operation), including
+all arguments in their fully expanded form. <em>Code</em> gives the
+result code of that execution, and <em>result</em> the result string.
+<em>Op</em> indicates what operation is being performed on the command
+execution, and is one of <strong>leave</strong> or
+<strong>leavestep</strong> as defined above. Note that the creation of
+many <strong>enterstep</strong> or <strong>leavestep</strong> traces can
+lead to unintuitive results, since the invoked commands from one trace
+can themselves lead to further command invocations for other traces.</p>
+<p><em>CommandPrefix</em> executes in the same context as the code that
+invoked the traced operation: thus the <em>commandPrefix</em>, if
+invoked from a procedure, will have access to the same local variables
+as code in the procedure. This context may be different than the context
+in which the trace was created. If <em>commandPrefix</em> invokes a
+procedure (which it normally does) then the procedure will have to use
+<strong>upvar</strong> or <strong>uplevel</strong> commands if it wishes
+to access the local variables of the code which invoked the trace
+operation.</p>
+<p>While <em>commandPrefix</em> is executing during an execution trace,
+traces on <em>name</em> are temporarily disabled. This allows the
+<em>commandPrefix</em> to execute <em>name</em> in its body without
+invoking any other traces again. If an error occurs while executing the
+<em>commandPrefix</em>, then the command <em>name</em> as a whole will
+return that same error.</p>
+<p>When multiple traces are set on <em>name</em>, then for
+<em>enter</em> and <em>enterstep</em> operations, the traced commands
+are invoked in the reverse order of how the traces were originally
+created; and for <em>leave</em> and <em>leavestep</em> operations, the
+traced commands are invoked in the original order of creation.</p>
+<p>The behavior of execution traces is currently undefined for a command
+<em>name</em> imported into another namespace.</p>
+</dd>
+<dt><strong>trace add variable</strong> <em>name ops
+commandPrefix</em></dt>
+<dd>
+<p>Arrange for <em>commandPrefix</em> to be executed whenever variable
+<em>name</em> is accessed in one of the ways given by the list
+<em>ops</em>. <em>Name</em> may refer to a normal variable, an element
+of an array, or to an array as a whole (i.e. <em>name</em> may be just
+the name of an array, with no parenthesized index). If <em>name</em>
+refers to a whole array, then <em>commandPrefix</em> is invoked whenever
+any element of the array is manipulated. If the variable does not exist,
+it will be created but will not be given a value, so it will be visible
+to <strong>namespace which</strong> queries, but not to <strong>info
+exists</strong> queries.</p>
+<p><em>Ops</em> indicates which operations are of interest, and is a
+list of one or more of the following items:</p>
+<dl>
+<dt><strong>array</strong></dt>
+<dd>
+<p>Invoke <em>commandPrefix</em> whenever the variable is accessed or
+modified via the <strong>array</strong> command, provided that
+<em>name</em> is not a scalar variable at the time that the
+<strong>array</strong> command is invoked. If <em>name</em> is a scalar
+variable, the access via the <strong>array</strong> command will not
+trigger the trace.</p>
+</dd>
+<dt><strong>read</strong></dt>
+<dd>
+<p>Invoke <em>commandPrefix</em> whenever the variable is read.</p>
+</dd>
+<dt><strong>write</strong></dt>
+<dd>
+<p>Invoke <em>commandPrefix</em> whenever the variable is written.</p>
+</dd>
+<dt><strong>unset</strong></dt>
+<dd>
+<p>Invoke <em>commandPrefix</em> whenever the variable is unset.
+Variables can be unset explicitly with the <strong>unset</strong>
+command, or implicitly when procedures return (all of their local
+variables are unset). Variables are also unset when interpreters are
+deleted, but traces will not be invoked because there is no interpreter
+in which to execute them.</p>
+</dd>
+</dl>
+<p>When the trace triggers, three arguments are appended to
+<em>commandPrefix</em> so that the actual command is as follows:</p>
+<pre><code>commandPrefix name1 name2 op</code></pre>
+<p><em>Name1</em> and <em>name2</em> give the name(s) for the variable
+being accessed: if the variable is a scalar then <em>name1</em> gives
+the variable's name and <em>name2</em> is an empty string; if the
+variable is an array element then <em>name1</em> gives the name of the
+array and name2 gives the index into the array; if an entire array is
+being deleted and the trace was registered on the overall array, rather
+than a single element, then <em>name1</em> gives the array name and
+<em>name2</em> is an empty string. <em>Name1</em> and <em>name2</em> are
+not necessarily the same as the name used in the <strong>trace
+variable</strong> command: the <strong>upvar</strong> command allows a
+procedure to reference a variable under a different name. <em>Op</em>
+indicates what operation is being performed on the variable, and is one
+of <strong>read</strong>, <strong>write</strong>, or
+<strong>unset</strong> as defined above.</p>
+<p><em>CommandPrefix</em> executes in the same context as the code that
+invoked the traced operation: if the variable was accessed as part of a
+Tcl procedure, then <em>commandPrefix</em> will have access to the same
+local variables as code in the procedure. This context may be different
+than the context in which the trace was created. If
+<em>commandPrefix</em> invokes a procedure (which it normally does) then
+the procedure will have to use <strong>upvar</strong> or
+<strong>uplevel</strong> if it wishes to access the traced variable.
+Note also that <em>name1</em> may not necessarily be the same as the
+name used to set the trace on the variable; differences can occur if the
+access is made through a variable defined with the
+<strong>upvar</strong> command.</p>
+<p>For read and write traces, <em>commandPrefix</em> can modify the
+variable to affect the result of the traced operation. If
+<em>commandPrefix</em> modifies the value of a variable during a read or
+write trace, then the new value will be returned as the result of the
+traced operation. The return value from <em>commandPrefix</em> is
+ignored except that if it returns an error of any sort then the traced
+operation also returns an error with the same error message returned by
+the trace command (this mechanism can be used to implement read-only
+variables, for example). For write traces, <em>commandPrefix</em> is
+invoked after the variable's value has been changed; it can write a new
+value into the variable to override the original value specified in the
+write operation. To implement read-only variables,
+<em>commandPrefix</em> will have to restore the old value of the
+variable.</p>
+<p>While <em>commandPrefix</em> is executing during a read or write
+trace, traces on the variable are temporarily disabled. This means that
+reads and writes invoked by <em>commandPrefix</em> will occur directly,
+without invoking <em>commandPrefix</em> (or any other traces) again.
+However, if <em>commandPrefix</em> unsets the variable then unset traces
+will be invoked.</p>
+<p>When an unset trace is invoked, the variable has already been
+deleted: it will appear to be undefined with no traces. If an unset
+occurs because of a procedure return, then the trace will be invoked in
+the variable context of the procedure being returned to: the stack frame
+of the returning procedure will no longer exist. Traces are not disabled
+during unset traces, so if an unset trace command creates a new trace
+and accesses the variable, the trace will be invoked. Any errors in
+unset traces are ignored.</p>
+<p>If there are multiple traces on a variable they are invoked in order
+of creation, most-recent first. If one trace returns an error, then no
+further traces are invoked for the variable. If an array element has a
+trace set, and there is also a trace set on the array as a whole, the
+trace on the overall array is invoked before the one on the element.</p>
+<p>Once created, the trace remains in effect either until the trace is
+removed with the <strong>trace remove variable</strong> command
+described below, until the variable is unset, or until the interpreter
+is deleted. Unsetting an element of array will remove any traces on that
+element, but will not remove traces on the overall array.</p>
+<p>This command returns an empty string.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>trace remove</strong> <em>type name opList
+commandPrefix</em></dt>
+<dd>
+<p>Where <em>type</em> is either <strong>command</strong>,
+<strong>execution</strong> or <strong>variable</strong>.</p>
+<dl>
+<dt><strong>trace remove command</strong> <em>name opList
+commandPrefix</em></dt>
+<dd>
+<p>If there is a trace set on command <em>name</em> with the operations
+and command given by <em>opList</em> and <em>commandPrefix</em>, then
+the trace is removed, so that <em>commandPrefix</em> will never again be
+invoked. Returns an empty string. If <em>name</em> does not exist, the
+command will throw an error.</p>
+</dd>
+<dt><strong>trace remove execution</strong> <em>name opList
+commandPrefix</em></dt>
+<dd>
+<p>If there is a trace set on command <em>name</em> with the operations
+and command given by <em>opList</em> and <em>commandPrefix</em>, then
+the trace is removed, so that <em>commandPrefix</em> will never again be
+invoked. Returns an empty string. If <em>name</em> does not exist, the
+command will throw an error.</p>
+</dd>
+<dt><strong>trace remove variable</strong> <em>name opList
+commandPrefix</em></dt>
+<dd>
+<p>If there is a trace set on variable <em>name</em> with the operations
+and command given by <em>opList</em> and <em>commandPrefix</em>, then
+the trace is removed, so that <em>commandPrefix</em> will never again be
+invoked. Returns an empty string.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>trace info</strong> <em>type name</em></dt>
+<dd>
+<p>Where <em>type</em> is either <strong>command</strong>,
+<strong>execution</strong> or <strong>variable</strong>.</p>
+<dl>
+<dt><strong>trace info command</strong> <em>name</em></dt>
+<dd>
+<p>Returns a list containing one element for each trace currently set on
+command <em>name</em>. Each element of the list is itself a list
+containing two elements, which are the <em>opList</em> and
+<em>commandPrefix</em> associated with the trace. If <em>name</em> does
+not have any traces set, then the result of the command will be an empty
+string. If <em>name</em> does not exist, the command will throw an
+error.</p>
+</dd>
+<dt><strong>trace info execution</strong> <em>name</em></dt>
+<dd>
+<p>Returns a list containing one element for each trace currently set on
+command <em>name</em>. Each element of the list is itself a list
+containing two elements, which are the <em>opList</em> and
+<em>commandPrefix</em> associated with the trace. If <em>name</em> does
+not have any traces set, then the result of the command will be an empty
+string. If <em>name</em> does not exist, the command will throw an
+error.</p>
+</dd>
+<dt><strong>trace info variable</strong> <em>name</em></dt>
+<dd>
+<p>Returns a list containing one element for each trace currently set on
+variable <em>name</em>. Each element of the list is itself a list
+containing two elements, which are the <em>opList</em> and
+<em>commandPrefix</em> associated with the trace. If <em>name</em> does
+not exist or does not have any traces set, then the result of the
+command will be an empty string.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p>For backwards compatibility, three other subcommands are
+available:</p>
+<blockquote>
+<dl>
+<dt><strong>trace variable</strong> <em>name ops command</em></dt>
+<dd>
+<p>This is equivalent to <strong>trace add variable</strong> <em>name
+ops command</em>.</p>
+</dd>
+<dt><strong>trace vdelete</strong> <em>name ops command</em></dt>
+<dd>
+<p>This is equivalent to <strong>trace remove variable</strong> <em>name
+ops command</em></p>
+</dd>
+<dt><strong>trace vinfo</strong> <em>name</em></dt>
+<dd>
+<p>This is equivalent to <strong>trace info variable</strong>
+<em>name</em></p>
+</dd>
+</dl>
+</blockquote>
+<p>These subcommands are deprecated and will likely be removed in a
+future version of Tcl. They use an older syntax in which
+<strong>array</strong>, <strong>read</strong>, <strong>write</strong>,
+<strong>unset</strong> are replaced by <strong>a</strong>,
+<strong>r</strong>, <strong>w</strong> and <strong>u</strong>
+respectively, and the <em>ops</em> argument is not a list, but simply a
+string concatenation of the operations, such as
+<strong>rwua</strong>.</p>
+<h1 id="examples">EXAMPLES</h1>
+<p>Print a message whenever either of the global variables
+<strong>foo</strong> and <strong>bar</strong> are updated, even if they
+have a different local name at the time (which can be done with the
+<strong>upvar</strong> command):</p>
+<pre><code>proc tracer {varname args} {
+    upvar #0 $varname var
+    puts &quot;$varname was updated to be \&quot;$var\&quot;&quot;
+}
+trace add variable foo write &quot;tracer foo&quot;
+trace add variable bar write &quot;tracer bar&quot;</code></pre>
+<p>Ensure that the global variable <strong>foobar</strong> always
+contains the product of the global variables <strong>foo</strong> and
+<strong>bar</strong>:</p>
+<pre><code>proc doMult args {
+    global foo bar foobar
+    set foobar [expr {$foo * $bar}]
+}
+trace add variable foo write doMult
+trace add variable bar write doMult</code></pre>
+<p>Print a trace of what commands are executed during the processing of
+a Tcl procedure:</p>
+<pre><code>proc x {} { y }
+proc y {} { z }
+proc z {} { puts hello }
+proc report args {puts [info level 0]}
+trace add execution x enterstep report
+x
+  → report y enterstep
+    report z enterstep
+    report {puts hello} enterstep
+    hello</code></pre>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-Commands/set.html">set</a>, <a
+href="../Tcl-Commands/unset.html">unset</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>read, command, rename, variable, write, trace, unset</p>

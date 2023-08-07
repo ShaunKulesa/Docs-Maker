@@ -1,0 +1,68 @@
+<h1 id="name">NAME</h1>
+<p>foreach - Iterate over all elements in one or more lists</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>foreach</strong> <em>varname list body</em><br />
+<strong>foreach</strong> <em>varlist1 list1</em> ?<em>varlist2 list2
+...</em>? <em>body</em></p>
+<h1 id="description">DESCRIPTION</h1>
+<p>The <strong>foreach</strong> command implements a loop where the loop
+variable(s) take on values from one or more lists. In the simplest case
+there is one loop variable, <em>varname</em>, and one list,
+<em>list</em>, that is a list of values to assign to <em>varname</em>.
+The <em>body</em> argument is a Tcl script. For each element of
+<em>list</em> (in order from first to last), <strong>foreach</strong>
+assigns the contents of the element to <em>varname</em> as if the
+<strong>lindex</strong> command had been used to extract the element,
+then calls the Tcl interpreter to execute <em>body</em>.</p>
+<p>In the general case there can be more than one value list (e.g.,
+<em>list1</em> and <em>list2</em>), and each value list can be
+associated with a list of loop variables (e.g., <em>varlist1</em> and
+<em>varlist2</em>). During each iteration of the loop the variables of
+each <em>varlist</em> are assigned consecutive values from the
+corresponding <em>list</em>. Values in each <em>list</em> are used in
+order from first to last, and each value is used exactly once. The total
+number of loop iterations is large enough to use up all the values from
+all the value lists. If a value list does not contain enough elements
+for each of its loop variables in each iteration, empty values are used
+for the missing elements.</p>
+<p>The <strong>break</strong> and <strong>continue</strong> statements
+may be invoked inside <em>body</em>, with the same effect as in the
+<strong>for</strong> command. <strong>Foreach</strong> returns an empty
+string.</p>
+<h1 id="examples">EXAMPLES</h1>
+<p>This loop prints every value in a list together with the square and
+cube of the value:</p>
+<pre><code>set values {1 3 5 7 2 4 6 8} ;# Odd numbers first, for fun!
+puts &quot;Value\tSquare\tCube&quot;    ;# Neat-looking header
+foreach x $values { ;# Now loop and print...
+    puts &quot; $x\t [expr {$x**2}]\t [expr {$x**3}]&quot;
+}</code></pre>
+<p>The following loop uses i and j as loop variables to iterate over
+pairs of elements of a single list.</p>
+<pre><code>set x {}
+foreach {i j} {a b c d e f} {
+    lappend x $j $i
+}
+# The value of x is &quot;b a d c f e&quot;
+# There are 3 iterations of the loop.</code></pre>
+<p>The next loop uses i and j to iterate over two lists in parallel.</p>
+<pre><code>set x {}
+foreach i {a b c} j {d e f g} {
+    lappend x $i $j
+}
+# The value of x is &quot;a d b e c f {} g&quot;
+# There are 4 iterations of the loop.</code></pre>
+<p>The two forms are combined in the following example.</p>
+<pre><code>set x {}
+foreach i {a b c} {j k} {d e f g} {
+    lappend x $i $j $k
+}
+# The value of x is &quot;a d e b f g c {} {}&quot;
+# There are 3 iterations of the loop.</code></pre>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-Commands/for.html">for</a>, <a
+href="../Tcl-Commands/while.html">while</a>, <a
+href="../Tcl-Commands/break.html">break</a>, <a
+href="../Tcl-Commands/continue.html">continue</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>foreach, iteration, list, loop</p>

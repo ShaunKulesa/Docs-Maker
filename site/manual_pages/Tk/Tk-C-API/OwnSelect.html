@@ -1,0 +1,31 @@
+<h1 id="name">NAME</h1>
+<p>Tk_OwnSelection - make a window the owner of the primary
+selection</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tk.h&gt;
+
+Tk_OwnSelection(tkwin, selection, proc, clientData)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Window that is to become new selection owner.</p>
+<p>The name of the selection to be owned, such as XA_PRIMARY.</p>
+<p>Procedure to invoke when <em>tkwin</em> loses selection ownership
+later.</p>
+<p>Arbitrary one-word value to pass to <em>proc</em>.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p><strong>Tk_OwnSelection</strong> arranges for <em>tkwin</em> to
+become the new owner of the selection specified by the atom
+<em>selection</em>. After this call completes, future requests for the
+selection will be directed to handlers created for <em>tkwin</em> using
+<strong>Tk_CreateSelHandler</strong>. When <em>tkwin</em> eventually
+loses the selection ownership, <em>proc</em> will be invoked so that the
+window can clean itself up (e.g. by unhighlighting the selection).
+<em>Proc</em> should have arguments and result that match the type
+<strong>Tk_LostSelProc</strong>:</p>
+<pre><code>typedef void Tk_LostSelProc(
+        ClientData clientData);</code></pre>
+<p>The <em>clientData</em> parameter to <em>proc</em> is a copy of the
+<em>clientData</em> argument given to <strong>Tk_OwnSelection</strong>,
+and is usually a pointer to a data structure containing
+application-specific information about <em>tkwin</em>.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>own, selection owner</p>

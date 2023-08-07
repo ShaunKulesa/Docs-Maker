@@ -1,0 +1,183 @@
+<h1 id="name">NAME</h1>
+<p>Ttk_MakeBox, Ttk_PadBox, Ttk_ExpandBox, Ttk_PackBox, Ttk_StickBox,
+Ttk_PlaceBox, Ttk_BoxContains, Ttk_MakePadding, Ttk_UniformPadding,
+Ttk_AddPadding, Ttk_RelievePadding, Ttk_GetPaddingFromObj,
+Ttk_GetBorderFromObj, Ttk_GetStickyFromObj - Tk themed geometry
+utilities</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tkTheme.h&gt;
+
+Ttk_Box
+Ttk_MakeBox(int x, int y, int width, int height);
+
+Ttk_Box
+Ttk_PadBox(Ttk_Box parcel, Ttk_Padding padding);
+
+Ttk_Box
+Ttk_ExpandBox(Ttk_Box parcel, Ttk_Padding padding);
+
+Ttk_Box
+Ttk_PackBox(Ttk_Box *cavity, int width, int height, Ttk_Side side);
+
+Ttk_Box
+Ttk_StickBox(Ttk_Box parcel, int width, int height, unsigned sticky);
+
+Ttk_Box
+Ttk_PlaceBox(Ttk_Box *cavity, int width, int height, Ttk_Side side, unsigned sticky);
+
+Ttk_Box
+Ttk_AnchorBox(Ttk_Box parcel, int width, int height, Tk_Anchor anchor);
+
+Ttk_Padding
+Ttk_MakePadding(short left, short top, short right, short bottom);
+
+Ttk_Padding
+Ttk_UniformPadding(short border);
+
+Ttk_Padding
+Ttk_AddPadding(Ttk_Padding padding1, Ttk_Padding padding2;
+
+Ttk_Padding
+Ttk_RelievePadding(Ttk_Padding padding, int relief);
+
+int
+Ttk_BoxContains(Ttk_Box box, int x, int y);
+
+int
+Ttk_GetPaddingFromObj(Tcl_Interp *interp, Tk_Window tkwin, Tcl_Obj *objPtr, Ttk_Padding *padding_rtn);
+
+int
+Ttk_GetBorderFromObj(Tcl_Interp *interp, Tcl_Obj *objPtr, Ttk_Padding *padding_rtn);
+
+int
+Ttk_GetStickyFromObj(Tcl_Interp *interp, Tcl_Obj *objPtr, int *sticky_rtn);</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>One of the symbolic constants <strong>TK_ANCHOR_N</strong>,
+<strong>TK_ANCHOR_NE</strong>, etc. See
+<em>Tk_GetAnchorFromObj(3)</em>.</p>
+<p>A rectangular region from which a parcel is allocated.</p>
+<p>Extra padding (in pixels) to add uniformly to each side of a
+region.</p>
+<p>Extra padding (in pixels) to add to the bottom of a region.</p>
+<p>Specifies a rectangular region.</p>
+<p>A rectangular region.</p>
+<p>The height in pixels of a region.</p>
+<p>Used to store error messages.</p>
+<p>Extra padding (in pixels) to add to the left side of a region.</p>
+<p>String value contains a symbolic name to be converted to an
+enumerated value or bitmask. Internal rep may be be modified to cache
+corresponding value.</p>
+<p>Extra padding to add on the inside of a region.</p>
+<p>Padding present in the inside of a region.</p>
+<p>A rectangular region, allocated from a cavity.</p>
+<p>One of the standard Tk relief options
+(<strong>TK_RELIEF_RAISED</strong>, <strong>TK_RELIEF_SUNKEN</strong>,
+etc.). See <strong>Tk_GetReliefFromObj</strong>.</p>
+<p>Extra padding (in pixels) to add to the right side of a region.</p>
+<p>One of <strong>TTK_SIDE_LEFT</strong>, <strong>TTK_SIDE_TOP</strong>,
+<strong>TTK_SIDE_RIGHT</strong>, or
+<strong>TTK_SIDE_BOTTOM</strong>.</p>
+<p>A bitmask containing one or more of the bits
+<strong>TTK_STICK_W</strong> (west, or left),
+<strong>TTK_STICK_E</strong> (east, or right),
+<strong>TTK_STICK_N</strong> (north, or top), and
+<strong>TTK_STICK_S</strong> (south, or bottom).
+<strong>TTK_FILL_X</strong> is defined as a synonym for
+(<strong>TTK_STICK_W</strong>|<strong>TTK_STICK_E</strong>),
+<strong>TTK_FILL_Y</strong> is a synonym for
+(<strong>TTK_STICK_N</strong>|<strong>TTK_STICK_S</strong>), and
+<strong>TTK_FILL_BOTH</strong> is a synonym for
+(<strong>TTK_FILL_X</strong>|<strong>TTK_FILL_Y</strong>). See also:
+<em>grid(n)</em>.</p>
+<p>Window whose screen geometry determines the conversion between
+absolute units and pixels.</p>
+<p>Extra padding at the top of a region.</p>
+<p>The width in pixels of a region.</p>
+<p>X coordinate of upper-left corner of region.</p>
+<p>Y coordinate of upper-left corner of region.</p>
+<h1 id="boxes">BOXES</h1>
+<p>The <strong>Ttk_Box</strong> structure represents a rectangular
+region of a window:</p>
+<pre><code>typedef struct {
+    int x;
+    int y;
+    int width;
+    int height;
+} Ttk_Box;</code></pre>
+<p>All coordinates are relative to the window.</p>
+<p><strong>Ttk_MakeBox</strong> is a convenience routine that constructs
+a <strong>Ttk_Box</strong> structure representing a region
+<em>width</em> pixels wide, <em>height</em> pixels tall, at the
+specified <em>x, y</em> coordinates.</p>
+<p><strong>Ttk_PadBox</strong> returns a new box located inside the
+specified <em>parcel</em>, shrunken according to the left, top, right,
+and bottom margins specified by <em>padding</em>.</p>
+<p><strong>Ttk_ExpandBox</strong> is the inverse of
+<strong>Ttk_PadBox</strong>: it returns a new box surrounding the
+specified <em>parcel</em>, expanded according to the left, top, right,
+and bottom margins specified by <em>padding</em>.</p>
+<p><strong>Ttk_PackBox</strong> allocates a parcel <em>width</em> by
+<em>height</em> pixels wide on the specified <em>side</em> of the
+<em>cavity</em>, and shrinks the <em>cavity</em> accordingly.</p>
+<p><strong>Ttk_StickBox</strong> places a box with the requested
+<em>width</em> and <em>height</em> inside the <em>parcel</em> according
+to the <em>sticky</em> bits.</p>
+<p><strong>Ttk_PlaceBox</strong> combines <strong>Ttk_PackBox</strong>
+and <strong>Ttk_StickBox</strong>: it allocates a parcel on the
+specified <em>side</em> of the <em>cavity</em>, places a box of the
+requested size inside the parcel according to <em>sticky</em>, and
+shrinks the <em>cavity</em>.</p>
+<p><strong>Ttk_AnchorBox</strong> places a box with the requested
+<em>width</em> and <em>height</em> inside the <em>parcel</em> according
+to the specified <em>anchor</em> option.</p>
+<p><strong>Ttk_BoxContains</strong> tests if the specified <em>x, y</em>
+coordinate lies within the rectangular region <em>box</em>.</p>
+<h1 id="paddding">PADDDING</h1>
+<p>The <strong>Ttk_Padding</strong> structure is used to represent
+borders, internal padding, and external margins:</p>
+<pre><code>typedef struct {
+    short left;
+    short top;
+    short right;
+    short bottom;
+} Ttk_Padding;</code></pre>
+<p><strong>Ttk_MakePadding</strong> is a convenience routine that
+constructs a <strong>Ttk_Padding</strong> structure with the specified
+left, top, right, and bottom components.</p>
+<p><strong>Ttk_UniformPadding</strong> constructs a
+<strong>Ttk_Padding</strong> structure with all components equal to the
+specified <em>border</em>.</p>
+<p><strong>Ttk_AddPadding</strong> adds two
+<strong>Ttk_Padding</strong>s together and returns a combined padding
+containing the sum of the individual padding components.</p>
+<p><strong>Ttk_RelievePadding</strong> adds an extra 2 pixels of padding
+to <em>padding</em> according to the specified <em>relief</em>. If
+<em>relief</em> is <strong>TK_RELIEF_SUNKEN</strong>, adds two pixels at
+the top and left so the inner region is shifted down and to the left. If
+it is <strong>TK_RELIEF_RAISED</strong>, adds two pixels at the bottom
+and right so the inner region is shifted up and to the right. Otherwise,
+adds 1 pixel on all sides. This is typically used in element geometry
+procedures to simulate a look for pushbuttons.</p>
+<h1 id="conversion-routines">CONVERSION ROUTINES</h1>
+<p><strong>Ttk_GetPaddingFromObj</strong> converts the string in
+<em>objPtr</em> to a <strong>Ttk_Padding</strong> structure. The string
+representation is a list of up to four length specifications If fewer
+than four elements are specified, <em>bottom</em> defaults to
+<em>top</em>, <em>right</em> defaults to <em>left</em>, and <em>top</em>
+defaults to <em>left</em>. See <strong>Tk_GetPixelsFromObj(3)</strong>
+for the syntax of length specifications.</p>
+<p><strong>Ttk_GetBorderFromObj</strong> is the same as
+<strong>Ttk_GetPaddingFromObj</strong> except that the lengths are
+specified as integers (i.e., resolution-dependent values like
+<em>3m</em> are not allowed).</p>
+<p><strong>Ttk_GetStickyFromObj</strong> converts the string in
+<em>objPtr</em> to a <em>sticky</em> bitmask. The string contains zero
+or more of the characters <strong>n</strong>, <strong>s</strong>,
+<strong>e</strong>, or <strong>w</strong>.</p>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a
+href="../Tk-C-API/Tk_GetReliefFromObj.html">Tk_GetReliefFromObj</a>, <a
+href="../Tk-C-API/Tk_GetPixelsFromObj.html">Tk_GetPixelsFromObj</a>, <a
+href="../Tk-C-API/Tk_GetAnchorFromObj.html">Tk_GetAnchorFromObj</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>geometry, padding, margins, box, region, sticky, relief</p>

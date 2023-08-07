@@ -1,0 +1,19 @@
+<h1 id="name">NAME</h1>
+<p>Tcl_Sleep - delay execution for a given number of milliseconds</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tcl.h&gt;
+
+Tcl_Sleep(ms)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Number of milliseconds to sleep.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>This procedure delays the calling process by the number of
+milliseconds given by the <em>ms</em> parameter and returns after that
+time has elapsed. It is typically used for things like flashing a
+button, where the delay is short and the application need not do
+anything while it waits. For longer delays where the application needs
+to respond to other events during the delay, the procedure
+<strong>Tcl_CreateTimerHandler</strong> should be used instead of
+<strong>Tcl_Sleep</strong>.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>sleep, time, wait</p>

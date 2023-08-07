@@ -1,0 +1,147 @@
+<h1 id="name">NAME</h1>
+<p>ttk::scale - Create and manipulate a scale widget</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>ttk::scale</strong> <em>pathName</em>
+?<em>options...</em>?</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>A <strong>ttk::scale</strong> widget is typically used to control the
+numeric value of a linked variable that varies uniformly over some
+range. A scale displays a <em>slider</em> that can be moved along over a
+<em>trough</em>, with the relative position of the slider over the
+trough indicating the value of the variable.</p>
+<h1 id="standard-options">STANDARD OPTIONS</h1>
+<pre><code>-class   -cursor -style
+-takefocus</code></pre>
+<p>See the manual entry for details on the standard options.</p>
+<h1 id="widget-specific-options">WIDGET-SPECIFIC OPTIONS</h1>
+<pre><code>Command-Line Name:   -command
+Database Name:  command
+Database Class: Command</code></pre>
+<blockquote>
+<p>Specifies the prefix of a Tcl command to invoke whenever the scale's
+value is changed via a widget command. The actual command consists of
+this option followed by a space and a real number indicating the new
+value of the scale.</p>
+</blockquote>
+<pre><code>Command-Line Name:   -from
+Database Name:  from
+Database Class: From</code></pre>
+<blockquote>
+<p>A real value corresponding to the left or top end of the scale.</p>
+</blockquote>
+<pre><code>Command-Line Name:   -length
+Database Name:  length
+Database Class: Length</code></pre>
+<blockquote>
+<p>Specifies the desired long dimension of the scale in screen units
+(i.e. any of the forms acceptable to <strong>Tk_GetPixels</strong>). For
+vertical scales this is the scale's height; for horizontal scales it is
+the scale's width.</p>
+</blockquote>
+<pre><code>Command-Line Name:   -orient
+Database Name:  orient
+Database Class: Orient</code></pre>
+<blockquote>
+<p>Specifies which orientation whether the widget should be laid out
+horizontally or vertically. Must be either <strong>horizontal</strong>
+or <strong>vertical</strong> or an abbreviation of one of these.</p>
+</blockquote>
+<pre><code>Command-Line Name:   -to
+Database Name:  to
+Database Class: To</code></pre>
+<blockquote>
+<p>Specifies a real value corresponding to the right or bottom end of
+the scale. This value may be either less than or greater than the
+<strong>-from</strong> option.</p>
+</blockquote>
+<pre><code>Command-Line Name:   -value
+Database Name:  value
+Database Class: Value</code></pre>
+<blockquote>
+<p>Specifies the current floating-point value of the variable. If
+<strong>-variable</strong> is set to an existing variable, specifying
+<strong>-value</strong> has no effect (the variable value takes
+precedence).</p>
+</blockquote>
+<pre><code>Command-Line Name:   -variable
+Database Name:  variable
+Database Class: Variable</code></pre>
+<blockquote>
+<p>Specifies the name of a global variable to link to the scale.
+Whenever the value of the variable changes, the scale will update to
+reflect this value. Whenever the scale is manipulated interactively, the
+variable will be modified to reflect the scale's new value.</p>
+</blockquote>
+<h1 id="widget-command">WIDGET COMMAND</h1>
+<dl>
+<dt><em>pathName</em> <strong>cget</strong> <em>option</em></dt>
+<dd>
+<p>Returns the current value of the specified <em>option</em>; see
+<em>ttk::widget(n)</em>.</p>
+</dd>
+<dt><em>pathName</em> <strong>configure</strong> ?<em>option</em>?
+?<em>value option value ...</em>?</dt>
+<dd>
+<p>Modify or query widget options; see <em>ttk::widget(n)</em>.</p>
+</dd>
+<dt><em>pathName</em> <strong>get</strong> ?<em>x y</em>?</dt>
+<dd>
+<p>Get the current value of the <strong>-value</strong> option, or the
+value corresponding to the coordinates <em>x,y</em> if they are
+specified. <em>X</em> and <em>y</em> are pixel coordinates relative to
+the scale widget origin.</p>
+</dd>
+<dt><em>pathName</em> <strong>identify</strong> <em>x y</em></dt>
+<dd>
+<p>Returns the name of the element at position <em>x</em>, <em>y</em>.
+See <em>ttk::widget(n)</em>.</p>
+</dd>
+<dt><em>pathName</em> <strong>instate</strong> <em>statespec</em>
+?<em>script</em>?</dt>
+<dd>
+<p>Test the widget state; see <em>ttk::widget(n)</em>.</p>
+</dd>
+<dt><em>pathName</em> <strong>set</strong> <em>value</em></dt>
+<dd>
+<p>Set the value of the widget (i.e. the <strong>-value</strong> option)
+to <em>value</em>. The value will be clipped to the range given by the
+<strong>-from</strong> and <strong>-to</strong> options. Note that
+setting the linked variable (i.e. the variable named in the
+<strong>-variable</strong> option) does not cause such clipping.</p>
+</dd>
+<dt><em>pathName</em> <strong>state</strong> ?<em>stateSpec</em>?</dt>
+<dd>
+<p>Modify or query the widget state; see <em>ttk::widget(n)</em>.</p>
+</dd>
+</dl>
+<h1 id="internal-commands">INTERNAL COMMANDS</h1>
+<dl>
+<dt><em>pathName</em> <strong>coords</strong> ?<em>value</em>?</dt>
+<dd>
+<p>Get the coordinates corresponding to <em>value</em>, or the
+coordinates corresponding to the current value of the
+<strong>-value</strong> option if <em>value</em> is omitted.</p>
+</dd>
+</dl>
+<h1 id="styling-options">STYLING OPTIONS</h1>
+<p>The class name for a <strong>ttk::scale</strong> is
+<strong>TScale</strong>.</p>
+<p>Dynamic states: <strong>active</strong>.</p>
+<p><strong>TScale</strong> styling options configurable with
+<strong>ttk::style</strong> are:</p>
+<p><strong>-background</strong> <em>color</em><br />
+<strong>-borderwidth</strong> <em>amount</em><br />
+<strong>-darkcolor</strong> <em>color</em><br />
+<strong>-groovewidth</strong> <em>amount</em><br />
+<strong>-lightcolor</strong> <em>color</em><br />
+<strong>-sliderwidth</strong> <em>amount</em><br />
+<strong>-troughcolor</strong> <em>color</em><br />
+<strong>-troughrelief</strong> <em>relief</em></p>
+<p>Some options are only available for specific themes.</p>
+<p>See the <strong>ttk::style</strong> manual page for information on
+how to configure ttk styles.</p>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tk-Commands/ttk::widget.html">ttk::widget</a>, <a
+href="../Tk-Commands/scale.html">scale</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>scale, slider, trough, widget</p>

@@ -1,0 +1,91 @@
+<h1 id="name">NAME</h1>
+<p>Tk_CanvasPsY, Tk_CanvasPsBitmap, Tk_CanvasPsColor, Tk_CanvasPsFont,
+Tk_CanvasPsPath, Tk_CanvasPsStipple - utility procedures for generating
+Postscript for canvases</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tk.h&gt;
+
+double
+Tk_CanvasPsY(canvas, canvasY)
+
+int
+Tk_CanvasPsBitmap(interp, canvas, bitmap, x, y, width, height)
+
+int
+Tk_CanvasPsColor(interp, canvas, colorPtr)
+
+int
+Tk_CanvasPsFont(interp, canvas, tkFont)
+
+Tk_CanvasPsPath(interp, canvas, coordPtr, numPoints)
+
+int
+Tk_CanvasPsStipple(interp, canvas, bitmap)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>A token that identifies a canvas widget for which Postscript is being
+generated.</p>
+<p>Y-coordinate in the space of the canvas.</p>
+<p>A Tcl interpreter; Postscript is appended to its result, or the
+result may be replaced with an error message.</p>
+<p>Bitmap to use for generating Postscript.</p>
+<p>X-coordinate within <em>bitmap</em> of left edge of region to
+output.</p>
+<p>Y-coordinate within <em>bitmap</em> of top edge of region to
+output.</p>
+<p>Width of region of bitmap to output, in pixels.</p>
+<p>Height of region of bitmap to output, in pixels.</p>
+<p>Information about color value to set in Postscript.</p>
+<p>Font for which Postscript is to be generated.</p>
+<p>Pointer to an array of coordinates for one or more points specified
+in canvas coordinates. The order of values in <em>coordPtr</em> is x1,
+y1, x2, y2, x3, y3, and so on.</p>
+<p>Number of points at <em>coordPtr</em>.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>These procedures are called by canvas type managers to carry out
+common functions related to generating Postscript. Most of the
+procedures take a <em>canvas</em> argument, which refers to a canvas
+widget for which Postscript is being generated.</p>
+<p><strong>Tk_CanvasPsY</strong> takes as argument a y-coordinate in the
+space of a canvas and returns the value that should be used for that
+point in the Postscript currently being generated for <em>canvas</em>. Y
+coordinates require transformation because Postscript uses an origin at
+the lower-left corner whereas X uses an origin at the upper-left corner.
+Canvas x coordinates can be used directly in Postscript without
+transformation.</p>
+<p><strong>Tk_CanvasPsBitmap</strong> generates Postscript to describe a
+region of a bitmap. The Postscript is generated in proper image data
+format for Postscript, i.e., as data between angle brackets, one bit per
+pixel. The Postscript is appended to the result of interpreter
+<em>interp</em> and <strong>TCL_OK</strong> is returned unless an error
+occurs, in which case <strong>TCL_ERROR</strong> is returned and the
+interpreter result is overwritten with an error message.</p>
+<p><strong>Tk_CanvasPsColor</strong> generates Postscript to set the
+current color to correspond to its <em>colorPtr</em> argument, taking
+into account any color map specified in the <strong>postscript</strong>
+command. It appends the Postscript to the interpreter <em>interp</em>'s
+result and returns <strong>TCL_OK</strong> unless an error occurs, in
+which case <strong>TCL_ERROR</strong> is returned and the interpreter's
+result is overwritten with an error message.</p>
+<p><strong>Tk_CanvasPsFont</strong> generates Postscript that sets the
+current font to match <em>tkFont</em> as closely as possible.
+<strong>Tk_CanvasPsFont</strong> takes into account any font map
+specified in the <strong>postscript</strong> command, and it does the
+best it can at mapping X fonts to Postscript fonts. It appends the
+Postscript to interpreter <em>interp</em>'s result and returns
+<strong>TCL_OK</strong> unless an error occurs, in which case
+<strong>TCL_ERROR</strong> is returned and the interpreter's result is
+overwritten with an error message.</p>
+<p><strong>Tk_CanvasPsPath</strong> generates Postscript to set the
+current path to the set of points given by <em>coordPtr</em> and
+<em>numPoints</em>. It appends the resulting Postscript to the result of
+interpreter <em>interp</em>.</p>
+<p><strong>Tk_CanvasPsStipple</strong> generates Postscript that will
+fill the current path in stippled fashion. It uses <em>bitmap</em> as
+the stipple pattern and the current Postscript color; ones in the
+stipple bitmap are drawn in the current color, and zeroes are not drawn
+at all. The Postscript is appended to interpreter <em>interp</em>'s
+result and <strong>TCL_OK</strong> is returned, unless an error occurs,
+in which case <strong>TCL_ERROR</strong> is returned and the
+interpreter's result is overwritten with an error message.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>bitmap, canvas, color, font, path, Postscript, stipple</p>

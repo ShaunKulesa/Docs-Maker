@@ -1,0 +1,158 @@
+<h1 id="name">NAME</h1>
+<p>ttk::panedwindow - Multi-pane container window</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>ttk::panedwindow pathname ?options?
+
+
+pathname add window ?options...?
+pathname insert index window ?options...?</code></pre>
+<h1 id="description">DESCRIPTION</h1>
+<p>A <strong>ttk::panedwindow</strong> widget displays a number of
+subwindows, stacked either vertically or horizontally. The user may
+adjust the relative sizes of the subwindows by dragging the sash between
+panes.</p>
+<h1 id="standard-options">STANDARD OPTIONS</h1>
+<pre><code>-class   -cursor -takefocus
+-style</code></pre>
+<p>See the manual entry for details on the standard options.</p>
+<h1 id="widget-specific-options">WIDGET-SPECIFIC OPTIONS</h1>
+<pre><code>Command-Line Name:   -orient
+Database Name:  orient
+Database Class: Orient</code></pre>
+<blockquote>
+<p>Specifies the orientation of the window. If
+<strong>vertical</strong>, subpanes are stacked top-to-bottom; if
+<strong>horizontal</strong>, subpanes are stacked left-to-right.</p>
+</blockquote>
+<pre><code>Command-Line Name:   -width
+Database Name:  width
+Database Class: Width</code></pre>
+<blockquote>
+<p>If present and greater than zero, specifies the desired width of the
+widget in pixels. Otherwise, the requested width is determined by the
+width of the managed windows.</p>
+</blockquote>
+<pre><code>Command-Line Name:   -height
+Database Name:  height
+Database Class: Height</code></pre>
+<blockquote>
+<p>If present and greater than zero, specifies the desired height of the
+widget in pixels. Otherwise, the requested height is determined by the
+height of the managed windows.</p>
+</blockquote>
+<h1 id="pane-options">PANE OPTIONS</h1>
+<p>The following options may be specified for each pane:</p>
+<pre><code>Command-Line Name:   -weight
+Database Name:  weight
+Database Class: Weight</code></pre>
+<blockquote>
+<p>An integer specifying the relative stretchability of the pane. When
+the paned window is resized, the extra space is added or subtracted to
+each pane proportionally to its <strong>-weight</strong>.</p>
+</blockquote>
+<h1 id="widget-command">WIDGET COMMAND</h1>
+<p>Supports the standard <strong>configure</strong>,
+<strong>cget</strong>, <strong>state</strong>, and
+<strong>instate</strong> commands; see <em>ttk::widget(n)</em> for
+details. Additional commands:</p>
+<dl>
+<dt><em>pathname</em> <strong>add</strong> <em>subwindow
+options...</em></dt>
+<dd>
+<p>Adds a new pane to the window. See <strong>PANE OPTIONS</strong> for
+the list of available options.</p>
+</dd>
+<dt><em>pathname</em> <strong>forget</strong> <em>pane</em></dt>
+<dd>
+<p>Removes the specified subpane from the widget. <em>pane</em> is
+either an integer index or the name of a managed subwindow.</p>
+</dd>
+<dt><em>pathname</em> <strong>identify</strong> <em>component x
+y</em></dt>
+<dd>
+<p>Returns the name of the element under the point given by <em>x</em>
+and <em>y</em>, or the empty string if no component is present at that
+location. If <em>component</em> is omitted, it defaults to
+<strong>sash</strong>. The following subcommands are supported:</p>
+<dl>
+<dt><em>pathname</em> <strong>identify element</strong> <em>x
+y</em></dt>
+<dd>
+<p>Returns the name of the element at the specified location.</p>
+</dd>
+<dt><em>pathname</em> <strong>identify sash</strong> <em>x y</em></dt>
+<dd>
+<p>Returns the index of the sash at the specified location.</p>
+</dd>
+</dl>
+</dd>
+<dt><em>pathname</em> <strong>insert</strong> <em>pos subwindow
+options...</em></dt>
+<dd>
+<p>Inserts a pane at the specified position. <em>pos</em> is either the
+string <strong>end</strong>, an integer index, or the name of a managed
+subwindow. If <em>subwindow</em> is already managed by the paned window,
+moves it to the specified position. See <strong>PANE OPTIONS</strong>
+for the list of available options.</p>
+</dd>
+<dt><em>pathname</em> <strong>pane</strong> <em>pane -option</em>
+?<em>value</em> ?<em>-option value...</em></dt>
+<dd>
+<p>Query or modify the options of the specified <em>pane</em>, where
+<em>pane</em> is either an integer index or the name of a managed
+subwindow. If no <em>-option</em> is specified, returns a dictionary of
+the pane option values. If one <em>-option</em> is specified, returns
+the value of that <em>option</em>. Otherwise, sets the <em>-option</em>s
+to the corresponding <em>value</em>s.</p>
+</dd>
+<dt><em>pathname</em> <strong>panes</strong></dt>
+<dd>
+<p>Returns the list of all windows managed by the widget, in the index
+order of their associated panes.</p>
+</dd>
+<dt><em>pathname</em> <strong>sashpos</strong> <em>index</em>
+?<em>newpos</em>?</dt>
+<dd>
+<p>If <em>newpos</em> is specified, sets the position of sash number
+<em>index</em>. May adjust the positions of adjacent sashes to ensure
+that positions are monotonically increasing. Sash positions are further
+constrained to be between 0 and the total size of the widget. Returns
+the new position of sash number <em>index</em>.</p>
+</dd>
+</dl>
+<p>The panedwindow widget also supports the following generic
+<strong>ttk::widget</strong> widget subcommands (see
+<em>ttk::widget(n)</em> for details):</p>
+<blockquote>
+<pre><code>cget    configure
+instate state</code></pre>
+</blockquote>
+<h1 id="virtual-events">VIRTUAL EVENTS</h1>
+<p>The panedwindow widget generates an
+<strong>&lt;&lt;EnteredChild&gt;&gt;</strong> virtual event on
+LeaveNotify/NotifyInferior events, because Tk does not execute binding
+scripts for &lt;Leave&gt; events when the pointer crosses from a parent
+to a child. The panedwindow widget needs to know when that happens.</p>
+<h1 id="styling-options">STYLING OPTIONS</h1>
+<p>The class name for a <strong>ttk::panedwindow</strong> is
+<strong>TPanedwindow</strong>. The sash has a class name of
+<strong>Sash</strong>.</p>
+<p><strong>TPanedwindow</strong> styling options configurable with
+<strong>ttk::style</strong> are:</p>
+<p><strong>-background</strong> <em>color</em></p>
+<p><strong>Sash</strong> styling options configurable with
+<strong>ttk::style</strong> are:</p>
+<p><strong>-background</strong> <em>color</em><br />
+<strong>-bordercolor</strong> <em>color</em><br />
+<strong>-gripcount</strong> <em>count</em><br />
+<strong>-handlepad</strong> <em>amount</em><br />
+<strong>-handlesize</strong> <em>amount</em><br />
+<strong>-lightcolor</strong> <em>color</em><br />
+<strong>-sashpad</strong> <em>amount</em><br />
+<strong>-sashrelief</strong> <em>relief</em><br />
+<strong>-sashthickness</strong> <em>amount</em></p>
+<p>Some options are only available for specific themes.</p>
+<p>See the <strong>ttk::style</strong> manual page for information on
+how to configure ttk styles.</p>
+<h1 id="see-also">SEE ALSO</h1>
+<p>ttk::widget(n), ttk::notebook(n), panedwindow(n)</p>

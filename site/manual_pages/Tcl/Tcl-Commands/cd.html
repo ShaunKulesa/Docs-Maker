@@ -1,0 +1,23 @@
+<h1 id="name">NAME</h1>
+<p>cd - Change working directory</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>cd</strong> ?<em>dirName</em>?</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>Change the current working directory to <em>dirName</em>, or to the
+home directory (as specified in the HOME environment variable) if
+<em>dirName</em> is not given. Returns an empty string. Note that the
+current working directory is a per-process resource; the
+<strong>cd</strong> command changes the working directory for all
+interpreters and (in a threaded environment) all threads.</p>
+<h1 id="examples">EXAMPLES</h1>
+<p>Change to the home directory of the user <strong>fred</strong>:</p>
+<pre><code>cd ~fred</code></pre>
+<p>Change to the directory <strong>lib</strong> that is a sibling
+directory of the current one:</p>
+<pre><code>cd ../lib</code></pre>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-Commands/filename.html">filename</a>, <a
+href="../Tcl-Commands/glob.html">glob</a>, <a
+href="../Tcl-Commands/pwd.html">pwd</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>working directory</p>

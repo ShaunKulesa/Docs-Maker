@@ -1,0 +1,193 @@
+<h1 id="name">NAME</h1>
+<p>lsort - Sort the elements of a list</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>lsort</strong> ?<em>options</em>? <em>list</em></p>
+<h1 id="description">DESCRIPTION</h1>
+<p>This command sorts the elements of <em>list</em>, returning a new
+list in sorted order. The implementation of the <strong>lsort</strong>
+command uses the merge-sort algorithm which is a stable sort that has
+O(n log n) performance characteristics.</p>
+<p>By default ASCII sorting is used with the result returned in
+increasing order. However, any of the following options may be specified
+before <em>list</em> to control the sorting process (unique
+abbreviations are accepted):</p>
+<dl>
+<dt><strong>-ascii</strong></dt>
+<dd>
+<p>Use string comparison with Unicode code-point collation order (the
+name is for backward-compatibility reasons.) This is the default.</p>
+</dd>
+<dt><strong>-dictionary</strong></dt>
+<dd>
+<p>Use dictionary-style comparison. This is the same as
+<strong>-ascii</strong> except (a) case is ignored except as a
+tie-breaker and (b) if two strings contain embedded numbers, the numbers
+compare as integers, not characters. For example, in
+<strong>-dictionary</strong> mode, <strong>bigBoy</strong> sorts between
+<strong>bigbang</strong> and <strong>bigboy</strong>, and
+<strong>x10y</strong> sorts between <strong>x9y</strong> and
+<strong>x11y</strong>. Overrides the <strong>-nocase</strong>
+option.</p>
+</dd>
+<dt><strong>-integer</strong></dt>
+<dd>
+<p>Convert list elements to integers and use integer comparison.</p>
+</dd>
+<dt><strong>-real</strong></dt>
+<dd>
+<p>Convert list elements to floating-point values and use floating
+comparison.</p>
+</dd>
+<dt><strong>-command </strong><em>command</em></dt>
+<dd>
+<p>Use <em>command</em> as a comparison command. To compare two
+elements, evaluate a Tcl script consisting of <em>command</em> with the
+two elements appended as additional arguments. The script should return
+an integer less than, equal to, or greater than zero if the first
+element is to be considered less than, equal to, or greater than the
+second, respectively.</p>
+</dd>
+<dt><strong>-increasing</strong></dt>
+<dd>
+<p>Sort the list in increasing order This is the default.</p>
+</dd>
+<dt><strong>-decreasing</strong></dt>
+<dd>
+<p>Sort the list in decreasing order</p>
+</dd>
+<dt><strong>-indices</strong></dt>
+<dd>
+<p>Return a list of indices into <em>list</em> in sorted order instead
+of the values themselves.</p>
+</dd>
+<dt><strong>-index </strong><em>indexList</em></dt>
+<dd>
+<p>If this option is specified, each of the elements of <em>list</em>
+must itself be a proper Tcl sublist (unless <strong>-stride</strong> is
+used). Instead of sorting based on whole sublists,
+<strong>lsort</strong> will extract the <em>indexList</em>'th element
+from each sublist (as if the overall element and the <em>indexList</em>
+were passed to <strong>lindex</strong>) and sort based on the given
+element. For example,</p>
+<pre><code>lsort -integer -index 1 \
+      {{First 24} {Second 18} {Third 30}}</code></pre>
+<p>returns <strong>{Second 18} {First 24} {Third 30}</strong>,</p>
+<pre><code>lsort -index end-1 \
+        {{a 1 e i} {b 2 3 f g} {c 4 5 6 d h}}</code></pre>
+<p>returns <strong>{c 4 5 6 d h} {a 1 e i} {b 2 3 f g}</strong>, and</p>
+<pre><code>lsort -index {0 1} {
+    {{b i g} 12345}
+    {{d e m o} 34512}
+    {{c o d e} 54321}
+}</code></pre>
+<p>returns <strong>{{d e m o} 34512} {{b i g} 12345} {{c o d e}
+54321}</strong> (because <strong>e</strong> sorts before
+<strong>i</strong> which sorts before <strong>o</strong>.) This option
+is much more efficient than using <strong>-command</strong> to achieve
+the same effect.</p>
+</dd>
+<dt><strong>-stride </strong><em>strideLength</em></dt>
+<dd>
+<p>If this option is specified, the list is treated as consisting of
+groups of <em>strideLength</em> elements and the groups are sorted by
+either their first element or, if the <strong>-index</strong> option is
+used, by the element within each group given by the first index passed
+to <strong>-index</strong> (which is then ignored by
+<strong>-index</strong>). Elements always remain in the same position
+within their group.</p>
+<p>The list length must be an integer multiple of <em>strideLength</em>,
+which in turn must be at least 2.</p>
+<p>For example,</p>
+<pre><code>lsort -stride 2 {carrot 10 apple 50 banana 25}</code></pre>
+<p>returns and</p>
+<pre><code>lsort -stride 2 -index 1 -integer {carrot 10 apple 50 banana 25}</code></pre>
+<p>returns</p>
+</dd>
+<dt><strong>-nocase</strong></dt>
+<dd>
+<p>Causes comparisons to be handled in a case-insensitive manner. Has no
+effect if combined with the <strong>-dictionary</strong>,
+<strong>-integer</strong>, or <strong>-real</strong> options.</p>
+</dd>
+<dt><strong>-unique</strong></dt>
+<dd>
+<p>If this option is specified, then only the last set of duplicate
+elements found in the list will be retained. Note that duplicates are
+determined relative to the comparison used in the sort. Thus if
+<strong>-index 0</strong> is used, <strong>{1 a}</strong> and <strong>{1
+b}</strong> would be considered duplicates and only the second element,
+<strong>{1 b}</strong>, would be retained.</p>
+</dd>
+</dl>
+<h1 id="notes">NOTES</h1>
+<p>The options to <strong>lsort</strong> only control what sort of
+comparison is used, and do not necessarily constrain what the values
+themselves actually are. This distinction is only noticeable when the
+list to be sorted has fewer than two elements.</p>
+<p>The <strong>lsort</strong> command is reentrant, meaning it is safe
+to use as part of the implementation of a command used in the
+<strong>-command</strong> option.</p>
+<h1 id="examples">EXAMPLES</h1>
+<p>Sorting a list using ASCII sorting:</p>
+<pre><code>% lsort {a10 B2 b1 a1 a2}
+B2 a1 a10 a2 b1</code></pre>
+<p>Sorting a list using Dictionary sorting:</p>
+<pre><code>% lsort -dictionary {a10 B2 b1 a1 a2}
+a1 a2 a10 b1 B2</code></pre>
+<p>Sorting lists of integers:</p>
+<pre><code>% lsort -integer {5 3 1 2 11 4}
+1 2 3 4 5 11
+% lsort -integer {1 2 0x5 7 0 4 -1}
+-1 0 1 2 4 0x5 7</code></pre>
+<p>Sorting lists of floating-point numbers:</p>
+<pre><code>% lsort -real {5 3 1 2 11 4}
+1 2 3 4 5 11
+% lsort -real {.5 0.07e1 0.4 6e-1}
+0.4 .5 6e-1 0.07e1</code></pre>
+<p>Sorting using indices:</p>
+<pre><code>% # Note the space character before the c
+% lsort {{a 5} { c 3} {b 4} {e 1} {d 2}}
+{ c 3} {a 5} {b 4} {d 2} {e 1}
+% lsort -index 0 {{a 5} { c 3} {b 4} {e 1} {d 2}}
+{a 5} {b 4} { c 3} {d 2} {e 1}
+% lsort -index 1 {{a 5} { c 3} {b 4} {e 1} {d 2}}
+{e 1} {d 2} { c 3} {b 4} {a 5}</code></pre>
+<p>Sorting a dictionary:</p>
+<pre><code>% set d [dict create c d a b h i f g c e]
+c e a b h i f g
+% lsort -stride 2 $d
+a b c e f g h i</code></pre>
+<p>Sorting using striding and multiple indices:</p>
+<pre><code>% # Note the first index value is relative to the group
+% lsort -stride 3 -index {0 1} \
+     {{Bob Smith} 25 Audi {Jane Doe} 40 Ford}
+{{Jane Doe} 40 Ford {Bob Smith} 25 Audi}</code></pre>
+<p>Stripping duplicate values using sorting:</p>
+<pre><code>% lsort -unique {a b c a b c a b c}
+a b c</code></pre>
+<p>More complex sorting using a comparison function:</p>
+<pre><code>% proc compare {a b} {
+    set a0 [lindex $a 0]
+    set b0 [lindex $b 0]
+    if {$a0 &lt; $b0} {
+        return -1
+    } elseif {$a0 &gt; $b0} {
+        return 1
+    }
+    return [string compare [lindex $a 1] [lindex $b 1]]
+}
+% lsort -command compare \
+        {{3 apple} {0x2 carrot} {1 dingo} {2 banana}}
+{1 dingo} {2 banana} {0x2 carrot} {3 apple}</code></pre>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-Commands/list.html">list</a>, <a
+href="../Tcl-Commands/lappend.html">lappend</a>, <a
+href="../Tcl-Commands/lindex.html">lindex</a>, <a
+href="../Tcl-Commands/linsert.html">linsert</a>, <a
+href="../Tcl-Commands/llength.html">llength</a>, <a
+href="../Tcl-Commands/lsearch.html">lsearch</a>, <a
+href="../Tcl-Commands/lset.html">lset</a>, <a
+href="../Tcl-Commands/lrange.html">lrange</a>, <a
+href="../Tcl-Commands/lreplace.html">lreplace</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>element, list, order, sort</p>

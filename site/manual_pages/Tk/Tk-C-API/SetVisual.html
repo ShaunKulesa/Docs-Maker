@@ -1,0 +1,31 @@
+<h1 id="name">NAME</h1>
+<p>Tk_SetWindowVisual - change visual characteristics of window</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tk.h&gt;
+
+int
+Tk_SetWindowVisual(tkwin, visual, depth, colormap)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Token for window.</p>
+<p>New visual type to use for <em>tkwin</em>.</p>
+<p>Number of bits per pixel desired for <em>tkwin</em>.</p>
+<p>New colormap for <em>tkwin</em>, which must be compatible with
+<em>visual</em> and <em>depth</em>.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>When Tk creates a new window it assigns it the default visual
+characteristics (visual, depth, and colormap) for its screen.
+<strong>Tk_SetWindowVisual</strong> may be called to change them.
+<strong>Tk_SetWindowVisual</strong> must be called before the window has
+actually been created in X (e.g. before <strong>Tk_MapWindow</strong> or
+<strong>Tk_MakeWindowExist</strong> has been invoked for the window).
+The safest thing is to call <strong>Tk_SetWindowVisual</strong>
+immediately after calling <strong>Tk_CreateWindow</strong>. If
+<em>tkwin</em> has already been created before
+<strong>Tk_SetWindowVisual</strong> is called then it returns 0 and does
+not make any changes; otherwise it returns 1 to signify that the
+operation completed successfully.</p>
+<p>Note: <strong>Tk_SetWindowVisual</strong> should not be called if you
+just want to change a window's colormap without changing its visual or
+depth; call <strong>Tk_SetWindowColormap</strong> instead.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>colormap, depth, visual</p>

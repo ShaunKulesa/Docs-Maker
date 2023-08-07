@@ -1,0 +1,114 @@
+<h1 id="name">NAME</h1>
+<p>option - Add/retrieve window options to/from the option database</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>option add pattern value ?priority?
+option clear
+option get window name class
+option readfile fileName ?priority?</code></pre>
+<h1 id="description">DESCRIPTION</h1>
+<p>The <strong>option</strong> command allows you to add entries to the
+Tk option database or to retrieve options from the database. The
+<strong>add</strong> form of the command adds a new option to the
+database. <em>Pattern</em> contains the option being specified, and
+consists of names and/or classes separated by asterisks or dots, in the
+usual X format (see <strong>PATTERN FORMAT</strong>). <em>Value</em>
+contains a text string to associate with <em>pattern</em>; this is the
+value that will be returned in calls to <strong>Tk_GetOption</strong> or
+by invocations of the <strong>option get</strong> command. If
+<em>priority</em> is specified, it indicates the priority level for this
+option (see below for legal values); it defaults to
+<strong>interactive</strong>. This command always returns an empty
+string.</p>
+<p>The <strong>option clear</strong> command clears the option database.
+Default options (from the <strong>RESOURCE_MANAGER</strong> property or
+the <strong>.Xdefaults</strong> file) will be reloaded automatically the
+next time an option is added to the database or removed from it. This
+command always returns an empty string.</p>
+<p>The <strong>option get</strong> command returns the value of the
+option specified for <em>window</em> under <em>name</em> and
+<em>class</em>. If several entries in the option database match
+<em>window</em>, <em>name</em>, and <em>class</em>, then the command
+returns whichever was created with highest <em>priority</em> level. If
+there are several matching entries at the same priority level, then it
+returns whichever entry was most recently entered into the option
+database. If there are no matching entries, then the empty string is
+returned.</p>
+<p>The <strong>readfile</strong> form of the command reads
+<em>fileName</em>, which should have the standard format for an X
+resource database such as <strong>.Xdefaults</strong>, and adds all the
+options specified in that file to the option database. If
+<em>priority</em> is specified, it indicates the priority level at which
+to enter the options; <em>priority</em> defaults to
+<strong>interactive</strong>.</p>
+<p>The file is read through a channel which is in "utf-8" encoding,
+invalid byte sequences are automatically converted to valid ones. This
+means that encodings like ISO 8859-1 or cp1252 with high probability
+will work as well, but this cannot be guaranteed. This cannot be
+changed, setting the [encoding system] has no effect.</p>
+<p>The <em>priority</em> arguments to the <strong>option</strong>
+command are normally specified symbolically using one of the following
+values:</p>
+<dl>
+<dt><strong>widgetDefault</strong></dt>
+<dd>
+<p>Level 20. Used for default values hard-coded into widgets.</p>
+</dd>
+<dt><strong>startupFile</strong></dt>
+<dd>
+<p>Level 40. Used for options specified in application-specific startup
+files.</p>
+</dd>
+<dt><strong>userDefault</strong></dt>
+<dd>
+<p>Level 60. Used for options specified in user-specific defaults files,
+such as <strong>.Xdefaults</strong>, resource databases loaded into the
+X server, or user-specific startup files.</p>
+</dd>
+<dt><strong>interactive</strong></dt>
+<dd>
+<p>Level 80. Used for options specified interactively after the
+application starts running. If <em>priority</em> is not specified, it
+defaults to this level.</p>
+</dd>
+</dl>
+<p>Any of the above keywords may be abbreviated. In addition, priorities
+may be specified numerically using integers between 0 and 100,
+inclusive. The numeric form is probably a bad idea except for new
+priority levels other than the ones given above.</p>
+<h1 id="pattern-format">PATTERN FORMAT</h1>
+<p>Patterns consist of a sequence of words separated by either periods,
+or asterisks The overall pattern may also be optionally preceded by an
+asterisk.</p>
+<p>Each word in the pattern conventionally starts with either an
+upper-case letter (in which case it denotes the class of either a widget
+or an option) or any other character, when it denotes the name of a
+widget or option. The last word in the pattern always indicates the
+option; the preceding ones constrain which widgets that option will be
+looked for in.</p>
+<p>When two words are separated by a period, the latter widget must be a
+direct child of the former (or the option must apply to only the
+indicated widgets). When two words are separated by an asterisk, any
+depth of widgets may lie between the former and latter widgets (and the
+option applies to all widgets that are children of the former
+widget).</p>
+<p>If the overall pattern is preceded by an asterisk, then the overall
+pattern applies anywhere it can throughout the whole widget hierarchy.
+Otherwise the first word of the pattern is matched against the name and
+class of the <strong>toplevel</strong>, which are usually set by options
+to <strong>wish</strong>.</p>
+<h1 id="examples">EXAMPLES</h1>
+<p>Instruct every button in the application to have red text on it
+unless explicitly overridden, by setting the <strong>foreground</strong>
+for the <strong>Button</strong> class (note that on some platforms the
+option is ignored):</p>
+<pre><code>option add *Button.foreground red startupFile</code></pre>
+<p>Allow users to control what happens in an entry widget when the
+Return key is pressed by specifying a script in the option database and
+add a default option for that which rings the bell:</p>
+<pre><code>entry .e
+bind .e &lt;Return&gt; [option get .e returnCommand Command]
+option add *.e.returnCommand bell widgetDefault</code></pre>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tk-Commands/options.html">options</a>, wish(1)</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>database, option, priority, retrieve</p>

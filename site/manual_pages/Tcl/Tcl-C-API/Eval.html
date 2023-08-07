@@ -1,0 +1,182 @@
+<h1 id="name">NAME</h1>
+<p>Tcl_EvalObjEx, Tcl_EvalFile, Tcl_EvalObjv, Tcl_Eval, Tcl_EvalEx,
+Tcl_GlobalEval, Tcl_GlobalEvalObj, Tcl_VarEval, Tcl_VarEvalVA - execute
+Tcl scripts</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tcl.h&gt;
+
+int
+Tcl_EvalObjEx(interp, objPtr, flags)
+
+int
+Tcl_EvalFile(interp, fileName)
+
+int
+Tcl_EvalObjv(interp, objc, objv, flags)
+
+int
+Tcl_Eval(interp, script)
+
+int
+Tcl_EvalEx(interp, script, numBytes, flags)
+
+int
+Tcl_GlobalEval(interp, script)
+
+int
+Tcl_GlobalEvalObj(interp, objPtr)
+
+int
+Tcl_VarEval(interp, part, part, ... (char *) NULL)
+
+int
+Tcl_VarEvalVA(interp, argList)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Interpreter in which to execute the script. The interpreter's result
+is modified to hold the result or error message from the script.</p>
+<p>A Tcl value containing the script to execute.</p>
+<p>ORed combination of flag bits that specify additional options.
+<strong>TCL_EVAL_GLOBAL</strong> and <strong>TCL_EVAL_DIRECT</strong>
+are currently supported.</p>
+<p>Name of a file containing a Tcl script.</p>
+<p>The number of values in the array pointed to by <em>objv</em>; this
+is also the number of words in the command.</p>
+<p>Points to an array of pointers to values; each value holds the value
+of a single word in the command to execute.</p>
+<p>The number of bytes in <em>script</em>, not including any null
+terminating character. If -1, then all characters up to the first null
+byte are used.</p>
+<p>Points to first byte of script to execute (null-terminated and
+UTF-8).</p>
+<p>String forming part of a Tcl script.</p>
+<p>An argument list which must have been initialized using
+<strong>va_start</strong>, and cleared using
+<strong>va_end</strong>.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>The procedures described here are invoked to execute Tcl scripts in
+various forms. <strong>Tcl_EvalObjEx</strong> is the core procedure and
+is used by many of the others. It executes the commands in the script
+stored in <em>objPtr</em> until either an error occurs or the end of the
+script is reached. If this is the first time <em>objPtr</em> has been
+executed, its commands are compiled into bytecode instructions which are
+then executed. The bytecodes are saved in <em>objPtr</em> so that the
+compilation step can be skipped if the value is evaluated again in the
+future.</p>
+<p>The return value from <strong>Tcl_EvalObjEx</strong> (and all the
+other procedures described here) is a Tcl completion code with one of
+the values <strong>TCL_OK</strong>, <strong>TCL_ERROR</strong>,
+<strong>TCL_RETURN</strong>, <strong>TCL_BREAK</strong>, or
+<strong>TCL_CONTINUE</strong>, or possibly some other integer value
+originating in an extension. In addition, a result value or error
+message is left in <em>interp</em>'s result; it can be retrieved using
+<strong>Tcl_GetObjResult</strong>.</p>
+<p><strong>Tcl_EvalFile</strong> reads the file given by
+<em>fileName</em> and evaluates its contents as a Tcl script. It returns
+the same information as <strong>Tcl_EvalObjEx</strong>. If the file
+could not be read then a Tcl error is returned to describe why the file
+could not be read. The eofchar for files is (^Z) for all platforms. If
+you require a in code for string comparison, you can use or which will
+be safely substituted by the Tcl interpreter into</p>
+<p><strong>Tcl_EvalObjv</strong> executes a single pre-parsed command
+instead of a script. The <em>objc</em> and <em>objv</em> arguments
+contain the values of the words for the Tcl command, one word in each
+value in <em>objv</em>. <strong>Tcl_EvalObjv</strong> evaluates the
+command and returns a completion code and result just like
+<strong>Tcl_EvalObjEx</strong>. The caller of
+<strong>Tcl_EvalObjv</strong> has to manage the reference count of the
+elements of <em>objv</em>, insuring that the values are valid until
+<strong>Tcl_EvalObjv</strong> returns.</p>
+<p><strong>Tcl_Eval</strong> is similar to
+<strong>Tcl_EvalObjEx</strong> except that the script to be executed is
+supplied as a string instead of a value and no compilation occurs. The
+string should be a proper UTF-8 string as converted by
+<strong>Tcl_ExternalToUtfDString</strong> or
+<strong>Tcl_ExternalToUtf</strong> when it is known to possibly contain
+upper ASCII characters whose possible combinations might be a UTF-8
+special code. The string is parsed and executed directly (using
+<strong>Tcl_EvalObjv</strong>) instead of compiling it and executing the
+bytecodes. In situations where it is known that the script will never be
+executed again, <strong>Tcl_Eval</strong> may be faster than
+<strong>Tcl_EvalObjEx</strong>. <strong>Tcl_Eval</strong> returns a
+completion code and result just like <strong>Tcl_EvalObjEx</strong>.
+Note: for backward compatibility with versions before Tcl 8.0,
+<strong>Tcl_Eval</strong> copies the value result in <em>interp</em> to
+<em>interp-&gt;result</em> (use is deprecated) where it can be accessed
+directly. This makes <strong>Tcl_Eval</strong> somewhat slower than
+<strong>Tcl_EvalEx</strong>, which does not do the copy.</p>
+<p><strong>Tcl_EvalEx</strong> is an extended version of
+<strong>Tcl_Eval</strong> that takes additional arguments
+<em>numBytes</em> and <em>flags</em>. For the efficiency reason given
+above, <strong>Tcl_EvalEx</strong> is generally preferred over
+<strong>Tcl_Eval</strong>.</p>
+<p><strong>Tcl_GlobalEval</strong> and
+<strong>Tcl_GlobalEvalObj</strong> are older procedures that are now
+deprecated. They are similar to <strong>Tcl_EvalEx</strong> and
+<strong>Tcl_EvalObjEx</strong> except that the script is evaluated in
+the global namespace and its variable context consists of global
+variables only (it ignores any Tcl procedures that are active). These
+functions are equivalent to using the <strong>TCL_EVAL_GLOBAL</strong>
+flag (see below).</p>
+<p><strong>Tcl_VarEval</strong> takes any number of string arguments of
+any length, concatenates them into a single string, then calls
+<strong>Tcl_Eval</strong> to execute that string as a Tcl command. It
+returns the result of the command and also modifies
+<em>interp-&gt;result</em> in the same way as <strong>Tcl_Eval</strong>.
+The last argument to <strong>Tcl_VarEval</strong> must be NULL to
+indicate the end of arguments. <strong>Tcl_VarEval</strong> is now
+deprecated.</p>
+<p><strong>Tcl_VarEvalVA</strong> is the same as
+<strong>Tcl_VarEval</strong> except that instead of taking a variable
+number of arguments it takes an argument list. Like
+<strong>Tcl_VarEval</strong>, <strong>Tcl_VarEvalVA</strong> is
+deprecated.</p>
+<h1 id="flag-bits">FLAG BITS</h1>
+<p>Any ORed combination of the following values may be used for the
+<em>flags</em> argument to procedures such as
+<strong>Tcl_EvalObjEx</strong>:</p>
+<dl>
+<dt><strong>TCL_EVAL_DIRECT</strong></dt>
+<dd>
+<p>This flag is only used by <strong>Tcl_EvalObjEx</strong>; it is
+ignored by other procedures. If this flag bit is set, the script is not
+compiled to bytecodes; instead it is executed directly as is done by
+<strong>Tcl_EvalEx</strong>. The <strong>TCL_EVAL_DIRECT</strong> flag
+is useful in situations where the contents of a value are going to
+change immediately, so the bytecodes will not be reused in a future
+execution. In this case, it is faster to execute the script
+directly.</p>
+</dd>
+<dt><strong>TCL_EVAL_GLOBAL</strong></dt>
+<dd>
+<p>If this flag is set, the script is evaluated in the global namespace
+instead of the current namespace and its variable context consists of
+global variables only (it ignores any Tcl procedures that are
+active).</p>
+</dd>
+</dl>
+<h1 id="miscellaneous-details">MISCELLANEOUS DETAILS</h1>
+<p>During the processing of a Tcl command it is legal to make nested
+calls to evaluate other commands (this is how procedures and some
+control structures are implemented). If a code other than
+<strong>TCL_OK</strong> is returned from a nested
+<strong>Tcl_EvalObjEx</strong> invocation, then the caller should
+normally return immediately, passing that same return code back to its
+caller, and so on until the top-level application is reached. A few
+commands, like <strong>for</strong>, will check for certain return
+codes, like <strong>TCL_BREAK</strong> and
+<strong>TCL_CONTINUE</strong>, and process them specially without
+returning.</p>
+<p><strong>Tcl_EvalObjEx</strong> keeps track of how many nested
+<strong>Tcl_EvalObjEx</strong> invocations are in progress for
+<em>interp</em>. If a code of <strong>TCL_RETURN</strong>,
+<strong>TCL_BREAK</strong>, or <strong>TCL_CONTINUE</strong> is about to
+be returned from the topmost <strong>Tcl_EvalObjEx</strong> invocation
+for <em>interp</em>, it converts the return code to
+<strong>TCL_ERROR</strong> and sets <em>interp</em>'s result to an error
+message indicating that the <strong>return</strong>,
+<strong>break</strong>, or <strong>continue</strong> command was invoked
+in an inappropriate place. This means that top-level applications should
+never see a return code from <strong>Tcl_EvalObjEx</strong> other than
+<strong>TCL_OK</strong> or <strong>TCL_ERROR</strong>.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>execute, file, global, result, script, value</p>

@@ -1,0 +1,374 @@
+<h1 id="name">NAME</h1>
+<p>exec - Invoke subprocesses</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>exec</strong> ?<em>switches</em>? <em>arg</em> ?<em>arg
+...</em>? ?<strong>&amp;</strong>?</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>This command treats its arguments as the specification of one or more
+subprocesses to execute. The arguments take the form of a standard shell
+pipeline where each <em>arg</em> becomes one word of a command, and each
+distinct command becomes a subprocess. The result of the command is the
+standard output of the final subprocess in the pipeline, interpreted
+using the system <strong>encoding</strong>; to use any other encoding
+(especially including binary data), the pipeline must be
+<strong>open</strong>ed, configured and read explicitly.</p>
+<p>If the initial arguments to <strong>exec</strong> start with
+<strong>-</strong> then they are treated as command-line switches and
+are not part of the pipeline specification. The following switches are
+currently supported:</p>
+<dl>
+<dt><strong>-ignorestderr</strong></dt>
+<dd>
+<p>Stops the <strong>exec</strong> command from treating the output of
+messages to the pipeline's standard error channel as an error case.</p>
+</dd>
+<dt><strong>-keepnewline</strong></dt>
+<dd>
+<p>Retains a trailing newline in the pipeline's output. Normally a
+trailing newline will be deleted.</p>
+</dd>
+<dt><strong>- -</strong></dt>
+<dd>
+<p>Marks the end of switches. The argument following this one will be
+treated as the first <em>arg</em> even if it starts with a
+<strong>-</strong>.</p>
+</dd>
+</dl>
+<p>If an <em>arg</em> (or pair of <em>arg</em>s) has one of the forms
+described below then it is used by <strong>exec</strong> to control the
+flow of input and output among the subprocess(es). Such arguments will
+not be passed to the subprocess(es). In forms such as <em>fileName</em>
+may either be in a separate argument from or in the same argument with
+no intervening space (i.e.</p>
+<dl>
+<dt><strong>|</strong></dt>
+<dd>
+<p>Separates distinct commands in the pipeline. The standard output of
+the preceding command will be piped into the standard input of the next
+command.</p>
+</dd>
+<dt><strong>|&amp;</strong></dt>
+<dd>
+<p>Separates distinct commands in the pipeline. Both standard output and
+standard error of the preceding command will be piped into the standard
+input of the next command. This form of redirection overrides forms such
+as 2&gt; and &gt;&amp;.</p>
+</dd>
+<dt><strong>&lt; </strong><em>fileName</em></dt>
+<dd>
+<p>The file named by <em>fileName</em> is opened and used as the
+standard input for the first command in the pipeline.</p>
+</dd>
+<dt><strong>&lt;@ </strong><em>fileId</em></dt>
+<dd>
+<p><em>FileId</em> must be the identifier for an open file, such as the
+return value from a previous call to <strong>open</strong>. It is used
+as the standard input for the first command in the pipeline.
+<em>FileId</em> must have been opened for reading.</p>
+</dd>
+<dt><strong>&lt;&lt; </strong><em>value</em></dt>
+<dd>
+<p><em>Value</em> is passed to the first command as its standard
+input.</p>
+</dd>
+<dt><strong>&gt; </strong><em>fileName</em></dt>
+<dd>
+<p>Standard output from the last command is redirected to the file named
+<em>fileName</em>, overwriting its previous contents.</p>
+</dd>
+<dt><strong>2&gt; </strong><em>fileName</em></dt>
+<dd>
+<p>Standard error from all commands in the pipeline is redirected to the
+file named <em>fileName</em>, overwriting its previous contents.</p>
+</dd>
+<dt><strong>&gt;&amp; </strong><em>fileName</em></dt>
+<dd>
+<p>Both standard output from the last command and standard error from
+all commands are redirected to the file named <em>fileName</em>,
+overwriting its previous contents.</p>
+</dd>
+<dt><strong>&gt;&gt; </strong><em>fileName</em></dt>
+<dd>
+<p>Standard output from the last command is redirected to the file named
+<em>fileName</em>, appending to it rather than overwriting it.</p>
+</dd>
+<dt><strong>2&gt;&gt; </strong><em>fileName</em></dt>
+<dd>
+<p>Standard error from all commands in the pipeline is redirected to the
+file named <em>fileName</em>, appending to it rather than overwriting
+it.</p>
+</dd>
+<dt><strong>&gt;&gt;&amp; </strong><em>fileName</em></dt>
+<dd>
+<p>Both standard output from the last command and standard error from
+all commands are redirected to the file named <em>fileName</em>,
+appending to it rather than overwriting it.</p>
+</dd>
+<dt><strong>&gt;@ </strong><em>fileId</em></dt>
+<dd>
+<p><em>FileId</em> must be the identifier for an open file, such as the
+return value from a previous call to <strong>open</strong>. Standard
+output from the last command is redirected to <em>fileId</em>'s file,
+which must have been opened for writing.</p>
+</dd>
+<dt><strong>2&gt;@ </strong><em>fileId</em></dt>
+<dd>
+<p><em>FileId</em> must be the identifier for an open file, such as the
+return value from a previous call to <strong>open</strong>. Standard
+error from all commands in the pipeline is redirected to
+<em>fileId</em>'s file. The file must have been opened for writing.</p>
+</dd>
+<dt><strong>2&gt;<span class="citation"
+data-cites="1">@1</span> </strong></dt>
+<dd>
+<p>Standard error from all commands in the pipeline is redirected to the
+command result. This operator is only valid at the end of the command
+pipeline.</p>
+</dd>
+<dt><strong>&gt;&amp;@ </strong><em>fileId</em></dt>
+<dd>
+<p><em>FileId</em> must be the identifier for an open file, such as the
+return value from a previous call to <strong>open</strong>. Both
+standard output from the last command and standard error from all
+commands are redirected to <em>fileId</em>'s file. The file must have
+been opened for writing.</p>
+</dd>
+</dl>
+<p>If standard output has not been redirected then the
+<strong>exec</strong> command returns the standard output from the last
+command in the pipeline, unless was specified, in which case standard
+error is included as well. If any of the commands in the pipeline exit
+abnormally or are killed or suspended, then <strong>exec</strong> will
+return an error and the error message will include the pipeline's output
+followed by error messages describing the abnormal terminations; the
+<strong>-errorcode</strong> return option will contain additional
+information about the last abnormal termination encountered. If any of
+the commands writes to its standard error file and that standard error
+is not redirected and <strong>-ignorestderr</strong> is not specified,
+then <strong>exec</strong> will return an error; the error message will
+include the pipeline's standard output, followed by messages about
+abnormal terminations (if any), followed by the standard error
+output.</p>
+<p>If the last character of the result or error message is a newline
+then that character is normally deleted from the result or error
+message. This is consistent with other Tcl return values, which do not
+normally end with newlines. However, if <strong>-keepnewline</strong> is
+specified then the trailing newline is retained.</p>
+<p>If standard input is not redirected with or then the standard input
+for the first command in the pipeline is taken from the application's
+current standard input.</p>
+<p>If the last <em>arg</em> is then the pipeline will be executed in
+background. In this case the <strong>exec</strong> command will return a
+list whose elements are the process identifiers for all of the
+subprocesses in the pipeline. The standard output from the last command
+in the pipeline will go to the application's standard output if it has
+not been redirected, and error output from all of the commands in the
+pipeline will go to the application's standard error file unless
+redirected.</p>
+<p>The first word in each command is taken as the command name;
+tilde-substitution is performed on it, and if the result contains no
+slashes then the directories in the PATH environment variable are
+searched for an executable by the given name. If the name contains a
+slash then it must refer to an executable reachable from the current
+directory. No expansion or other shell-like substitutions are performed
+on the arguments to commands.</p>
+<h1 id="portability-issues">PORTABILITY ISSUES</h1>
+<dl>
+<dt><strong>Windows</strong> (all versions)</dt>
+<dd>
+<p>Reading from or writing to a socket, using the notation, does not
+work. When reading from a socket, a 16-bit DOS application will hang and
+a 32-bit application will return immediately with end-of-file. When
+either type of application writes to a socket, the information is
+instead sent to the console, if one is present, or is discarded.</p>
+<p>Note that the current escape resp. quoting of arguments for windows
+works only with executables using CommandLineToArgv, CRT-library or
+similar, as well as with the windows batch files (excepting the newline,
+see below). Although it is the common escape algorithm, but, in fact,
+the way how the executable parses the command-line (resp. splits it into
+single arguments) is decisive.</p>
+<p>Unfortunately, there is currently no way to supply newline character
+within an argument to the batch files (<strong>.cmd</strong> or
+<strong>.bat</strong>) or to the command processor (<strong>cmd.exe
+/c</strong>), because this causes truncation of command-line (also the
+argument chain) on the first newline character. But it works properly
+with an executable (using CommandLineToArgv, etc).</p>
+<p>The Tk console text widget does not provide real standard IO
+capabilities. Under Tk, when redirecting from standard input, all
+applications will see an immediate end-of-file; information redirected
+to standard output or standard error will be discarded.</p>
+<p>Either forward or backward slashes are accepted as path separators
+for arguments to Tcl commands. When executing an application, the path
+name specified for the application may also contain forward or backward
+slashes as path separators. Bear in mind, however, that most Windows
+applications accept arguments with forward slashes only as option
+delimiters and backslashes only in paths. Any arguments to an
+application that specify a path name with forward slashes will not
+automatically be converted to use the backslash character. If an
+argument contains forward slashes as the path separator, it may or may
+not be recognized as a path name, depending on the program.</p>
+<p>Two or more forward or backward slashes in a row in a path refer to a
+network path. For example, a simple concatenation of the root directory
+<strong>c:/</strong> with a subdirectory
+<strong>/windows/system</strong> will yield
+<strong>c://windows/system</strong> (two slashes together), which refers
+to the mount point called <strong>system</strong> on the machine called
+<strong>windows</strong> (and the <strong>c:/</strong> is ignored), and
+is not equivalent to <strong>c:/windows/system</strong>, which describes
+a directory on the current computer. The <strong>file join</strong>
+command should be used to concatenate path components.</p>
+<p>Note that there are two general types of Win32 console
+applications:</p>
+<blockquote>
+<dl>
+<dt>[1]</dt>
+<dd>
+<p>CLI — CommandLine Interface, simple stdio exchange.
+<strong>netstat.exe</strong> for example.</p>
+</dd>
+<dt>[2]</dt>
+<dd>
+<p>TUI — Textmode User Interface, any application that accesses the
+console API for doing such things as cursor movement, setting text
+color, detecting key presses and mouse movement, etc. An example would
+be <strong>telnet.exe</strong> from Windows 2000. These types of
+applications are not common in a windows environment, but do exist.</p>
+</dd>
+</dl>
+</blockquote>
+<p><strong>exec</strong> will not work well with TUI applications when a
+console is not present, as is done when launching applications under
+wish. It is desirable to have console applications hidden and detached.
+This is a designed-in limitation as <strong>exec</strong> wants to
+communicate over pipes. The Expect extension addresses this issue when
+communicating with a TUI application.</p>
+<p>When attempting to execute an application, <strong>exec</strong>
+first searches for the name as it was specified. Then, in order,
+<strong>.com</strong>, <strong>.exe</strong>, <strong>.bat</strong> and
+<strong>.cmd</strong> are appended to the end of the specified name and
+it searches for the longer name. If a directory name was not specified
+as part of the application name, the following directories are
+automatically searched in order when attempting to locate the
+application:</p>
+<ul>
+<li><p>The directory from which the Tcl executable was loaded.</p></li>
+<li><p>The current directory.</p></li>
+<li><p>The Windows 32-bit system directory.</p></li>
+<li><p>The Windows home directory.</p></li>
+<li><p>The directories listed in the path.</p></li>
+</ul>
+<p>In order to execute shell built-in commands like <strong>dir</strong>
+and <strong>copy</strong>, the caller must prepend the desired command
+with because built-in commands are not implemented using
+executables.</p>
+</dd>
+<dt><strong>Unix</strong> (including Mac OS X)</dt>
+<dd>
+<p>The <strong>exec</strong> command is fully functional and works as
+described.</p>
+</dd>
+</dl>
+<h1 id="unix-examples">UNIX EXAMPLES</h1>
+<p>Here are some examples of the use of the <strong>exec</strong>
+command on Unix. To execute a simple program and get its result:</p>
+<pre><code>exec uname -a</code></pre>
+<h2 id="working-with-non-zero-results">WORKING WITH NON-ZERO
+RESULTS</h2>
+<p>To execute a program that can return a non-zero result, you should
+wrap the call to <strong>exec</strong> in <strong>catch</strong> and
+check the contents of the <strong>-errorcode</strong> return option if
+you have an error:</p>
+<pre><code>set status 0
+if {[catch {exec grep foo bar.txt} results options]} {
+    set details [dict get $options -errorcode]
+    if {[lindex $details 0] eq &quot;CHILDSTATUS&quot;} {
+        set status [lindex $details 2]
+    } else {
+        # Some other error; regenerate it to let caller handle
+        return -options $options -level 0 $results
+    }
+}</code></pre>
+<p>This is more easily written using the <strong>try</strong> command,
+as that makes it simpler to trap specific types of errors. This is done
+using code like this:</p>
+<pre><code>try {
+    set results [exec grep foo bar.txt]
+    set status 0
+} trap CHILDSTATUS {results options} {
+    set status [lindex [dict get $options -errorcode] 2]
+}</code></pre>
+<h2 id="working-with-quoted-arguments">WORKING WITH QUOTED
+ARGUMENTS</h2>
+<p>When translating a command from a Unix shell invocation, care should
+be taken over the fact that single quote characters have no special
+significance to Tcl. Thus:</p>
+<pre><code>awk &#39;{sum += $1} END {print sum}&#39; numbers.list</code></pre>
+<p>would be translated into something like:</p>
+<pre><code>exec awk {{sum += $1} END {print sum}} numbers.list</code></pre>
+<h2 id="working-with-globbing">WORKING WITH GLOBBING</h2>
+<p>If you are converting invocations involving shell globbing, you
+should remember that Tcl does not handle globbing or expand things into
+multiple arguments by default. Instead you should write things like
+this:</p>
+<pre><code>exec ls -l {*}[glob *.tcl]</code></pre>
+<h2 id="working-with-user-supplied-shell-script-fragments">WORKING WITH
+USER-SUPPLIED SHELL SCRIPT FRAGMENTS</h2>
+<p>One useful technique can be to expose to users of a script the
+ability to specify a fragment of shell script to execute that will have
+some data passed in on standard input that was produced by the Tcl
+program. This is a common technique for using the <em>lpr</em> program
+for printing. By far the simplest way of doing this is to pass the
+user's script to the user's shell for processing, as this avoids a lot
+of complexity with parsing other languages.</p>
+<pre><code>set lprScript [get from user...]
+set postscriptData [generate somehow...]
+
+exec $env(SHELL) -c $lprScript &lt;&lt; $postscriptData</code></pre>
+<h1 id="windows-examples">WINDOWS EXAMPLES</h1>
+<p>Here are some examples of the use of the <strong>exec</strong>
+command on Windows. To start an instance of <em>notepad</em> editing a
+file without waiting for the user to finish editing the file:</p>
+<pre><code>exec notepad myfile.txt &amp;</code></pre>
+<p>To print a text file using <em>notepad</em>:</p>
+<pre><code>exec notepad /p myfile.txt</code></pre>
+<h2 id="working-with-console-programs">WORKING WITH CONSOLE
+PROGRAMS</h2>
+<p>If a program calls other programs, such as is common with compilers,
+then you may need to resort to batch files to hide the console windows
+that sometimes pop up:</p>
+<pre><code>exec cmp.bat somefile.c -o somefile</code></pre>
+<p>With the file <em>cmp.bat</em> looking something like:</p>
+<pre><code>@gcc %*</code></pre>
+<p>or like another variant using single parameters:</p>
+<pre><code>@gcc %1 %2 %3 %4 %5 %6 %7 %8 %9</code></pre>
+<h2 id="working-with-command-built-ins">WORKING WITH COMMAND
+BUILT-INS</h2>
+<p>Sometimes you need to be careful, as different programs may have the
+same name and be in the path. It can then happen that typing a command
+at the DOS prompt finds <em>a different program</em> than the same
+command run via <strong>exec</strong>. This is because of the
+(documented) differences in behaviour between <strong>exec</strong> and
+DOS batch files.</p>
+<p>When in doubt, use the command <strong>auto_execok</strong>: it will
+return the complete path to the program as seen by the
+<strong>exec</strong> command. This applies especially when you want to
+run commands like <em>dir</em> from a Tcl script (if you just want to
+list filenames, use the <strong>glob</strong> command.) To do that, use
+this:</p>
+<pre><code>exec {*}[auto_execok dir] *.tcl</code></pre>
+<h2 id="working-with-native-filenames">WORKING WITH NATIVE
+FILENAMES</h2>
+<p>Many programs on Windows require filename arguments to be passed in
+with backslashes as pathname separators. This is done with the help of
+the <strong>file nativename</strong> command. For example, to make a
+directory (on NTFS) encrypted so that only the current user can access
+it requires use of the <em>CIPHER</em> command, like this:</p>
+<pre><code>set secureDir &quot;~/Desktop/Secure Directory&quot;
+file mkdir $secureDir
+exec CIPHER /e /s:[file nativename $secureDir]</code></pre>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-Commands/error.html">error</a>, <a
+href="../Tcl-Commands/file.html">file</a>, <a
+href="../Tcl-Commands/open.html">open</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>execute, pipeline, redirection, subprocess</p>

@@ -1,0 +1,23 @@
+<h1 id="name">NAME</h1>
+<p>Tk_GetHWND, Tk_AttachHWND - manage interactions between the Windows
+handle and an X window</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tkPlatDecls.h&gt;
+
+HWND
+Tk_GetHWND(window)
+
+Window
+Tk_AttachHWND(tkwin, hwnd)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>X token for window.</p>
+<p>Tk window for window.</p>
+<p>Windows HWND for window.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p><strong>Tk_GetHWND</strong> returns the Windows HWND identifier for X
+Windows window given by <em>window</em>.</p>
+<p><strong>Tk_AttachHWND</strong> binds the Windows HWND identifier to
+the specified Tk_Window given by <em>tkwin</em>. It returns an X Windows
+window that encapsulates the HWND.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>identifier, window</p>

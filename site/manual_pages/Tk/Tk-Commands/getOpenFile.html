@@ -1,0 +1,183 @@
+<h1 id="name">NAME</h1>
+<p>tk_getOpenFile, tk_getSaveFile - pop up a dialog box for the user to
+select a file to open or save.</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>tk_getOpenFile ?option value ...?
+tk_getSaveFile ?option value ...?</code></pre>
+<h1 id="description">DESCRIPTION</h1>
+<p>The procedures <strong>tk_getOpenFile</strong> and
+<strong>tk_getSaveFile</strong> pop up a dialog box for the user to
+select a file to open or save. The <strong>tk_getOpenFile</strong>
+command is usually associated with the <strong>Open</strong> command in
+the <strong>File</strong> menu. Its purpose is for the user to select an
+existing file <em>only</em>. If the user enters a non-existent file, the
+dialog box gives the user an error prompt and requires the user to give
+an alternative selection. If an application allows the user to create
+new files, it should do so by providing a separate <strong>New</strong>
+menu command.</p>
+<p>The <strong>tk_getSaveFile</strong> command is usually associated
+with the <strong>Save</strong> as command in the <strong>File</strong>
+menu. If the user enters a file that already exists, the dialog box
+prompts the user for confirmation whether the existing file should be
+overwritten or not.</p>
+<p>The following <em>option-value</em> pairs are possible as command
+line arguments to these two commands:</p>
+<dl>
+<dt><strong>-command</strong> <em>string</em></dt>
+<dd>
+<p>Specifies the prefix of a Tcl command to invoke when the user closes
+the dialog after having selected an item. This callback is not called if
+the user cancelled the dialog. The actual command consists of
+<em>string</em> followed by a space and the value selected by the user
+in the dialog. This is only available on Mac OS X.</p>
+</dd>
+<dt><strong>-confirmoverwrite</strong> <em>boolean</em></dt>
+<dd>
+<p>Configures how the Save dialog reacts when the selected file already
+exists, and saving would overwrite it. A true value requests a
+confirmation dialog be presented to the user. A false value requests
+that the overwrite take place without confirmation. Default value is
+true.</p>
+</dd>
+<dt><strong>-defaultextension</strong> <em>extension</em></dt>
+<dd>
+<p>Specifies a string that will be appended to the filename if the user
+enters a filename without an extension. The default value is the empty
+string, which means no extension will be appended to the filename in any
+case. This option is ignored on Mac OS X, which does not require
+extensions to filenames, and the UNIX implementation guesses reasonable
+values for this from the <strong>-filetypes</strong> option when this is
+not supplied.</p>
+</dd>
+<dt><strong>-filetypes</strong> <em>filePatternList</em></dt>
+<dd>
+<p>If a <strong>File types</strong> listbox exists in the file dialog on
+the particular platform, this option gives the <em>filetype</em>s in
+this listbox. When the user choose a filetype in the listbox, only the
+files of that type are listed. If this option is unspecified, or if it
+is set to the empty list, or if the <strong>File types</strong> listbox
+is not supported by the particular platform then all files are listed
+regardless of their types. See the section <strong>SPECIFYING FILE
+PATTERNS</strong> below for a discussion on the contents of
+<em>filePatternList</em>.</p>
+</dd>
+<dt><strong>-initialdir</strong> <em>directory</em></dt>
+<dd>
+<p>Specifies that the files in <em>directory</em> should be displayed
+when the dialog pops up. If this parameter is not specified, the initial
+directory defaults to the current working directory on non-Windows
+systems and on Windows systems prior to Vista. On Vista and later
+systems, the initial directory defaults to the last user-selected
+directory for the application. If the parameter specifies a relative
+path, the return value will convert the relative path to an absolute
+path.</p>
+</dd>
+<dt><strong>-initialfile</strong> <em>filename</em></dt>
+<dd>
+<p>Specifies a filename to be displayed in the dialog when it pops
+up.</p>
+</dd>
+<dt><strong>-message</strong> <em>string</em></dt>
+<dd>
+<p>Specifies a message to include in the client area of the dialog. This
+is only available on Mac OS X.</p>
+</dd>
+<dt><strong>-multiple</strong> <em>boolean</em></dt>
+<dd>
+<p>Allows the user to choose multiple files from the Open dialog.</p>
+</dd>
+<dt><strong>-parent</strong> <em>window</em></dt>
+<dd>
+<p>Makes <em>window</em> the logical parent of the file dialog. The file
+dialog is displayed on top of its parent window. On Mac OS X, this turns
+the file dialog into a sheet attached to the parent window.</p>
+</dd>
+<dt><strong>-title</strong> <em>titleString</em></dt>
+<dd>
+<p>Specifies a string to display as the title of the dialog box. If this
+option is not specified, then a default title is displayed.</p>
+</dd>
+<dt><strong>-typevariable</strong> <em>variableName</em></dt>
+<dd>
+<p>The global variable <em>variableName</em> is used to preselect which
+filter is used from <em>filterList</em> when the dialog box is opened
+and is updated when the dialog box is closed, to the last selected
+filter. The variable is read once at the beginning to select the
+appropriate filter. If the variable does not exist, or its value does
+not match any filter typename, or is empty (<strong>{}</strong>), the
+dialog box will revert to the default behavior of selecting the first
+filter in the list. If the dialog is canceled, the variable is not
+modified.</p>
+</dd>
+</dl>
+<p>If the user selects a file, both <strong>tk_getOpenFile</strong> and
+<strong>tk_getSaveFile</strong> return the full pathname of this file.
+If the user cancels the operation, both commands return the empty
+string.</p>
+<h1 id="specifying-file-patterns">SPECIFYING FILE PATTERNS</h1>
+<p>The <em>filePatternList</em> value given by the
+<strong>-filetypes</strong> option is a list of file patterns. Each file
+pattern is a list of the form</p>
+<pre><code>typeName {extension ?extension ...?} ?{macType ?macType ...?}?</code></pre>
+<p><em>typeName</em> is the name of the file type described by this file
+pattern and is the text string that appears in the <strong>File
+types</strong> listbox. <em>extension</em> is a file extension for this
+file pattern. <em>macType</em> is a four-character Macintosh file type.
+The list of <em>macType</em>s is optional and may be omitted for
+applications that do not need to execute on the Macintosh platform.</p>
+<p>Several file patterns may have the same <em>typeName,</em> in which
+case they refer to the same file type and share the same entry in the
+listbox. When the user selects an entry in the listbox, all the files
+that match at least one of the file patterns corresponding to that entry
+are listed. Usually, each file pattern corresponds to a distinct type of
+file. The use of more than one file pattern for one type of file is only
+necessary on the Macintosh platform.</p>
+<p>On the Macintosh platform, a file matches a file pattern if its name
+matches at least one of the <em>extension</em>(s) AND it belongs to at
+least one of the <em>macType</em>(s) of the file pattern. For example,
+the <strong>C Source Files</strong> file pattern in the sample code
+matches with files that have a <strong>.c</strong> extension AND belong
+to the <em>macType</em> <strong>TEXT</strong>. To use the OR rule
+instead, you can use two file patterns, one with the <em>extensions</em>
+only and the other with the <em>macType</em> only. The <strong>GIF
+Files</strong> file type in the sample code matches files that
+<em>either</em> have a <strong>.gif</strong> extension OR belong to the
+<em>macType</em> <strong>GIFF</strong>.</p>
+<p>On the Unix and Windows platforms, a file matches a file pattern if
+its name matches at least one of the <em>extension</em>(s) of the file
+pattern. The <em>macType</em>s are ignored.</p>
+<h1 id="specifying-extensions">SPECIFYING EXTENSIONS</h1>
+<p>On the Unix and Macintosh platforms, extensions are matched using
+glob-style pattern matching. On the Windows platform, extensions are
+matched by the underlying operating system. The types of possible
+extensions are:</p>
+<ol type="1">
+<li><p>the special extension matches any file;</p></li>
+<li><p>the special extension matches any files that do not have an
+extension (i.e., the filename contains no full stop character);</p></li>
+<li><p>any character string that does not contain any wild card
+characters (* and ?).</p></li>
+</ol>
+<p>Due to the different pattern matching rules on the various platforms,
+to ensure portability, wild card characters are not allowed in the
+extensions, except as in the special extension Extensions without a full
+stop character (e.g. are allowed but may not work on all platforms.</p>
+<h1 id="example">EXAMPLE</h1>
+<pre><code>set types {
+    {{Text Files}       {.txt}        }
+    {{TCL Scripts}      {.tcl}        }
+    {{C Source Files}   {.c}      TEXT}
+    {{GIF Files}        {.gif}        }
+    {{GIF Files}        {}        GIFF}
+    {{All Files}        *             }
+}
+set filename [tk_getOpenFile -filetypes $types]
+
+if {$filename ne &quot;&quot;} {
+    # Open the file ...
+}</code></pre>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a
+href="../Tk-Commands/tk_chooseDirectory.html">tk_chooseDirectory</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>file selection dialog</p>

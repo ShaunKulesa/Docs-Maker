@@ -1,0 +1,47 @@
+<h1 id="name">NAME</h1>
+<p>Tcl_CallWhenDeleted, Tcl_DontCallWhenDeleted - Arrange for callback
+when interpreter is deleted</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tcl.h&gt;
+
+Tcl_CallWhenDeleted(interp, proc, clientData)
+
+Tcl_DontCallWhenDeleted(interp, proc, clientData)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Interpreter with which to associated callback.</p>
+<p>Procedure to call when <em>interp</em> is deleted.</p>
+<p>Arbitrary one-word value to pass to <em>proc</em>.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p><strong>Tcl_CallWhenDeleted</strong> arranges for <em>proc</em> to be
+called by <strong>Tcl_DeleteInterp</strong> if/when <em>interp</em> is
+deleted at some future time. <em>Proc</em> will be invoked just before
+the interpreter is deleted, but the interpreter will still be valid at
+the time of the call. <em>Proc</em> should have arguments and result
+that match the type <strong>Tcl_InterpDeleteProc</strong>:</p>
+<pre><code>typedef void Tcl_InterpDeleteProc(
+        ClientData clientData,
+        Tcl_Interp *interp);</code></pre>
+<p>The <em>clientData</em> and <em>interp</em> parameters are copies of
+the <em>clientData</em> and <em>interp</em> arguments given to
+<strong>Tcl_CallWhenDeleted</strong>. Typically, <em>clientData</em>
+points to an application-specific data structure that <em>proc</em> uses
+to perform cleanup when an interpreter is about to go away.
+<em>Proc</em> does not return a value.</p>
+<p><strong>Tcl_DontCallWhenDeleted</strong> cancels a previous call to
+<strong>Tcl_CallWhenDeleted</strong> with the same arguments, so that
+<em>proc</em> will not be called after all when <em>interp</em> is
+deleted. If there is no deletion callback that matches <em>interp</em>,
+<em>proc</em>, and <em>clientData</em> then the call to
+<strong>Tcl_DontCallWhenDeleted</strong> has no effect.</p>
+<p>Note that if the callback is being used to delete a resource that
+<em>must</em> be released on exit,
+<strong>Tcl_CreateExitHandler</strong> should be used to ensure that a
+callback is received even if the application terminates without deleting
+the interpreter.</p>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a
+href="../Tcl-C-API/Tcl_CreateExitHandler.html">Tcl_CreateExitHandler</a>,
+<a
+href="../Tcl-C-API/Tcl_CreateThreadExitHandler.html">Tcl_CreateThreadExitHandler</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>callback, cleanup, delete, interpreter</p>

@@ -1,0 +1,32 @@
+<h1 id="name">NAME</h1>
+<p>Tk_MapWindow, Tk_UnmapWindow - map or unmap a window</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tk.h&gt;
+
+Tk_Window
+Tk_MapWindow(tkwin)
+
+Tk_UnmapWindow(tkwin)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Token for window.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>These procedures may be used to map and unmap windows managed by Tk.
+<strong>Tk_MapWindow</strong> maps the window given by <em>tkwin</em>,
+and also creates an X window corresponding to <em>tkwin</em> if it does
+not already exist. See the <strong>Tk_CreateWindow</strong> manual entry
+for information on deferred window creation.
+<strong>Tk_UnmapWindow</strong> unmaps <em>tkwin</em>'s window from the
+screen.</p>
+<p>If <em>tkwin</em> is a child window
+(i.e. <strong>Tk_CreateWindow</strong> was used to create a child
+window), then event handlers interested in map and unmap events are
+invoked immediately. If <em>tkwin</em> is not an internal window, then
+the event handlers will be invoked later, after X has seen the request
+and returned an event for it.</p>
+<p>These procedures should be used in place of the X procedures
+<strong>XMapWindow</strong> and <strong>XUnmapWindow</strong>, since
+they update Tk's local data structure for <em>tkwin</em>. Applications
+using Tk should not invoke <strong>XMapWindow</strong> and
+<strong>XUnmapWindow</strong> directly.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>map, unmap, window</p>

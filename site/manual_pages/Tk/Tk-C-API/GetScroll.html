@@ -1,0 +1,53 @@
+<h1 id="name">NAME</h1>
+<p>Tk_GetScrollInfoObj, Tk_GetScrollInfo - parse arguments for scrolling
+commands</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tk.h&gt;
+
+int
+Tk_GetScrollInfoObj(interp, objc, objv, fractionPtr, stepsPtr)
+
+int
+Tk_GetScrollInfo(interp, argc, argv, fractionPtr, stepsPtr)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Interpreter to use for error reporting.</p>
+<p>Number of Tcl_Obj's in <em>objv</em> array.</p>
+<p>Argument objects. These represent the entire widget command, of which
+the first word is typically the widget name and the second word is
+typically <strong>xview</strong> or <strong>yview</strong>.</p>
+<p>Number of strings in <em>argv</em> array.</p>
+<p>Argument strings. These represent the entire widget command, of which
+the first word is typically the widget name and the second word is
+typically <strong>xview</strong> or <strong>yview</strong>.</p>
+<p>Filled in with fraction from <strong>moveto</strong> option, if
+any.</p>
+<p>Filled in with line or page count from <strong>scroll</strong>
+option, if any. The value may be negative.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p><strong>Tk_GetScrollInfoObj</strong> parses the arguments expected by
+widget scrolling commands such as <strong>xview</strong> and
+<strong>yview</strong>. It receives the entire list of words that make
+up a widget command and parses the words starting with <em>objv</em>[2].
+The words starting with <em>objv</em>[2] must have one of the following
+forms:</p>
+<pre><code>moveto fraction
+scroll number units
+scroll number pages</code></pre>
+<p>Any of the <strong>moveto</strong>, <strong>scroll</strong>,
+<strong>units</strong>, and <strong>pages</strong> keywords may be
+abbreviated. If <em>objv</em> has the <strong>moveto</strong> form,
+<strong>TK_SCROLL_MOVETO</strong> is returned as result and
+<em>*fractionPtr</em> is filled in with the <em>fraction</em> argument
+to the command, which must be a proper real value. If <em>objv</em> has
+the <strong>scroll</strong> form, <strong>TK_SCROLL_UNITS</strong> or
+<strong>TK_SCROLL_PAGES</strong> is returned and <em>*stepsPtr</em> is
+filled in with the <em>number</em> value, which must be a proper
+integer. If an error occurs in parsing the arguments,
+<strong>TK_SCROLL_ERROR</strong> is returned and an error message is
+left in interpreter <em>interp</em>'s result.</p>
+<p><strong>Tk_GetScrollInfo</strong> is identical in function to
+<strong>Tk_GetScrollInfoObj</strong>. However,
+<strong>Tk_GetScrollInfo</strong> accepts string arguments, making it
+more appropriate for use with legacy widgets.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>parse, scrollbar, scrolling command, xview, yview</p>

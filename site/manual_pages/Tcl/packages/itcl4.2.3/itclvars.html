@@ -1,0 +1,79 @@
+<h1 id="name">NAME</h1>
+<p>itclvars - variables used by [incr Tcl]</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>The following global variables are created and managed automatically
+by the <strong>[incr Tcl]</strong> library. Except where noted below,
+these variables should normally be treated as read-only by
+application-specific code and by users.</p>
+<dl>
+<dt><strong>itcl::library</strong></dt>
+<dd>
+<p>When an interpreter is created, <strong>[incr Tcl]</strong>
+initializes this variable to hold the name of a directory containing the
+system library of <strong>[incr Tcl]</strong> scripts. The initial value
+of <strong>itcl::library</strong> is set from the ITCL_LIBRARY
+environment variable if it exists, or from a compiled-in value
+otherwise.</p>
+</dd>
+<dt><strong>itcl::patchLevel</strong></dt>
+<dd>
+<p>When an interpreter is created, <strong>[incr Tcl]</strong>
+initializes this variable to hold the current patch level for
+<strong>[incr Tcl]</strong>. For example, the value
+"<strong>2.0p1</strong>" indicates <strong>[incr Tcl]</strong> version
+2.0 with the first set of patches applied.</p>
+</dd>
+<dt><strong>itcl::purist</strong></dt>
+<dd>
+<p>When an interpreter is created containing Tcl/Tk and the
+<strong>[incr Tcl]</strong> namespace facility, this variable controls a
+"backward-compatibility" mode for widget access.</p>
+<p>In vanilla Tcl/Tk, there is a single pool of commands, so the access
+command for a widget is the same as the window name. When a widget is
+created within a namespace, however, its access command is installed in
+that namespace, and should be accessed outside of the namespace using a
+qualified name. For example,</p>
+<pre><code>namespace foo {
+    namespace bar {
+        button .b -text &quot;Testing&quot;
+    }
+}
+foo::bar::.b configure -background red
+pack .b</code></pre>
+<p>Note that the window name "<code>.b</code>" is still used in
+conjunction with commands like <strong>pack</strong> and
+<strong>destroy</strong>. However, the access command for the widget
+(i.e., name that appears as the <em>first</em> argument on a command
+line) must be more specific.</p>
+<p>The "<strong>winfo command</strong>" command can be used to query the
+fully-qualified access command for any widget, so one can write:</p>
+<pre><code>[winfo command .b] configure -background red</code></pre>
+<p>and this is good practice when writing library procedures. Also, in
+conjunction with the <strong>bind</strong> command, the "%q" field can
+be used in place of "%W" as the access command:</p>
+<pre><code>bind Button &lt;Key-Return&gt; {%q flash; %q invoke}</code></pre>
+<p>While this behavior makes sense from the standpoint of encapsulation,
+it causes problems with existing Tcl/Tk applications. Many existing
+applications are written with bindings that use "%W". Many library
+procedures assume that the window name is the access command.</p>
+<p>The <strong>itcl::purist</strong> variable controls a
+backward-compatibility mode. By default, this variable is "0", and the
+window name can be used as an access command in any context. Whenever
+the <strong>unknown</strong> procedure stumbles across a widget name, it
+simply uses "<strong>winfo command</strong>" to determine the
+appropriate command name. If this variable is set to "1", this
+backward-compatibility mode is disabled. This gives better
+encapsulation, but using the window name as the access command may lead
+to "invalid command" errors.</p>
+</dd>
+<dt><strong>itcl::version</strong></dt>
+<dd>
+<p>When an interpreter is created, <strong>[incr Tcl]</strong>
+initializes this variable to hold the version number of the form
+<em>x.y</em>. Changes to <em>x</em> represent major changes with
+probable incompatibilities and changes to <em>y</em> represent small
+enhancements and bug fixes that retain backward compatibility.</p>
+</dd>
+</dl>
+<h1 id="keywords">KEYWORDS</h1>
+<p>itcl, variables</p>

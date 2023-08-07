@@ -1,0 +1,38 @@
+<h1 id="name">NAME</h1>
+<p>global - Access global variables</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>global</strong> ?<em>varname ...</em>?</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>This command has no effect unless executed in the context of a proc
+body. If the <strong>global</strong> command is executed in the context
+of a proc body, it creates local variables linked to the corresponding
+global variables (though these linked variables, like those created by
+<strong>upvar</strong>, are not included in the list returned by
+<strong>info locals</strong>).</p>
+<p>If <em>varname</em> contains namespace qualifiers, the local
+variable's name is the unqualified name of the global variable, as
+determined by the <strong>namespace tail</strong> command.</p>
+<p><em>varname</em> is always treated as the name of a variable, not an
+array element. An error is returned if the name looks like an array
+element, such as <strong>a(b)</strong>.</p>
+<h1 id="examples">EXAMPLES</h1>
+<p>This procedure sets the namespace variable <em>::a::x</em></p>
+<pre><code>proc reset {} {
+    global a::x
+    set x 0
+}</code></pre>
+<p>This procedure accumulates the strings passed to it in a global
+buffer, separated by newlines. It is useful for situations when you want
+to build a message piece-by-piece (as if with <strong>puts</strong>) but
+send that full message in a single piece (e.g. over a connection opened
+with <strong>socket</strong> or as part of a counted HTTP response).</p>
+<pre><code>proc accum {string} {
+    global accumulator
+    append accumulator $string \n
+}</code></pre>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-Commands/namespace.html">namespace</a>, <a
+href="../Tcl-Commands/upvar.html">upvar</a>, <a
+href="../Tcl-Commands/variable.html">variable</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>global, namespace, procedure, variable</p>

@@ -1,0 +1,107 @@
+<h1 id="name">NAME</h1>
+<p>Tcl_Interp - client-visible fields of interpreter structures</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tcl.h&gt;
+
+typedef struct {
+    char *result;
+    Tcl_FreeProc *freeProc;
+    int errorLine;
+} Tcl_Interp;
+
+typedef void Tcl_FreeProc(
+        char *blockPtr);</code></pre>
+<h1 id="description">DESCRIPTION</h1>
+<p>The <strong>Tcl_CreateInterp</strong> procedure returns a pointer to
+a Tcl_Interp structure. Callers of <strong>Tcl_CreateInterp</strong>
+should use this pointer as an opaque token, suitable for nothing other
+than passing back to other routines in the Tcl interface. Accessing
+fields directly through the pointer as described below is no longer
+supported. The supported public routines <strong>Tcl_SetResult</strong>,
+<strong>Tcl_GetResult</strong>, <strong>Tcl_SetErrorLine</strong>,
+<strong>Tcl_GetErrorLine</strong> must be used instead.</p>
+<p>For legacy programs and extensions no longer being maintained,
+compiles against the Tcl 8.6 header files are only possible with the
+compiler directives</p>
+<pre><code>#define USE_INTERP_RESULT</code></pre>
+<p>and/or</p>
+<pre><code>#define USE_INTERP_ERRORLINE</code></pre>
+<p>depending on which fields of the <strong>Tcl_Interp</strong> struct
+are accessed. These directives may be embedded in code or supplied via
+compiler options.</p>
+<p>The <em>result</em> and <em>freeProc</em> fields are used to return
+results or error messages from commands. This information is returned by
+command procedures back to <strong>Tcl_Eval</strong>, and by
+<strong>Tcl_Eval</strong> back to its callers. The <em>result</em> field
+points to the string that represents the result or error message, and
+the <em>freeProc</em> field tells how to dispose of the storage for the
+string when it is not needed anymore. The easiest way for command
+procedures to manipulate these fields is to call procedures like
+<strong>Tcl_SetResult</strong> or <strong>Tcl_AppendResult</strong>;
+they will hide all the details of managing the fields. The description
+below is for those procedures that manipulate the fields directly.</p>
+<p>Whenever a command procedure returns, it must ensure that the
+<em>result</em> field of its interpreter points to the string being
+returned by the command. The <em>result</em> field must always point to
+a valid string. If a command wishes to return no result then
+<em>interp-&gt;result</em> should point to an empty string. Normally,
+results are assumed to be statically allocated, which means that the
+contents will not change before the next time <strong>Tcl_Eval</strong>
+is called or some other command procedure is invoked. In this case, the
+<em>freeProc</em> field must be zero. Alternatively, a command procedure
+may dynamically allocate its return value (e.g. using
+<strong>Tcl_Alloc</strong>) and store a pointer to it in
+<em>interp-&gt;result</em>. In this case, the command procedure must
+also set <em>interp-&gt;freeProc</em> to the address of a procedure that
+can free the value, or <strong>TCL_DYNAMIC</strong> if the storage was
+allocated directly by Tcl or by a call to <strong>Tcl_Alloc</strong>. If
+<em>interp-&gt;freeProc</em> is non-zero, then Tcl will call
+<em>freeProc</em> to free the space pointed to by
+<em>interp-&gt;result</em> before it invokes the next command. If a
+client procedure overwrites <em>interp-&gt;result</em> when
+<em>interp-&gt;freeProc</em> is non-zero, then it is responsible for
+calling <em>freeProc</em> to free the old <em>interp-&gt;result</em>
+(the <strong>Tcl_FreeResult</strong> macro should be used for this
+purpose).</p>
+<p><em>FreeProc</em> should have arguments and result that match the
+<strong>Tcl_FreeProc</strong> declaration above: it receives a single
+argument which is a pointer to the result value to free. In most
+applications <strong>TCL_DYNAMIC</strong> is the only non-zero value
+ever used for <em>freeProc</em>. However, an application may store a
+different procedure address in <em>freeProc</em> in order to use an
+alternate memory allocator or in order to do other cleanup when the
+result memory is freed.</p>
+<p>As part of processing each command, <strong>Tcl_Eval</strong>
+initializes <em>interp-&gt;result</em> and <em>interp-&gt;freeProc</em>
+just before calling the command procedure for the command. The
+<em>freeProc</em> field will be initialized to zero, and
+<em>interp-&gt;result</em> will point to an empty string. Commands that
+do not return any value can simply leave the fields alone. Furthermore,
+the empty string pointed to by <em>result</em> is actually part of an
+array of <strong>TCL_RESULT_SIZE</strong> characters (approximately
+200). If a command wishes to return a short string, it can simply copy
+it to the area pointed to by <em>interp-&gt;result</em>. Or, it can use
+the sprintf procedure to generate a short result string at the location
+pointed to by <em>interp-&gt;result</em>.</p>
+<p>It is a general convention in Tcl-based applications that the result
+of an interpreter is normally in the initialized state described in the
+previous paragraph. Procedures that manipulate an interpreter's result
+(e.g. by returning an error) will generally assume that the result has
+been initialized when the procedure is called. If such a procedure is to
+be called after the result has been changed, then
+<strong>Tcl_ResetResult</strong> should be called first to reset the
+result to its initialized state. The direct use of
+<em>interp-&gt;result</em> is strongly deprecated (see
+<strong>Tcl_SetResult</strong>).</p>
+<p>The <em>errorLine</em> field is valid only after
+<strong>Tcl_Eval</strong> returns a <strong>TCL_ERROR</strong> return
+code. In this situation the <em>errorLine</em> field identifies the line
+number of the command being executed when the error occurred. The line
+numbers are relative to the command being executed: 1 means the first
+line of the command passed to <strong>Tcl_Eval</strong>, 2 means the
+second line, and so on. The <em>errorLine</em> field is typically used
+in conjunction with <strong>Tcl_AddErrorInfo</strong> to report
+information about where an error occurred. <em>ErrorLine</em> should not
+normally be modified except by <strong>Tcl_Eval</strong>.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>free, initialized, interpreter, malloc, result</p>

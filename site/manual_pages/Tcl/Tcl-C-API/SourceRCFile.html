@@ -1,0 +1,18 @@
+<h1 id="name">NAME</h1>
+<p>Tcl_SourceRCFile - source the Tcl rc file</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tcl.h&gt;
+
+void
+Tcl_SourceRCFile(interp)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Tcl interpreter to source rc file into.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p><strong>Tcl_SourceRCFile</strong> is used to source the Tcl rc file
+at startup. It is typically invoked by Tcl_Main or Tk_Main. The name of
+the file sourced is obtained from the global variable
+<strong>tcl_rcFileName</strong> in the interpreter given by
+<em>interp</em>. If this variable is not defined, or if the file it
+indicates cannot be found, no action is taken.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>application-specific initialization, main program, rc file</p>

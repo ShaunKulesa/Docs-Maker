@@ -1,0 +1,22 @@
+<h1 id="name">NAME</h1>
+<p>Tcl_SignalId, Tcl_SignalMsg - Convert signal codes</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tcl.h&gt;
+
+const char *
+Tcl_SignalId(sig)
+
+const char *
+Tcl_SignalMsg(sig)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>A POSIX signal number such as <strong>SIGPIPE</strong>.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p><strong>Tcl_SignalId</strong> and <strong>Tcl_SignalMsg</strong>
+return a string representation of the provided signal number
+(<em>sig</em>). <strong>Tcl_SignalId</strong> returns a machine-readable
+textual identifier such as <strong>Tcl_SignalMsg</strong> returns a
+human-readable string such as The strings returned by these functions
+are statically allocated and the caller must not free or modify
+them.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>signals, signal numbers</p>

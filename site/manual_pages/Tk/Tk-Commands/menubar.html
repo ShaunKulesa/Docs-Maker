@@ -1,0 +1,22 @@
+<h1 id="name">NAME</h1>
+<p>tk_menuBar, tk_bindForTraversal - Obsolete support for menu bars</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>tk_menuBar</strong> <em>frame</em> ?<em>menu menu
+...</em>?</p>
+<p><strong>tk_bindForTraversal</strong> <em>arg arg ...</em></p>
+<h1 id="description">DESCRIPTION</h1>
+<p>These procedures were used in Tk 3.6 and earlier releases to help
+manage pulldown menus and to implement keyboard traversal of menus. In
+Tk 4.0 and later releases they are no longer needed. Stubs for these
+procedures have been retained for backward compatibility, but they have
+no effect. You should remove calls to these procedures from your code,
+since eventually the procedures will go away.</p>
+<p>From Tk 8.0 onwards, you should instead construct your menubar as a
+normal <strong>menu</strong> and then attach it to the
+<strong>toplevel</strong> of your choice using the
+<strong>-menu</strong> option of that widget.</p>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tk-Commands/menu.html">menu</a>, <a
+href="../Tk-Commands/toplevel.html">toplevel</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>keyboard traversal, menu, menu bar, post</p>

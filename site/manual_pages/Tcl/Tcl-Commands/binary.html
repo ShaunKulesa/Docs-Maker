@@ -1,0 +1,786 @@
+<h1 id="name">NAME</h1>
+<p>binary - Insert and extract fields from binary strings</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>binary decode</strong> <em>format</em> ?<em>-option value
+...</em>? <em>data</em><br />
+<strong>binary encode</strong> <em>format</em> ?<em>-option value
+...</em>? <em>data</em><br />
+</p>
+<p><strong>binary format</strong> <em>formatString</em> ?<em>arg arg
+...</em>?<br />
+<strong>binary scan</strong> <em>string formatString</em> ?<em>varName
+varName ...</em>?</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>This command provides facilities for manipulating binary data. The
+subcommand <strong>binary format</strong> creates a binary string from
+normal Tcl values. For example, given the values 16 and 22, on a 32-bit
+architecture, it might produce an 8-byte binary string consisting of two
+4-byte integers, one for each of the numbers. The subcommand
+<strong>binary scan</strong>, does the opposite: it extracts data from a
+binary string and returns it as ordinary Tcl string values.</p>
+<p>The <strong>binary encode</strong> and <strong>binary decode</strong>
+subcommands convert binary data to or from string encodings such as
+base64 (used in MIME messages for example).</p>
+<p>Note that other operations on binary data, such as taking a
+subsequence of it, getting its length, or reinterpreting it as a string
+in some encoding, are done by other Tcl commands (respectively
+<strong>string range</strong>, <strong>string length</strong> and
+<strong>encoding convertfrom</strong> in the example cases). A binary
+string in Tcl is merely one where all the characters it contains are in
+the range \u0000-\u00FF.</p>
+<h1 id="binary-encode-and-decode">BINARY ENCODE AND DECODE</h1>
+<p>When encoding binary data as a readable string, the starting binary
+data is passed to the <strong>binary encode</strong> command, together
+with the name of the encoding to use and any encoding-specific options
+desired. Data which has been encoded can be converted back to binary
+form using <strong>binary decode</strong>. The following formats and
+options are supported.</p>
+<dl>
+<dt><strong>base64</strong></dt>
+<dd>
+<p>The <strong>base64</strong> binary encoding is commonly used in mail
+messages and XML documents, and uses mostly upper and lower case letters
+and digits. It has the distinction of being able to be rewrapped
+arbitrarily without losing information.</p>
+<p>During encoding, the following options are supported:</p>
+<dl>
+<dt><strong>-maxlen</strong> <em>length</em></dt>
+<dd>
+<p>Indicates that the output should be split into lines of no more than
+<em>length</em> characters. By default, lines are not split.</p>
+</dd>
+<dt><strong>-wrapchar</strong> <em>character</em></dt>
+<dd>
+<p>Indicates that, when lines are split because of the
+<strong>-maxlen</strong> option, <em>character</em> should be used to
+separate lines. By default, this is a newline character,</p>
+</dd>
+</dl>
+<p>During decoding, the following options are supported:</p>
+<dl>
+<dt><strong>-strict</strong></dt>
+<dd>
+<p>Instructs the decoder to throw an error if it encounters any
+characters that are not strictly part of the encoding itself. Otherwise
+it ignores them. RFC 2045 calls for base64 decoders to be
+non-strict.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>hex</strong></dt>
+<dd>
+<p>The <strong>hex</strong> binary encoding converts each byte to a pair
+of hexadecimal digits that represent the byte value as a hexadecimal
+integer. When encoding, lower characters are used. When decoding, upper
+and lower characters are accepted.</p>
+<p>No options are supported during encoding. During decoding, the
+following options are supported:</p>
+<dl>
+<dt><strong>-strict</strong></dt>
+<dd>
+<p>Instructs the decoder to throw an error if it encounters whitespace
+characters. Otherwise it ignores them.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>uuencode</strong></dt>
+<dd>
+<p>The <strong>uuencode</strong> binary encoding used to be common for
+transfer of data between Unix systems and on USENET, but is less common
+these days, having been largely superseded by the
+<strong>base64</strong> binary encoding.</p>
+<p>During encoding, the following options are supported (though changing
+them may produce files that other implementations of decoders cannot
+process):</p>
+<dl>
+<dt><strong>-maxlen</strong> <em>length</em></dt>
+<dd>
+<p>Indicates the maximum number of characters to produce for each
+encoded line. The valid range is 5 to 85. Line lengths outside that
+range cannot be accommodated by the encoding format. The default value
+is 61.</p>
+</dd>
+<dt><strong>-wrapchar</strong> <em>character</em></dt>
+<dd>
+<p>Indicates the character(s) to use to mark the end of each encoded
+line. Acceptable values are a sequence of zero or more characters from
+the set { \x09 (TAB), \x0B (VT), \x0C (FF), \x0D (CR) } followed by zero
+or one newline \x0A (LF). Any other values are rejected because they
+would generate encoded text that could not be decoded. The default value
+is a single newline.</p>
+</dd>
+</dl>
+<p>During decoding, the following options are supported:</p>
+<dl>
+<dt><strong>-strict</strong></dt>
+<dd>
+<p>Instructs the decoder to throw an error if it encounters anything
+outside of the standard encoding format. Without this option, the
+decoder tolerates some deviations, mostly to forgive reflows of lines
+between the encoder and decoder.</p>
+</dd>
+</dl>
+<p>Note that neither the encoder nor the decoder handle the header and
+footer of the uuencode format.</p>
+</dd>
+</dl>
+<h1 id="binary-format">BINARY FORMAT</h1>
+<p>The <strong>binary format</strong> command generates a binary string
+whose layout is specified by the <em>formatString</em> and whose
+contents come from the additional arguments. The resulting binary value
+is returned.</p>
+<p>The <em>formatString</em> consists of a sequence of zero or more
+field specifiers separated by zero or more spaces. Each field specifier
+is a single type character followed by an optional flag character
+followed by an optional numeric <em>count</em>. Most field specifiers
+consume one argument to obtain the value to be formatted. The type
+character specifies how the value is to be formatted. The <em>count</em>
+typically indicates how many items of the specified type are taken from
+the value. If present, the <em>count</em> is a non-negative decimal
+integer or <strong>*</strong>, which normally indicates that all of the
+items in the value are to be used. If the number of arguments does not
+match the number of fields in the format string that consume arguments,
+then an error is generated. The flag character is ignored for
+<strong>binary format</strong>.</p>
+<p>Here is a small example to clarify the relation between the field
+specifiers and the arguments:</p>
+<pre><code>binary format d3d {1.0 2.0 3.0 4.0} 0.1</code></pre>
+<p>The first argument is a list of four numbers, but because of the
+count of 3 for the associated field specifier, only the first three will
+be used. The second argument is associated with the second field
+specifier. The resulting binary string contains the four numbers 1.0,
+2.0, 3.0 and 0.1.</p>
+<p>Each type-count pair moves an imaginary cursor through the binary
+data, storing bytes at the current position and advancing the cursor to
+just after the last byte stored. The cursor is initially at position 0
+at the beginning of the data. The type may be any one of the following
+characters:</p>
+<ol type="a">
+<li><p>Stores a byte string of length <em>count</em> in the output
+string. Every character is taken as modulo 256 (i.e. the low byte of
+every character is used, and the high byte discarded) so when storing
+character strings not wholly expressible using the characters
+\u0000-\u00ff, the <strong>encoding convertto</strong> command should be
+used first to change the string into an external representation if this
+truncation is not desired (i.e. if the characters are not part of the
+ISO 8859-1 character set.) If <em>arg</em> has fewer than <em>count</em>
+bytes, then additional zero bytes are used to pad out the field. If
+<em>arg</em> is longer than the specified length, the extra characters
+will be ignored. If <em>count</em> is <strong>*</strong>, then all of
+the bytes in <em>arg</em> will be formatted. If <em>count</em> is
+omitted, then one character will be formatted. For example,</p>
+<pre><code>binary format a7a*a alpha bravo charlie</code></pre>
+<p>will return a string equivalent to
+<strong>alpha\000\000bravoc</strong>,</p>
+<pre><code>binary format a* [encoding convertto utf-8 \u20ac]</code></pre>
+<p>will return a string equivalent to <strong>\342\202\254</strong>
+(which is the UTF-8 byte sequence for a Euro-currency character) and</p>
+<pre><code>binary format a* [encoding convertto iso8859-15 \u20ac]</code></pre>
+<p>will return a string equivalent to <strong>\244</strong> (which is
+the ISO 8859-15 byte sequence for a Euro-currency character). Contrast
+these last two with:</p>
+<pre><code>binary format a* \u20ac</code></pre>
+<p>which returns a string equivalent to <strong>\254</strong>
+(i.e. <strong>\xac</strong>) by truncating the high-bits of the
+character, and which is probably not what is desired.</p></li>
+</ol>
+<!-- -->
+<ol type="A">
+<li><p>This form is the same as <strong>a</strong> except that spaces
+are used for padding instead of nulls. For example,</p>
+<pre><code>binary format A6A*A alpha bravo charlie</code></pre>
+<p>will return <strong>alpha bravoc</strong>.</p></li>
+</ol>
+<!-- -->
+<ol start="2" type="a">
+<li><p>Stores a string of <em>count</em> binary digits in low-to-high
+order within each byte in the output string. <em>Arg</em> must contain a
+sequence of <strong>1</strong> and <strong>0</strong> characters. The
+resulting bytes are emitted in first to last order with the bits being
+formatted in low-to-high order within each byte. If <em>arg</em> has
+fewer than <em>count</em> digits, then zeros will be used for the
+remaining bits. If <em>arg</em> has more than the specified number of
+digits, the extra digits will be ignored. If <em>count</em> is
+<strong>*</strong>, then all of the digits in <em>arg</em> will be
+formatted. If <em>count</em> is omitted, then one digit will be
+formatted. If the number of bits formatted does not end at a byte
+boundary, the remaining bits of the last byte will be zeros. For
+example,</p>
+<pre><code>binary format b5b* 11100 111000011010</code></pre>
+<p>will return a string equivalent to
+<strong>\x07\x87\x05</strong>.</p></li>
+</ol>
+<!-- -->
+<ol start="2" type="A">
+<li><p>This form is the same as <strong>b</strong> except that the bits
+are stored in high-to-low order within each byte. For example,</p>
+<pre><code>binary format B5B* 11100 111000011010</code></pre>
+<p>will return a string equivalent to
+<strong>\xe0\xe1\xa0</strong>.</p></li>
+<li><p>Stores a string of <em>count</em> hexadecimal digits in
+high-to-low within each byte in the output string. <em>Arg</em> must
+contain a sequence of characters in the set The resulting bytes are
+emitted in first to last order with the hex digits being formatted in
+high-to-low order within each byte. If <em>arg</em> has fewer than
+<em>count</em> digits, then zeros will be used for the remaining digits.
+If <em>arg</em> has more than the specified number of digits, the extra
+digits will be ignored. If <em>count</em> is <strong>*</strong>, then
+all of the digits in <em>arg</em> will be formatted. If <em>count</em>
+is omitted, then one digit will be formatted. If the number of digits
+formatted does not end at a byte boundary, the remaining bits of the
+last byte will be zeros. For example,</p>
+<pre><code>binary format H3H*H2 ab DEF 987</code></pre>
+<p>will return a string equivalent to
+<strong>\xab\x00\xde\xf0\x98</strong>.</p></li>
+</ol>
+<!-- -->
+<ol start="8" type="a">
+<li><p>This form is the same as <strong>H</strong> except that the
+digits are stored in low-to-high order within each byte. This is seldom
+required. For example,</p>
+<pre><code>binary format h3h*h2 AB def 987</code></pre>
+<p>will return a string equivalent to
+<strong>\xba\x00\xed\x0f\x89</strong>.</p></li>
+<li><p>Stores one or more 8-bit integer values in the output string. If
+no <em>count</em> is specified, then <em>arg</em> must consist of an
+integer value. If <em>count</em> is specified, <em>arg</em> must consist
+of a list containing at least that many integers. The low-order 8 bits
+of each integer are stored as a one-byte value at the cursor position.
+If <em>count</em> is <strong>*</strong>, then all of the integers in the
+list are formatted. If the number of elements in the list is greater
+than <em>count</em>, then the extra elements are ignored. For
+example,</p>
+<pre><code>binary format c3cc* {3 -3 128 1} 260 {2 5}</code></pre>
+<p>will return a string equivalent to
+<strong>\x03\xfd\x80\x04\x02\x05</strong>, whereas</p>
+<pre><code>binary format c {2 5}</code></pre>
+<p>will generate an error.</p></li>
+<li><p>This form is the same as <strong>c</strong> except that it stores
+one or more 16-bit integers in little-endian byte order in the output
+string. The low-order 16-bits of each integer are stored as a two-byte
+value at the cursor position with the least significant byte stored
+first. For example,</p>
+<pre><code>binary format s3 {3 -3 258 1}</code></pre>
+<p>will return a string equivalent to
+<strong>\x03\x00\xfd\xff\x02\x01</strong>.</p></li>
+</ol>
+<!-- -->
+<ol start="19" type="A">
+<li><p>This form is the same as <strong>s</strong> except that it stores
+one or more 16-bit integers in big-endian byte order in the output
+string. For example,</p>
+<pre><code>binary format S3 {3 -3 258 1}</code></pre>
+<p>will return a string equivalent to
+<strong>\x00\x03\xff\xfd\x01\x02</strong>.</p></li>
+</ol>
+<!-- -->
+<ol start="20" type="a">
+<li>This form (mnemonically <em>tiny</em>) is the same as
+<strong>s</strong> and <strong>S</strong> except that it stores the
+16-bit integers in the output string in the native byte order of the
+machine where the Tcl script is running. To determine what the native
+byte order of the machine is, refer to the <strong>byteOrder</strong>
+element of the <strong>tcl_platform</strong> array.</li>
+</ol>
+<!-- -->
+<ol type="i">
+<li><p>This form is the same as <strong>c</strong> except that it stores
+one or more 32-bit integers in little-endian byte order in the output
+string. The low-order 32-bits of each integer are stored as a four-byte
+value at the cursor position with the least significant byte stored
+first. For example,</p>
+<pre><code>binary format i3 {3 -3 65536 1}</code></pre>
+<p>will return a string equivalent to
+<strong>\x03\x00\x00\x00\xfd\xff\xff\xff\x00\x00\x01\x00</strong></p></li>
+</ol>
+<!-- -->
+<ol type="I">
+<li><p>This form is the same as <strong>i</strong> except that it stores
+one or more one or more 32-bit integers in big-endian byte order in the
+output string. For example,</p>
+<pre><code>binary format I3 {3 -3 65536 1}</code></pre>
+<p>will return a string equivalent to
+<strong>\x00\x00\x00\x03\xff\xff\xff\xfd\x00\x01\x00\x00</strong></p></li>
+</ol>
+<!-- -->
+<ol start="14" type="a">
+<li><p>This form (mnemonically <em>number</em> or <em>normal</em>) is
+the same as <strong>i</strong> and <strong>I</strong> except that it
+stores the 32-bit integers in the output string in the native byte order
+of the machine where the Tcl script is running. To determine what the
+native byte order of the machine is, refer to the
+<strong>byteOrder</strong> element of the <strong>tcl_platform</strong>
+array.</p></li>
+<li><p>This form is the same as <strong>c</strong> except that it stores
+one or more 64-bit integers in little-endian byte order in the output
+string. The low-order 64-bits of each integer are stored as an
+eight-byte value at the cursor position with the least significant byte
+stored first. For example,</p>
+<pre><code>binary format w 7810179016327718216</code></pre>
+<p>will return the string <strong>HelloTcl</strong></p></li>
+</ol>
+<!-- -->
+<ol start="23" type="A">
+<li><p>This form is the same as <strong>w</strong> except that it stores
+one or more one or more 64-bit integers in big-endian byte order in the
+output string. For example,</p>
+<pre><code>binary format Wc 4785469626960341345 110</code></pre>
+<p>will return the string <strong>BigEndian</strong></p></li>
+</ol>
+<!-- -->
+<ol start="13" type="a">
+<li><p>This form (mnemonically the mirror of <strong>w</strong>) is the
+same as <strong>w</strong> and <strong>W</strong> except that it stores
+the 64-bit integers in the output string in the native byte order of the
+machine where the Tcl script is running. To determine what the native
+byte order of the machine is, refer to the <strong>byteOrder</strong>
+element of the <strong>tcl_platform</strong> array.</p></li>
+<li><p>This form is the same as <strong>c</strong> except that it stores
+one or more one or more single-precision floating point numbers in the
+machine's native representation in the output string. This
+representation is not portable across architectures, so it should not be
+used to communicate floating point numbers across the network. The size
+of a floating point number may vary across architectures, so the number
+of bytes that are generated may vary. If the value overflows the
+machine's native representation, then the value of FLT_MAX as defined by
+the system will be used instead. Because Tcl uses double-precision
+floating point numbers internally, there may be some loss of precision
+in the conversion to single-precision. For example, on a Windows system
+running on an Intel Pentium processor,</p>
+<pre><code>binary format f2 {1.6 3.4}</code></pre>
+<p>will return a string equivalent to
+<strong>\xcd\xcc\xcc\x3f\x9a\x99\x59\x40</strong>.</p></li>
+<li><p>This form (mnemonically <em>real</em>) is the same as
+<strong>f</strong> except that it stores the single-precision floating
+point numbers in little-endian order. This conversion only produces
+meaningful output when used on machines which use the IEEE floating
+point representation (very common, but not universal.)</p></li>
+</ol>
+<!-- -->
+<ol start="18" type="A">
+<li>This form is the same as <strong>r</strong> except that it stores
+the single-precision floating point numbers in big-endian order.</li>
+</ol>
+<!-- -->
+<ol start="4" type="a">
+<li><p>This form is the same as <strong>f</strong> except that it stores
+one or more one or more double-precision floating point numbers in the
+machine's native representation in the output string. For example, on a
+Windows system running on an Intel Pentium processor,</p>
+<pre><code>binary format d1 {1.6}</code></pre>
+<p>will return a string equivalent to
+<strong>\x9a\x99\x99\x99\x99\x99\xf9\x3f</strong>.</p></li>
+<li><p>This form (mnemonically the mirror of <strong>d</strong>) is the
+same as <strong>d</strong> except that it stores the double-precision
+floating point numbers in little-endian order. This conversion only
+produces meaningful output when used on machines which use the IEEE
+floating point representation (very common, but not universal.)</p></li>
+</ol>
+<!-- -->
+<ol start="17" type="A">
+<li>This form is the same as <strong>q</strong> except that it stores
+the double-precision floating point numbers in big-endian order.</li>
+</ol>
+<!-- -->
+<ol start="24" type="a">
+<li><p>Stores <em>count</em> null bytes in the output string. If
+<em>count</em> is not specified, stores one null byte. If <em>count</em>
+is <strong>*</strong>, generates an error. This type does not consume an
+argument. For example,</p>
+<pre><code>binary format a3xa3x2a3 abc def ghi</code></pre>
+<p>will return a string equivalent to
+<strong>abc\000def\000\000ghi</strong>.</p></li>
+</ol>
+<!-- -->
+<ol start="24" type="A">
+<li><p>Moves the cursor back <em>count</em> bytes in the output string.
+If <em>count</em> is <strong>*</strong> or is larger than the current
+cursor position, then the cursor is positioned at location 0 so that the
+next byte stored will be the first byte in the result string. If
+<em>count</em> is omitted then the cursor is moved back one byte. This
+type does not consume an argument. For example,</p>
+<pre><code>binary format a3X*a3X2a3 abc def ghi</code></pre>
+<p>will return <strong>dghi</strong>.</p></li>
+</ol>
+<!-- -->
+<ol type="1">
+<li><p>Moves the cursor to the absolute location in the output string
+specified by <em>count</em>. Position 0 refers to the first byte in the
+output string. If <em>count</em> refers to a position beyond the last
+byte stored so far, then null bytes will be placed in the uninitialized
+locations and the cursor will be placed at the specified location. If
+<em>count</em> is <strong>*</strong>, then the cursor is moved to the
+current end of the output string. If <em>count</em> is omitted, then an
+error will be generated. This type does not consume an argument. For
+example,</p>
+<pre><code>binary format a5@2a1@*a3@10a1 abcde f ghi j</code></pre>
+<p>will return <strong>abfdeghi\000\000j</strong>.</p></li>
+</ol>
+<h1 id="binary-scan">BINARY SCAN</h1>
+<p>The <strong>binary scan</strong> command parses fields from a binary
+string, returning the number of conversions performed. <em>String</em>
+gives the input bytes to be parsed (one byte per character, and
+characters not representable as a byte have their high bits chopped) and
+<em>formatString</em> indicates how to parse it. Each <em>varName</em>
+gives the name of a variable; when a field is scanned from
+<em>string</em> the result is assigned to the corresponding
+variable.</p>
+<p>As with <strong>binary format</strong>, the <em>formatString</em>
+consists of a sequence of zero or more field specifiers separated by
+zero or more spaces. Each field specifier is a single type character
+followed by an optional flag character followed by an optional numeric
+<em>count</em>. Most field specifiers consume one argument to obtain the
+variable into which the scanned values should be placed. The type
+character specifies how the binary data is to be interpreted. The
+<em>count</em> typically indicates how many items of the specified type
+are taken from the data. If present, the <em>count</em> is a
+non-negative decimal integer or <strong>*</strong>, which normally
+indicates that all of the remaining items in the data are to be used. If
+there are not enough bytes left after the current cursor position to
+satisfy the current field specifier, then the corresponding variable is
+left untouched and <strong>binary scan</strong> returns immediately with
+the number of variables that were set. If there are not enough arguments
+for all of the fields in the format string that consume arguments, then
+an error is generated. The flag character may be given to cause some
+types to be read as unsigned values. The flag is accepted for all field
+types but is ignored for non-integer fields.</p>
+<p>A similar example as with <strong>binary format</strong> should
+explain the relation between field specifiers and arguments in case of
+the binary scan subcommand:</p>
+<pre><code>binary scan $bytes s3s first second</code></pre>
+<p>This command (provided the binary string in the variable
+<em>bytes</em> is long enough) assigns a list of three integers to the
+variable <em>first</em> and assigns a single value to the variable
+<em>second</em>. If <em>bytes</em> contains fewer than 8 bytes
+(i.e. four 2-byte integers), no assignment to <em>second</em> will be
+made, and if <em>bytes</em> contains fewer than 6 bytes (i.e. three
+2-byte integers), no assignment to <em>first</em> will be made.
+Hence:</p>
+<pre><code>puts [binary scan abcdefg s3s first second]
+puts $first
+puts $second</code></pre>
+<p>will print (assuming neither variable is set previously):</p>
+<pre><code>1
+25185 25699 26213
+can&#39;t read &quot;second&quot;: no such variable</code></pre>
+<p>It is <em>important</em> to note that the <strong>c</strong>,
+<strong>s</strong>, and <strong>S</strong> (and <strong>i</strong> and
+<strong>I</strong> on 64bit systems) will be scanned into long data size
+values. In doing this, values that have their high bit set (0x80 for
+chars, 0x8000 for shorts, 0x80000000 for ints), will be sign extended.
+Thus the following will occur:</p>
+<pre><code>set signShort [binary format s1 0x8000]
+binary scan $signShort s1 val; # val == 0xFFFF8000</code></pre>
+<p>If you require unsigned values you can include the flag character
+following the field type. For example, to read an unsigned short
+value:</p>
+<pre><code>set signShort [binary format s1 0x8000]
+binary scan $signShort su1 val; # val == 0x00008000</code></pre>
+<p>Each type-count pair moves an imaginary cursor through the binary
+data, reading bytes from the current position. The cursor is initially
+at position 0 at the beginning of the data. The type may be any one of
+the following characters:</p>
+<ol type="a">
+<li><p>The data is a byte string of length <em>count</em>. If
+<em>count</em> is <strong>*</strong>, then all of the remaining bytes in
+<em>string</em> will be scanned into the variable. If <em>count</em> is
+omitted, then one byte will be scanned. All bytes scanned will be
+interpreted as being characters in the range \u0000-\u00ff so the
+<strong>encoding convertfrom</strong> command will be needed if the
+string is not a binary string or a string encoded in ISO 8859-1. For
+example,</p>
+<pre><code>binary scan abcde\000fghi a6a10 var1 var2</code></pre>
+<p>will return <strong>1</strong> with the string equivalent to
+<strong>abcde\000</strong> stored in <em>var1</em> and <em>var2</em>
+left unmodified, and</p>
+<pre><code>binary scan \342\202\254 a* var1
+set var2 [encoding convertfrom utf-8 $var1]</code></pre>
+<p>will store a Euro-currency character in <em>var2</em>.</p></li>
+</ol>
+<!-- -->
+<ol type="A">
+<li><p>This form is the same as <strong>a</strong>, except trailing
+blanks and nulls are stripped from the scanned value before it is stored
+in the variable. For example,</p>
+<pre><code>binary scan &quot;abc efghi  \000&quot; A* var1</code></pre>
+<p>will return <strong>1</strong> with <strong>abc efghi</strong> stored
+in <em>var1</em>.</p></li>
+</ol>
+<!-- -->
+<ol start="2" type="a">
+<li><p>The data is turned into a string of <em>count</em> binary digits
+in low-to-high order represented as a sequence of and characters. The
+data bytes are scanned in first to last order with the bits being taken
+in low-to-high order within each byte. Any extra bits in the last byte
+are ignored. If <em>count</em> is <strong>*</strong>, then all of the
+remaining bits in <em>string</em> will be scanned. If <em>count</em> is
+omitted, then one bit will be scanned. For example,</p>
+<pre><code>binary scan \x07\x87\x05 b5b* var1 var2</code></pre>
+<p>will return <strong>2</strong> with <strong>11100</strong> stored in
+<em>var1</em> and <strong>1110000110100000</strong> stored in
+<em>var2</em>.</p></li>
+</ol>
+<!-- -->
+<ol start="2" type="A">
+<li><p>This form is the same as <strong>b</strong>, except the bits are
+taken in high-to-low order within each byte. For example,</p>
+<pre><code>binary scan \x70\x87\x05 B5B* var1 var2</code></pre>
+<p>will return <strong>2</strong> with <strong>01110</strong> stored in
+<em>var1</em> and <strong>1000011100000101</strong> stored in
+<em>var2</em>.</p></li>
+<li><p>The data is turned into a string of <em>count</em> hexadecimal
+digits in high-to-low order represented as a sequence of characters in
+the set The data bytes are scanned in first to last order with the hex
+digits being taken in high-to-low order within each byte. Any extra bits
+in the last byte are ignored. If <em>count</em> is <strong>*</strong>,
+then all of the remaining hex digits in <em>string</em> will be scanned.
+If <em>count</em> is omitted, then one hex digit will be scanned. For
+example,</p>
+<pre><code>binary scan \x07\xC6\x05\x1f\x34 H3H* var1 var2</code></pre>
+<p>will return <strong>2</strong> with <strong>07c</strong> stored in
+<em>var1</em> and <strong>051f34</strong> stored in
+<em>var2</em>.</p></li>
+</ol>
+<!-- -->
+<ol start="8" type="a">
+<li><p>This form is the same as <strong>H</strong>, except the digits
+are taken in reverse (low-to-high) order within each byte. For
+example,</p>
+<pre><code>binary scan \x07\x86\x05\x12\x34 h3h* var1 var2</code></pre>
+<p>will return <strong>2</strong> with <strong>706</strong> stored in
+<em>var1</em> and <strong>502143</strong> stored in <em>var2</em>.</p>
+<p>Note that most code that wishes to parse the hexadecimal digits from
+multiple bytes in order should use the <strong>H</strong>
+format.</p></li>
+<li><p>The data is turned into <em>count</em> 8-bit signed integers and
+stored in the corresponding variable as a list. If <em>count</em> is
+<strong>*</strong>, then all of the remaining bytes in <em>string</em>
+will be scanned. If <em>count</em> is omitted, then one 8-bit integer
+will be scanned. For example,</p>
+<pre><code>binary scan \x07\x86\x05 c2c* var1 var2</code></pre>
+<p>will return <strong>2</strong> with <strong>7 -122</strong> stored in
+<em>var1</em> and <strong>5</strong> stored in <em>var2</em>. Note that
+the integers returned are signed, but they can be converted to unsigned
+8-bit quantities using an expression like:</p>
+<pre><code>set num [expr { $num &amp; 0xFF }]</code></pre></li>
+<li><p>The data is interpreted as <em>count</em> 16-bit signed integers
+represented in little-endian byte order. The integers are stored in the
+corresponding variable as a list. If <em>count</em> is
+<strong>*</strong>, then all of the remaining bytes in <em>string</em>
+will be scanned. If <em>count</em> is omitted, then one 16-bit integer
+will be scanned. For example,</p>
+<pre><code>binary scan \x05\x00\x07\x00\xf0\xff s2s* var1 var2</code></pre>
+<p>will return <strong>2</strong> with <strong>5 7</strong> stored in
+<em>var1</em> and <strong>-16</strong> stored in <em>var2</em>. Note
+that the integers returned are signed, but they can be converted to
+unsigned 16-bit quantities using an expression like:</p>
+<pre><code>set num [expr { $num &amp; 0xFFFF }]</code></pre></li>
+</ol>
+<!-- -->
+<ol start="19" type="A">
+<li><p>This form is the same as <strong>s</strong> except that the data
+is interpreted as <em>count</em> 16-bit signed integers represented in
+big-endian byte order. For example,</p>
+<pre><code>binary scan \x00\x05\x00\x07\xff\xf0 S2S* var1 var2</code></pre>
+<p>will return <strong>2</strong> with <strong>5 7</strong> stored in
+<em>var1</em> and <strong>-16</strong> stored in <em>var2</em>.</p></li>
+</ol>
+<!-- -->
+<ol start="20" type="a">
+<li>The data is interpreted as <em>count</em> 16-bit signed integers
+represented in the native byte order of the machine running the Tcl
+script. It is otherwise identical to <strong>s</strong> and
+<strong>S</strong>. To determine what the native byte order of the
+machine is, refer to the <strong>byteOrder</strong> element of the
+<strong>tcl_platform</strong> array.</li>
+</ol>
+<!-- -->
+<ol type="i">
+<li><p>The data is interpreted as <em>count</em> 32-bit signed integers
+represented in little-endian byte order. The integers are stored in the
+corresponding variable as a list. If <em>count</em> is
+<strong>*</strong>, then all of the remaining bytes in <em>string</em>
+will be scanned. If <em>count</em> is omitted, then one 32-bit integer
+will be scanned. For example,</p>
+<pre><code>set str \x05\x00\x00\x00\x07\x00\x00\x00\xf0\xff\xff\xff
+binary scan $str i2i* var1 var2</code></pre>
+<p>will return <strong>2</strong> with <strong>5 7</strong> stored in
+<em>var1</em> and <strong>-16</strong> stored in <em>var2</em>. Note
+that the integers returned are signed, but they can be converted to
+unsigned 32-bit quantities using an expression like:</p>
+<pre><code>set num [expr { $num &amp; 0xFFFFFFFF }]</code></pre></li>
+</ol>
+<!-- -->
+<ol type="I">
+<li><p>This form is the same as <strong>I</strong> except that the data
+is interpreted as <em>count</em> 32-bit signed integers represented in
+big-endian byte order. For example,</p>
+<pre><code>set str \x00\x00\x00\x05\x00\x00\x00\x07\xff\xff\xff\xf0
+binary scan $str I2I* var1 var2</code></pre>
+<p>will return <strong>2</strong> with <strong>5 7</strong> stored in
+<em>var1</em> and <strong>-16</strong> stored in <em>var2</em>.</p></li>
+</ol>
+<!-- -->
+<ol start="14" type="a">
+<li><p>The data is interpreted as <em>count</em> 32-bit signed integers
+represented in the native byte order of the machine running the Tcl
+script. It is otherwise identical to <strong>i</strong> and
+<strong>I</strong>. To determine what the native byte order of the
+machine is, refer to the <strong>byteOrder</strong> element of the
+<strong>tcl_platform</strong> array.</p></li>
+<li><p>The data is interpreted as <em>count</em> 64-bit signed integers
+represented in little-endian byte order. The integers are stored in the
+corresponding variable as a list. If <em>count</em> is
+<strong>*</strong>, then all of the remaining bytes in <em>string</em>
+will be scanned. If <em>count</em> is omitted, then one 64-bit integer
+will be scanned. For example,</p>
+<pre><code>set str \x05\x00\x00\x00\x07\x00\x00\x00\xf0\xff\xff\xff
+binary scan $str wi* var1 var2</code></pre>
+<p>will return <strong>2</strong> with <strong>30064771077</strong>
+stored in <em>var1</em> and <strong>-16</strong> stored in
+<em>var2</em>. Note that the integers returned are signed and cannot be
+represented by Tcl as unsigned values.</p></li>
+</ol>
+<!-- -->
+<ol start="23" type="A">
+<li><p>This form is the same as <strong>w</strong> except that the data
+is interpreted as <em>count</em> 64-bit signed integers represented in
+big-endian byte order. For example,</p>
+<pre><code>set str \x00\x00\x00\x05\x00\x00\x00\x07\xff\xff\xff\xf0
+binary scan $str WI* var1 var2</code></pre>
+<p>will return <strong>2</strong> with <strong>21474836487</strong>
+stored in <em>var1</em> and <strong>-16</strong> stored in
+<em>var2</em>.</p></li>
+</ol>
+<!-- -->
+<ol start="13" type="a">
+<li><p>The data is interpreted as <em>count</em> 64-bit signed integers
+represented in the native byte order of the machine running the Tcl
+script. It is otherwise identical to <strong>w</strong> and
+<strong>W</strong>. To determine what the native byte order of the
+machine is, refer to the <strong>byteOrder</strong> element of the
+<strong>tcl_platform</strong> array.</p></li>
+<li><p>The data is interpreted as <em>count</em> single-precision
+floating point numbers in the machine's native representation. The
+floating point numbers are stored in the corresponding variable as a
+list. If <em>count</em> is <strong>*</strong>, then all of the remaining
+bytes in <em>string</em> will be scanned. If <em>count</em> is omitted,
+then one single-precision floating point number will be scanned. The
+size of a floating point number may vary across architectures, so the
+number of bytes that are scanned may vary. If the data does not
+represent a valid floating point number, the resulting value is
+undefined and compiler dependent. For example, on a Windows system
+running on an Intel Pentium processor,</p>
+<pre><code>binary scan \x3f\xcc\xcc\xcd f var1</code></pre>
+<p>will return <strong>1</strong> with
+<strong>1.6000000238418579</strong> stored in <em>var1</em>.</p></li>
+<li><p>This form is the same as <strong>f</strong> except that the data
+is interpreted as <em>count</em> single-precision floating point number
+in little-endian order. This conversion is not portable to the minority
+of systems not using IEEE floating point representations.</p></li>
+</ol>
+<!-- -->
+<ol start="18" type="A">
+<li>This form is the same as <strong>f</strong> except that the data is
+interpreted as <em>count</em> single-precision floating point number in
+big-endian order. This conversion is not portable to the minority of
+systems not using IEEE floating point representations.</li>
+</ol>
+<!-- -->
+<ol start="4" type="a">
+<li><p>This form is the same as <strong>f</strong> except that the data
+is interpreted as <em>count</em> double-precision floating point numbers
+in the machine's native representation. For example, on a Windows system
+running on an Intel Pentium processor,</p>
+<pre><code>binary scan \x9a\x99\x99\x99\x99\x99\xf9\x3f d var1</code></pre>
+<p>will return <strong>1</strong> with
+<strong>1.6000000000000001</strong> stored in <em>var1</em>.</p></li>
+<li><p>This form is the same as <strong>d</strong> except that the data
+is interpreted as <em>count</em> double-precision floating point number
+in little-endian order. This conversion is not portable to the minority
+of systems not using IEEE floating point representations.</p></li>
+</ol>
+<!-- -->
+<ol start="17" type="A">
+<li>This form is the same as <strong>d</strong> except that the data is
+interpreted as <em>count</em> double-precision floating point number in
+big-endian order. This conversion is not portable to the minority of
+systems not using IEEE floating point representations.</li>
+</ol>
+<!-- -->
+<ol start="24" type="a">
+<li><p>Moves the cursor forward <em>count</em> bytes in <em>string</em>.
+If <em>count</em> is <strong>*</strong> or is larger than the number of
+bytes after the current cursor position, then the cursor is positioned
+after the last byte in <em>string</em>. If <em>count</em> is omitted,
+then the cursor is moved forward one byte. Note that this type does not
+consume an argument. For example,</p>
+<pre><code>binary scan \x01\x02\x03\x04 x2H* var1</code></pre>
+<p>will return <strong>1</strong> with <strong>0304</strong> stored in
+<em>var1</em>.</p></li>
+</ol>
+<!-- -->
+<ol start="24" type="A">
+<li><p>Moves the cursor back <em>count</em> bytes in <em>string</em>. If
+<em>count</em> is <strong>*</strong> or is larger than the current
+cursor position, then the cursor is positioned at location 0 so that the
+next byte scanned will be the first byte in <em>string</em>. If
+<em>count</em> is omitted then the cursor is moved back one byte. Note
+that this type does not consume an argument. For example,</p>
+<pre><code>binary scan \x01\x02\x03\x04 c2XH* var1 var2</code></pre>
+<p>will return <strong>2</strong> with <strong>1 2</strong> stored in
+<em>var1</em> and <strong>020304</strong> stored in
+<em>var2</em>.</p></li>
+</ol>
+<!-- -->
+<ol type="1">
+<li><p>Moves the cursor to the absolute location in the data string
+specified by <em>count</em>. Note that position 0 refers to the first
+byte in <em>string</em>. If <em>count</em> refers to a position beyond
+the end of <em>string</em>, then the cursor is positioned after the last
+byte. If <em>count</em> is omitted, then an error will be generated. For
+example,</p>
+<pre><code>binary scan \x01\x02\x03\x04 c2@1H* var1 var2</code></pre>
+<p>will return <strong>2</strong> with <strong>1 2</strong> stored in
+<em>var1</em> and <strong>020304</strong> stored in
+<em>var2</em>.</p></li>
+</ol>
+<h1 id="portability-issues">PORTABILITY ISSUES</h1>
+<p>The <strong>r</strong>, <strong>R</strong>, <strong>q</strong> and
+<strong>Q</strong> conversions will only work reliably for transferring
+data between computers which are all using IEEE floating point
+representations. This is very common, but not universal. To transfer
+floating-point numbers portably between all architectures, use their
+textual representation (as produced by <strong>format</strong>)
+instead.</p>
+<h1 id="examples">EXAMPLES</h1>
+<p>This is a procedure to write a Tcl string to a binary-encoded channel
+as UTF-8 data preceded by a length word:</p>
+<pre><code>proc writeString {channel string} {
+    set data [encoding convertto utf-8 $string]
+    puts -nonewline [binary format Ia* \
+            [string length $data] $data]
+}</code></pre>
+<p>This procedure reads a string from a channel that was written by the
+previously presented <em>writeString</em> procedure:</p>
+<pre><code>proc readString {channel} {
+    if {![binary scan [read $channel 4] I length]} {
+        error &quot;missing length&quot;
+    }
+    set data [read $channel $length]
+    return [encoding convertfrom utf-8 $data]
+}</code></pre>
+<p>This converts the contents of a file (named in the variable
+<em>filename</em>) to base64 and prints them:</p>
+<pre><code>set f [open $filename rb]
+set data [read $f]
+close $f
+puts [binary encode base64 -maxlen 64 $data]</code></pre>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-Commands/encoding.html">encoding</a>, <a
+href="../Tcl-Commands/format.html">format</a>, <a
+href="../Tcl-Commands/scan.html">scan</a>, <a
+href="../Tcl-Commands/string.html">string</a>, <a
+href="../Tcl-Commands/tcl_platform.html">tcl_platform</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>binary, format, scan</p>

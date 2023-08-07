@@ -1,0 +1,20 @@
+<h1 id="name">NAME</h1>
+<p>Tk_SetCaretPos - set the display caret location</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tk.h&gt;
+
+int
+Tk_SetCaretPos(tkwin, x, y, height)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Token for window.</p>
+<p>Window-relative x coordinate.</p>
+<p>Window-relative y coordinate.</p>
+<p>Height of the caret in the window.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p><strong>Tk_SetCaretPos</strong> sets the caret location for the
+display of the specified Tk_Window <em>tkwin</em>. The caret is the
+per-display cursor location used for indicating global focus (e.g. to
+comply with Microsoft Accessibility guidelines), as well as for location
+of the over-the-spot XIM (X Input Methods) or Windows IME windows.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>caret, cursor</p>

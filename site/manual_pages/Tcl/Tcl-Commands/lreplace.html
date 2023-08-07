@@ -1,0 +1,69 @@
+<h1 id="name">NAME</h1>
+<p>lreplace - Replace elements in a list with new elements</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>lreplace</strong> <em>list first last</em> ?<em>element
+element ...</em>?</p>
+<h1 id="description">DESCRIPTION</h1>
+<p><strong>lreplace</strong> returns a new list formed by replacing zero
+or more elements of <em>list</em> with the <em>element</em> arguments.
+<em>first</em> and <em>last</em> are index values specifying the first
+and last elements of the range to replace. The index values
+<em>first</em> and <em>last</em> are interpreted the same as index
+values for the command <strong>string index</strong>, supporting simple
+index arithmetic and indices relative to the end of the list. 0 refers
+to the first element of the list, and <strong>end</strong> refers to the
+last element of the list.</p>
+<p>If either <em>first</em> or <em>last</em> is less than zero, it is
+considered to refer to before the first element of the list. This allows
+<strong>lreplace</strong> to prepend elements to <em>list</em>.</p>
+<p>If either <em>first</em> or <em>last</em> indicates a position
+greater than the index of the last element of the list, it is treated as
+if it is an index one greater than the last element. This allows
+<strong>lreplace</strong> to append elements to <em>list</em>.</p>
+<p>If <em>last</em> is less than <em>first</em>, then any specified
+elements will be inserted into the list before the element specified by
+<em>first</em> with no elements being deleted.</p>
+<p>The <em>element</em> arguments specify zero or more new elements to
+be added to the list in place of those that were deleted. Each
+<em>element</em> argument will become a separate element of the list. If
+no <em>element</em> arguments are specified, then the elements between
+<em>first</em> and <em>last</em> are simply deleted.</p>
+<h1 id="examples">EXAMPLES</h1>
+<p>Replacing an element of a list with another:</p>
+<pre><code>% lreplace {a b c d e} 1 1 foo
+a foo c d e</code></pre>
+<p>Replacing two elements of a list with three:</p>
+<pre><code>% lreplace {a b c d e} 1 2 three more elements
+a three more elements d e</code></pre>
+<p>Deleting the last element from a list in a variable:</p>
+<pre><code>% set var {a b c d e}
+a b c d e
+% set var [lreplace $var end end]
+a b c d</code></pre>
+<p>A procedure to delete a given element from a list:</p>
+<pre><code>proc lremove {listVariable value} {
+    upvar 1 $listVariable var
+    set idx [lsearch -exact $var $value]
+    set var [lreplace $var $idx $idx]
+}</code></pre>
+<p>Appending elements to the list; note that <strong>end+2</strong> will
+initially be treated as if it is <strong>6</strong> here, but both that
+and <strong>12345</strong> are greater than the index of the final item
+so they behave identically:</p>
+<pre><code>% set var {a b c d e}
+a b c d e
+% set var [lreplace $var 12345 end+2 f g h i]
+a b c d e f g h i</code></pre>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-Commands/list.html">list</a>, <a
+href="../Tcl-Commands/lappend.html">lappend</a>, <a
+href="../Tcl-Commands/lindex.html">lindex</a>, <a
+href="../Tcl-Commands/linsert.html">linsert</a>, <a
+href="../Tcl-Commands/llength.html">llength</a>, <a
+href="../Tcl-Commands/lsearch.html">lsearch</a>, <a
+href="../Tcl-Commands/lset.html">lset</a>, <a
+href="../Tcl-Commands/lrange.html">lrange</a>, <a
+href="../Tcl-Commands/lsort.html">lsort</a>, <a
+href="../Tcl-Commands/string.html">string</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>element, list, replace</p>

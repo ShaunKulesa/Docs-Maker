@@ -1,0 +1,16 @@
+<h1 id="name">NAME</h1>
+<p>Tk_MainLoop - loop for events until all windows are deleted</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tk.h&gt;
+
+Tk_MainLoop()</code></pre>
+<h1 id="description">DESCRIPTION</h1>
+<p><strong>Tk_MainLoop</strong> is a procedure that loops repeatedly
+calling <strong>Tcl_DoOneEvent</strong>. It returns only when there are
+no applications left in this process (i.e. no main windows exist
+anymore). Most windowing applications will call
+<strong>Tk_MainLoop</strong> after initialization; the main execution of
+the application will consist entirely of callbacks invoked via
+<strong>Tcl_DoOneEvent</strong>.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>application, event, main loop</p>

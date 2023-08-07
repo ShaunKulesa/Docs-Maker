@@ -1,0 +1,32 @@
+<h1 id="name">NAME</h1>
+<p>concat - Join lists together</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>concat</strong> ?<em>arg arg ...</em>?</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>This command joins each of its arguments together with spaces after
+trimming leading and trailing white-space from each of them. If all of
+the arguments are lists, this has the same effect as concatenating them
+into a single list. Arguments that are empty (after trimming) are
+ignored entirely. It permits any number of arguments; if no
+<em>arg</em>s are supplied, the result is an empty string.</p>
+<h1 id="examples">EXAMPLES</h1>
+<p>Although <strong>concat</strong> will concatenate lists, flattening
+them in the process (so giving the following interactive session):</p>
+<pre><code>% concat a b {c d e} {f {g h}}
+a b c d e f {g h}</code></pre>
+<p>it will also concatenate things that are not lists, as can be seen
+from this session:</p>
+<pre><code>% concat &quot; a b {c   &quot; d &quot;  e} f&quot;
+a b {c d e} f</code></pre>
+<p>Note also that the concatenation does not remove spaces from the
+middle of values, as can be seen here:</p>
+<pre><code>% concat &quot;a   b   c&quot; { d e f }
+a   b   c d e f</code></pre>
+<p>(i.e., there are three spaces between each of the <strong>a</strong>,
+the <strong>b</strong> and the <strong>c</strong>).</p>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-Commands/append.html">append</a>, <a
+href="../Tcl-Commands/eval.html">eval</a>, <a
+href="../Tcl-Commands/join.html">join</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>concatenate, join, list</p>

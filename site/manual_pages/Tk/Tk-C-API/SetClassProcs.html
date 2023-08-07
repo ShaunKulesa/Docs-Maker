@@ -1,0 +1,65 @@
+<h1 id="name">NAME</h1>
+<p>Tk_SetClassProcs - register widget specific procedures</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tk.h&gt;
+
+Tk_SetClassProcs(tkwin, procs, instanceData)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Token for window to modify.</p>
+<p>Pointer to data structure containing widget specific procedures. The
+data structure pointed to by <em>procs</em> must be static: Tk keeps a
+reference to it as long as the window exists.</p>
+<p>Arbitrary one-word value to pass to widget callbacks.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p><strong>Tk_SetClassProcs</strong> is called to register a set of
+procedures that are used as callbacks in different places.</p>
+<p>The structure pointed to by <em>procs</em> contains the
+following:</p>
+<pre><code>typedef struct Tk_ClassProcs {
+    unsigned int size;
+    Tk_ClassWorldChangedProc *worldChangedProc;
+    Tk_ClassCreateProc *createProc;
+    Tk_ClassModalProc *modalProc;
+} Tk_ClassProcs;</code></pre>
+<p>The <em>size</em> field is used to simplify future expansion of the
+structure. It should always be set to (literally)
+<strong>sizeof(Tk_ClassProcs)</strong>.</p>
+<p><em>worldChangedProc</em> is invoked when the system has altered in
+some way that requires some reaction from the widget. For example, when
+a font alias (see the <strong>font</strong> manual entry) is
+reconfigured, widgets configured to use that font alias must update
+their display accordingly. <em>worldChangedProc</em> should have
+arguments and results that match the type
+<strong>Tk_ClassWorldChangedProc</strong>:</p>
+<pre><code>typedef void Tk_ClassWorldChangedProc(
+        ClientData instanceData);</code></pre>
+<p>The <em>instanceData</em> parameter passed to the
+<em>worldChangedProc</em> will be identical to the <em>instanceData</em>
+parameter passed to <strong>Tk_SetClassProcs</strong>.</p>
+<p><em>createProc</em> is used to create platform-dependent windows. It
+is invoked by <strong>Tk_MakeWindowExist</strong>. <em>createProc</em>
+should have arguments and results that match the type
+<strong>Tk_ClassCreateProc</strong>:</p>
+<pre><code>typedef Window Tk_ClassCreateProc(
+        Tk_Window tkwin,
+        Window parent,
+        ClientData instanceData);</code></pre>
+<p>The <em>tkwin</em> and <em>instanceData</em> parameters will be
+identical to the <em>tkwin</em> and <em>instanceData</em> parameters
+passed to <strong>Tk_SetClassProcs</strong>. The <em>parent</em>
+parameter will be the parent of the window to be created. The
+<em>createProc</em> should return the created window.</p>
+<p><em>modalProc</em> is invoked after all bindings on a widget have
+been triggered in order to handle a modal loop. <em>modalProc</em>
+should have arguments and results that match the type
+<strong>Tk_ClassModalProc</strong>:</p>
+<pre><code>typedef void Tk_ClassModalProc(
+        Tk_Window tkwin,
+        XEvent *eventPtr);</code></pre>
+<p>The <em>tkwin</em> parameter to <em>modalProc</em> will be identical
+to the <em>tkwin</em> parameter passed to
+<strong>Tk_SetClassProcs</strong>. The <em>eventPtr</em> parameter will
+be a pointer to an XEvent structure describing the event being
+processed.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>callback, class</p>

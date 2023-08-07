@@ -1,0 +1,32 @@
+<h1 id="name">NAME</h1>
+<p>Tcl_PrintDouble - Convert floating value to string</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tcl.h&gt;
+
+Tcl_PrintDouble(interp, value, dst)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Before Tcl 8.0, the <strong>tcl_precision</strong> variable in this
+interpreter controlled the conversion. As of Tcl 8.0, this argument is
+ignored and the conversion is controlled by the
+<strong>tcl_precision</strong> variable that is now shared by all
+interpreters.</p>
+<p>Floating-point value to be converted.</p>
+<p>Where to store the string representing <em>value</em>. Must have at
+least <strong>TCL_DOUBLE_SPACE</strong> characters of storage.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p><strong>Tcl_PrintDouble</strong> generates a string that represents
+the value of <em>value</em> and stores it in memory at the location
+given by <em>dst</em>. It uses <strong>%g</strong> format to generate
+the string, with one special twist: the string is guaranteed to contain
+either a or an so that it does not look like an integer. Where
+<strong>%g</strong> would generate an integer with no decimal point,
+<strong>Tcl_PrintDouble</strong> adds</p>
+<p>If the <strong>tcl_precision</strong> value is non-zero, the result
+will have precisely that many digits of significance. If the value is
+zero (the default), the result will have the fewest digits needed to
+represent the number in such a way that
+<strong>Tcl_NewDoubleObj</strong> will generate the same number when
+presented with the given string. IEEE semantics of rounding to even
+apply to the conversion.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>conversion, double-precision, floating-point, string</p>

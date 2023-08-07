@@ -1,0 +1,33 @@
+<h1 id="name">NAME</h1>
+<p>Tcl_Concat - concatenate a collection of strings</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tcl.h&gt;
+
+const char *
+Tcl_Concat(argc, argv)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Number of strings.</p>
+<p>Array of strings to concatenate. Must have <em>argc</em> entries.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p><strong>Tcl_Concat</strong> is a utility procedure used by several of
+the Tcl commands. Given a collection of strings, it concatenates them
+together into a single string, with the original strings separated by
+spaces. This procedure behaves differently than
+<strong>Tcl_Merge</strong>, in that the arguments are simply
+concatenated: no effort is made to ensure proper list structure.
+However, in most common usage the arguments will all be proper lists
+themselves; if this is true, then the result will also have proper list
+structure.</p>
+<p><strong>Tcl_Concat</strong> eliminates leading and trailing white
+space as it copies strings from <strong>argv</strong> to the result. If
+an element of <strong>argv</strong> consists of nothing but white space,
+then that string is ignored entirely. This white-space removal was added
+to make the output of the <strong>concat</strong> command
+cleaner-looking.</p>
+<p>The result string is dynamically allocated using
+<strong>Tcl_Alloc</strong>; the caller must eventually release the space
+by calling <strong>Tcl_Free</strong>.</p>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-C-API/Tcl_ConcatObj.html">Tcl_ConcatObj</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>concatenate, strings</p>

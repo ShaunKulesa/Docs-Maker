@@ -1,0 +1,74 @@
+<h1 id="name">NAME</h1>
+<p>Tcl_ExprLongObj, Tcl_ExprDoubleObj, Tcl_ExprBooleanObj, Tcl_ExprObj -
+evaluate an expression</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tcl.h&gt;
+
+int
+Tcl_ExprLongObj(interp, objPtr, longPtr)
+
+int
+Tcl_ExprDoubleObj(interp, objPtr, doublePtr)
+
+int
+Tcl_ExprBooleanObj(interp, objPtr, booleanPtr)
+
+int
+Tcl_ExprObj(interp, objPtr, resultPtrPtr)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Interpreter in whose context to evaluate <em>objPtr</em>.</p>
+<p>Pointer to a value containing the expression to evaluate.</p>
+<p>Pointer to location in which to store the integer value of the
+expression.</p>
+<p>Pointer to location in which to store the floating-point value of the
+expression.</p>
+<p>Pointer to location in which to store the 0/1 boolean value of the
+expression.</p>
+<p>Pointer to location in which to store a pointer to the value that is
+the result of the expression.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>These four procedures all evaluate an expression, returning the
+result in one of four different forms. The expression is given by the
+<em>objPtr</em> argument, and it can have any of the forms accepted by
+the <strong>expr</strong> command.</p>
+<p>The <em>interp</em> argument refers to an interpreter used to
+evaluate the expression (e.g. for variables and nested Tcl commands) and
+to return error information.</p>
+<p>For all of these procedures the return value is a standard Tcl
+result: <strong>TCL_OK</strong> means the expression was successfully
+evaluated, and <strong>TCL_ERROR</strong> means that an error occurred
+while evaluating the expression. If <strong>TCL_ERROR</strong> is
+returned, then a message describing the error can be retrieved using
+<strong>Tcl_GetObjResult</strong>. If an error occurs while executing a
+Tcl command embedded in the expression then that error will be
+returned.</p>
+<p>If the expression is successfully evaluated, then its value is
+returned in one of four forms, depending on which procedure is invoked.
+<strong>Tcl_ExprLongObj</strong> stores an integer value at
+<em>*longPtr</em>. If the expression's actual value is a floating-point
+number, then it is truncated to an integer. If the expression's actual
+value is a non-numeric string then an error is returned.</p>
+<p><strong>Tcl_ExprDoubleObj</strong> stores a floating-point value at
+<em>*doublePtr</em>. If the expression's actual value is an integer, it
+is converted to floating-point. If the expression's actual value is a
+non-numeric string then an error is returned.</p>
+<p><strong>Tcl_ExprBooleanObj</strong> stores a 0/1 integer value at
+<em>*booleanPtr</em>. If the expression's actual value is an integer or
+floating-point number, then they store 0 at <em>*booleanPtr</em> if the
+value was zero and 1 otherwise. If the expression's actual value is a
+non-numeric string then it must be one of the values accepted by
+<strong>Tcl_GetBoolean</strong> such as or or else an error occurs.</p>
+<p>If <strong>Tcl_ExprObj</strong> successfully evaluates the
+expression, it stores a pointer to the Tcl value containing the
+expression's value at <em>*resultPtrPtr</em>. In this case, the caller
+is responsible for calling <strong>Tcl_DecrRefCount</strong> to
+decrement the value's reference count when it is finished with the
+value.</p>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-C-API/Tcl_ExprLong.html">Tcl_ExprLong</a>, <a
+href="../Tcl-C-API/Tcl_ExprDouble.html">Tcl_ExprDouble</a>, <a
+href="../Tcl-C-API/Tcl_ExprBoolean.html">Tcl_ExprBoolean</a>, <a
+href="../Tcl-C-API/Tcl_ExprString.html">Tcl_ExprString</a>, <a
+href="../Tcl-C-API/Tcl_GetObjResult.html">Tcl_GetObjResult</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>boolean, double, evaluate, expression, integer, value, string</p>

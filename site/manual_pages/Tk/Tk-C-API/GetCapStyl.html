@@ -1,0 +1,39 @@
+<h1 id="name">NAME</h1>
+<p>Tk_GetCapStyle, Tk_NameOfCapStyle - translate between strings and cap
+styles</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tk.h&gt;
+
+int
+Tk_GetCapStyle(interp, string, capPtr)
+
+const char *
+Tk_NameOfCapStyle(cap)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Interpreter to use for error reporting.</p>
+<p>String containing name of cap style - one of or - or a unique
+abbreviation of one.</p>
+<p>Pointer to location in which to store X cap style corresponding to
+<em>string</em>.</p>
+<p>Cap style: one of <strong>CapButt</strong>,
+<strong>CapProjecting</strong>, or <strong>CapRound</strong>.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p><strong>Tk_GetCapStyle</strong> places in <em>*capPtr</em> the X cap
+style corresponding to <em>string</em>. This will be one of the values
+<strong>CapButt</strong>, <strong>CapProjecting</strong>, or
+<strong>CapRound</strong>. Cap styles are typically used in X graphics
+contexts to indicate how the end-points of lines should be capped. See
+the X documentation for information on what each style implies.</p>
+<p>Under normal circumstances the return value is
+<strong>TCL_OK</strong> and <em>interp</em> is unused. If
+<em>string</em> does not contain a valid cap style or an abbreviation of
+one of these names, then an error message is stored in interpreter
+<em>interp</em>'s result, <strong>TCL_ERROR</strong> is returned, and
+<em>*capPtr</em> is unmodified.</p>
+<p><strong>Tk_NameOfCapStyle</strong> is the logical inverse of
+<strong>Tk_GetCapStyle</strong>. Given a cap style such as
+<strong>CapButt</strong> it returns a statically-allocated string
+corresponding to <em>cap</em>. If <em>cap</em> is not a legal cap style,
+then is returned.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>butt, cap style, projecting, round</p>

@@ -1,0 +1,25 @@
+<h1 id="name">NAME</h1>
+<p>pwd - Return the absolute path of the current working directory</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>pwd</strong></p>
+<h1 id="description">DESCRIPTION</h1>
+<p>Returns the absolute path name of the current working directory.</p>
+<h1 id="example">EXAMPLE</h1>
+<p>Sometimes it is useful to change to a known directory when running
+some external command using <strong>exec</strong>, but it is important
+to keep the application usually running in the directory that it was
+started in (unless the user specifies otherwise) since that minimizes
+user confusion. The way to do this is to save the current directory
+while the external command is being run:</p>
+<pre><code>set tarFile [file normalize somefile.tar]
+set savedDir [pwd]
+cd /tmp
+exec tar -xf $tarFile
+cd $savedDir</code></pre>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-Commands/file.html">file</a>, <a
+href="../Tcl-Commands/cd.html">cd</a>, <a
+href="../Tcl-Commands/glob.html">glob</a>, <a
+href="../Tcl-Commands/filename.html">filename</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>working directory</p>

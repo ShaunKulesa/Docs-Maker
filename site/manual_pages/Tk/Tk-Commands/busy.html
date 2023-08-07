@@ -1,0 +1,202 @@
+<h1 id="name">NAME</h1>
+<p>busy - confine pointer events to a window sub-tree</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>tk busy</strong> <em>window</em> ?<em>options</em>?</p>
+<p><strong>tk busy hold</strong> <em>window</em> ?<em>options</em>?</p>
+<p><strong>tk busy configure</strong> <em>window</em> ?<em>option
+value</em>?...</p>
+<p><strong>tk busy forget</strong> <em>window</em> ?<em>window</em>
+?...</p>
+<p><strong>tk busy current</strong> ?<em>pattern</em>?</p>
+<p><strong>tk busy status</strong> <em>window</em></p>
+<h1 id="description">DESCRIPTION</h1>
+<p>The <strong>tk busy</strong> command provides a simple means to block
+pointer events from Tk widgets, while overriding the widget's cursor
+with a configurable busy cursor. Note this command does not prevent
+keyboard events from being sent to the widgets made busy.</p>
+<h1 id="introduction">INTRODUCTION</h1>
+<p>There are many times in applications where you want to temporarily
+restrict what actions the user can take. For example, an application
+could have a button that when pressed causes some processing to occur.
+However, while the application is busy processing, you probably don't
+want the user to be able to click the button again. You may also want
+restrict the user from other tasks such as clicking a button.</p>
+<p>The <strong>tk busy</strong> command lets you make Tk widgets busy.
+This means that user interactions such as button clicks, moving the
+mouse, typing at the keyboard, etc. are ignored by the widget. You can
+set a special cursor (like a watch) that overrides the widget's normal
+cursor, providing feedback that the application (widget) is temporarily
+busy.</p>
+<p>When a widget is made busy, the widget and all of its descendants
+will ignore pointer events. It's easy to make an entire panel of widgets
+busy. You can simply make the toplevel widget (such as busy. This is
+easier and far much more efficient than recursively traversing the
+widget hierarchy, disabling each widget and re-configuring its
+cursor.</p>
+<p>Often, the <strong>tk busy</strong> command can be used instead of
+Tk's <strong>grab</strong> command. Unlike <strong>grab</strong> which
+restricts all user interactions to one widget, with the <strong>tk
+busy</strong> command you can have more than one widget active (for
+example, a dialog and a button).</p>
+<h2 id="example">EXAMPLE</h2>
+<p>You can make several widgets busy by simply making its ancestor
+widget busy using the <strong>hold</strong> operation.</p>
+<pre><code>frame .top
+button .top.button; canvas .top.canvas
+pack .top.button .top.canvas
+pack .top
+# . . .
+tk busy hold .top
+update</code></pre>
+<p>All the widgets within <strong>.top</strong> (including
+<strong>.top</strong>) are now busy. Using <strong>update</strong>
+insures that <strong>tk busy</strong> command will take effect before
+any other user events can occur.</p>
+<p>When the application is no longer busy processing, you can allow user
+interactions again and free any resources it allocated by the
+<strong>forget</strong> operation.</p>
+<pre><code>tk busy forget .top</code></pre>
+<p>The busy window has a configurable cursor. You can change the busy
+cursor using the <strong>configure</strong> operation.</p>
+<pre><code>tk busy configure .top -cursor &quot;watch&quot;</code></pre>
+<p>Destroying the widget will also clean up any resources allocated by
+the <strong>tk</strong> busy command.</p>
+<h1 id="operations">OPERATIONS</h1>
+<p>The following operations are available for the <strong>tk
+busy</strong> command:</p>
+<dl>
+<dt><strong>tk busy</strong> <em>window</em> ?<em>option
+value</em>?...</dt>
+<dd>
+<p>Shortcut for <strong>tk busy hold</strong> command.</p>
+</dd>
+<dt><strong>tk busy hold</strong> <em>window</em> ?<em>option
+value</em>?...</dt>
+<dd>
+<p>Makes the specified <em>window</em> (and its descendants in the Tk
+window hierarchy) appear busy. <em>Window</em> must be a valid path name
+of a Tk widget. A transparent window is put in front of the specified
+window. This transparent window is mapped the next time idle tasks are
+processed, and the specified window and its descendants will be blocked
+from user interactions. Normally <strong>update</strong> should be
+called immediately afterward to insure that the hold operation is in
+effect before the application starts its processing. The following
+configuration options are valid:</p>
+<dl>
+<dt><strong>-cursor</strong> <em>cursorName</em></dt>
+<dd>
+<p>Specifies the cursor to be displayed when the widget is made busy.
+<em>CursorName</em> can be in any form accepted by
+<strong>Tk_GetCursor</strong>. The default cursor is
+<strong>wait</strong> on Windows and <strong>watch</strong> on other
+platforms.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>tk busy cget</strong> <em>window</em> <em>option</em></dt>
+<dd>
+<p>Queries the <strong>tk busy</strong> command configuration options
+for <em>window</em>. <em>Window</em> must be the path name of a widget
+previously made busy by the <strong>hold</strong> operation. The command
+returns the present value of the specified <em>option</em>.
+<em>Option</em> may have any of the values accepted by the
+<strong>hold</strong> operation.</p>
+</dd>
+<dt><strong>tk busy configure</strong> <em>window</em> ?<em>option
+value</em>?...</dt>
+<dd>
+<p>Queries or modifies the <strong>tk busy</strong> command
+configuration options for <em>window</em>. <em>Window</em> must be the
+path name of a widget previously made busy by the <strong>hold</strong>
+operation. If no options are specified, a list describing all of the
+available options for <em>window</em> (see
+<strong>Tk_ConfigureInfo</strong> for information on the format of this
+list) is returned. If <em>option</em> is specified with no
+<em>value</em>, then the command returns a list describing the one named
+option (this list will be identical to the corresponding sublist of the
+value returned if no <em>option</em> is specified). If one or more
+<em>option-value</em> pairs are specified, then the command modifies the
+given widget option(s) to have the given value(s); in this case the
+command returns the empty string. <em>Option</em> may have any of the
+values accepted by the <strong>hold</strong> operation.</p>
+<p>Please note that the option database is referenced through
+<em>window</em>. For example, if the widget <strong>.frame</strong> is
+to be made busy, the busy cursor can be specified for it by either
+<strong>option</strong> command:</p>
+<pre><code>option add *frame.busyCursor gumby
+option add *Frame.BusyCursor gumby</code></pre>
+</dd>
+<dt><strong>tk busy forget</strong> <em>window</em>
+?<em>window</em>?...</dt>
+<dd>
+<p>Releases resources allocated by the <strong>tk busy</strong> command
+for <em>window</em>, including the transparent window. User events will
+again be received by <em>window</em>. Resources are also released when
+<em>window</em> is destroyed. <em>Window</em> must be the name of a
+widget specified in the <strong>hold</strong> operation, otherwise an
+error is reported.</p>
+</dd>
+<dt><strong>tk busy current</strong> ?<em>pattern</em>?</dt>
+<dd>
+<p>Returns the pathnames of all widgets that are currently busy. If a
+<em>pattern</em> is given, only the path names of busy widgets matching
+<em>pattern</em> are returned.</p>
+</dd>
+<dt><strong>tk busy status</strong> <em>window</em></dt>
+<dd>
+<p>Returns the status of a widget <em>window</em>. If <em>window</em>
+presently can not receive user interactions, <strong>1</strong> is
+returned, otherwise <strong>0</strong>.</p>
+</dd>
+</dl>
+<h1 id="event-handling">EVENT HANDLING</h1>
+<h2 id="bindings">BINDINGS</h2>
+<p>The event blocking feature is implemented by creating and mapping a
+transparent window that completely covers the widget. When the busy
+window is mapped, it invisibly shields the widget and its hierarchy from
+all events that may be sent. Like Tk widgets, busy windows have widget
+names in the Tk window hierarchy. This means that you can use the
+<strong>bind</strong> command, to handle events in the busy window.</p>
+<pre><code>tk busy hold .frame.canvas
+bind .frame.canvas_Busy &lt;Enter&gt; { ... }</code></pre>
+<p>Normally the busy window is a sibling of the widget. The name of the
+busy window is where <em>widget</em> is the name of the widget to be
+made busy. In the previous example, the pathname of the busy window is
+The exception is when the widget is a toplevel widget (such as where the
+busy window can't be made a sibling. The busy window is then a child of
+the widget named where <em>widget</em> is the name of the toplevel
+widget. In the following example, the pathname of the busy window is</p>
+<pre><code>tk busy hold .
+bind ._Busy &lt;Enter&gt; { ... }</code></pre>
+<h2 id="enterleave-events">ENTER/LEAVE EVENTS</h2>
+<p>Mapping and unmapping busy windows generates Enter/Leave events for
+all widgets they cover. Please note this if you are tracking Enter/Leave
+events in widgets.</p>
+<h2 id="keyboard-events">KEYBOARD EVENTS</h2>
+<p>When a widget is made busy, the widget is prevented from gaining the
+keyboard focus by a user clicking on it by the busy window. But if the
+widget already had focus, it still may receive keyboard events. The
+widget can also still receive focus through keyboard traversal. To
+prevent this, you must move focus to another window and make sure the
+focus can not go back to the widgets made busy (e.g. but restricting
+focus to a cancel button).</p>
+<pre><code>pack [frame .frame]
+pack [text .frame.text]
+tk busy hold .frame
+pack [button .cancel -text &quot;Cancel&quot; -command exit]
+focus .cancel
+bind .cancel &lt;Tab&gt; {break}
+bind .cancel &lt;Shift-Tab&gt; {break}
+update</code></pre>
+<p>The above example moves the focus from .frame immediately after
+invoking the <strong>hold</strong> so that no keyboard events will be
+sent to <strong>.frame</strong> or any of its descendants. It also makes
+sure it's not possible to leave button <strong>.cancel</strong> using
+the keyboard.</p>
+<h1 id="portability">PORTABILITY</h1>
+<p>Note that the <strong>tk busy</strong> command does not currently
+have any effect on OSX when Tk is built using Aqua support.</p>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tk-Commands/grab.html">grab</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>busy, keyboard events, pointer events, window</p>

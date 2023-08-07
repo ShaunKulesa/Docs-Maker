@@ -1,0 +1,52 @@
+<h1 id="name">NAME</h1>
+<p>Tcl_WrongNumArgs - generate standard error message for wrong number
+of arguments</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tcl.h&gt;
+
+Tcl_WrongNumArgs(interp, objc, objv, message)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Interpreter in which error will be reported: error message gets
+stored in its result value.</p>
+<p>Number of leading arguments from <em>objv</em> to include in error
+message.</p>
+<p>Arguments to command that had the wrong number of arguments.</p>
+<p>Additional error information to print after leading arguments from
+<em>objv</em>. This typically gives the acceptable syntax of the
+command. This argument may be NULL.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p><strong>Tcl_WrongNumArgs</strong> is a utility procedure that is
+invoked by command procedures when they discover that they have received
+the wrong number of arguments. <strong>Tcl_WrongNumArgs</strong>
+generates a standard error message and stores it in the result value of
+<em>interp</em>. The message includes the <em>objc</em> initial elements
+of <em>objv</em> plus <em>message</em>. For example, if <em>objv</em>
+consists of the values <strong>foo</strong> and <strong>bar</strong>,
+<em>objc</em> is 1, and <em>message</em> is then <em>interp</em>'s
+result value will be set to the following string:</p>
+<pre><code>wrong # args: should be &quot;foo fileName count&quot;</code></pre>
+<p>If <em>objc</em> is 2, the result will be set to the following
+string:</p>
+<pre><code>wrong # args: should be &quot;foo bar fileName count&quot;</code></pre>
+<p><em>Objc</em> is usually 1, but may be 2 or more for commands like
+<strong>string</strong> and the Tk widget commands, which use the first
+argument as a subcommand.</p>
+<p>Some of the values in the <em>objv</em> array may be abbreviations
+for a subcommand. The command <strong>Tcl_GetIndexFromObj</strong> will
+convert the abbreviated string value into an <em>indexObject</em>. If an
+error occurs in the parsing of the subcommand we would like to use the
+full subcommand name rather than the abbreviation. If the
+<strong>Tcl_WrongNumArgs</strong> command finds any
+<em>indexObjects</em> in the <em>objv</em> array it will use the full
+subcommand name in the error message instead of the abbreviated name
+that was originally passed in. Using the above example, let us assume
+that <em>bar</em> is actually an abbreviation for <em>barfly</em> and
+the value is now an <em>indexObject</em> because it was passed to
+<strong>Tcl_GetIndexFromObj</strong>. In this case the error message
+would be:</p>
+<pre><code>wrong # args: should be &quot;foo barfly fileName count&quot;</code></pre>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a
+href="../Tcl-C-API/Tcl_GetIndexFromObj.html">Tcl_GetIndexFromObj</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>command, error message, wrong number of arguments</p>

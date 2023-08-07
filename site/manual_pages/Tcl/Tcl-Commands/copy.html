@@ -1,0 +1,52 @@
+<h1 id="name">NAME</h1>
+<p>oo::copy - create copies of objects and classes</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>package require TclOO
+
+oo::copy sourceObject ?targetObject? ?targetNamespace?</code></pre>
+<h1 id="description">DESCRIPTION</h1>
+<p>The <strong>oo::copy</strong> command creates a copy of an object or
+class. It takes the name of the object or class to be copied,
+<em>sourceObject</em>, and optionally the name of the object or class to
+create, <em>targetObject</em>, which will be resolved relative to the
+current namespace if not an absolute qualified name and</p>
+<p><em>targetNamespace</em> which is the name of the namespace that will
+hold the internal state of the object (<strong>my</strong> command,
+etc.); it <em>must not</em> refer to an existing namespace. If either
+<em>targetObject</em> or <em>targetNamespace</em> is omitted or is given
+as the empty string, a new name is chosen. Names, unless specified, are
+chosen with the same algorithm used by the <strong>new</strong> method
+of <strong>oo::class</strong>.</p>
+<p>The copied object will be of the same class as the source object, and
+will have all its per-object methods copied. If it is a class, it will
+also have all the class methods in the class copied, but it will not
+have any of its instances copied.</p>
+<p>After the <em>targetObject</em> has been created and all definitions
+of its configuration (e.g., methods, filters, mixins) copied, the
+<strong>&lt;cloned&gt;</strong> method of <em>targetObject</em> will be
+invoked, to allow for customization of the created object such as
+installing related variable traces. The only argument given will be
+<em>sourceObject</em>. The default implementation of this method (in
+<strong>oo::object</strong>) just copies the procedures and variables in
+the namespace of <em>sourceObject</em> to the namespace of
+<em>targetObject</em>. If this method call does not return a result that
+is successful (i.e., an error or other kind of exception) then the
+<em>targetObject</em> will be deleted and an error returned.</p>
+<p>The result of the <strong>oo::copy</strong> command will be the
+fully-qualified name of the new object or class.</p>
+<h1 id="examples">EXAMPLES</h1>
+<p>This example creates an object, copies it, modifies the source
+object, and then demonstrates that the copied object is indeed a
+copy.</p>
+<pre><code>oo::object create src
+oo::objdefine src method msg {} {puts foo}
+oo::copy src dst
+oo::objdefine src method msg {} {puts bar}
+src msg              → prints &quot;bar&quot;
+dst msg              → prints &quot;foo&quot;</code></pre>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-Commands/oo::class.html">oo::class</a>, <a
+href="../Tcl-Commands/oo::define.html">oo::define</a>, <a
+href="../Tcl-Commands/oo::object.html">oo::object</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>clone, copy, duplication, object</p>

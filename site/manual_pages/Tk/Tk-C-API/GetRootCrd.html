@@ -1,0 +1,22 @@
+<h1 id="name">NAME</h1>
+<p>Tk_GetRootCoords - Compute root-window coordinates of window</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tk.h&gt;
+
+Tk_GetRootCoords(tkwin, xPtr, yPtr)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Token for window.</p>
+<p>Pointer to location in which to store root-window x-coordinate
+corresponding to left edge of <em>tkwin</em>'s border.</p>
+<p>Pointer to location in which to store root-window y-coordinate
+corresponding to top edge of <em>tkwin</em>'s border.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>This procedure scans through the structural information maintained by
+Tk to compute the root-window coordinates corresponding to the
+upper-left corner of <em>tkwin</em>'s border. If <em>tkwin</em> has no
+border, then <strong>Tk_GetRootCoords</strong> returns the root-window
+coordinates corresponding to location (0,0) in <em>tkwin</em>.
+<strong>Tk_GetRootCoords</strong> is relatively efficient, since it does
+not have to communicate with the X server.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>coordinates, root window</p>

@@ -1,0 +1,175 @@
+<h1 id="name">NAME</h1>
+<p>glob - Return names of files that match patterns</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>glob</strong> ?<em>switches</em>? ?<em>pattern ...</em>?</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>This command performs file name in a fashion similar to the csh shell
+or bash shell. It returns a list of the files whose names match any of
+the <em>pattern</em> arguments. No particular order is guaranteed in the
+list, so if a sorted list is required the caller should use
+<strong>lsort</strong>.</p>
+<h2 id="options">OPTIONS</h2>
+<p>If the initial arguments to <strong>glob</strong> start with
+<strong>-</strong> then they are treated as switches. The following
+switches are currently supported:</p>
+<dl>
+<dt><strong>-directory</strong> <em>directory</em></dt>
+<dd>
+<p>Search for files which match the given patterns starting in the given
+<em>directory</em>. This allows searching of directories whose name
+contains glob-sensitive characters without the need to quote such
+characters explicitly. This option may not be used in conjunction with
+<strong>-path</strong>, which is used to allow searching for complete
+file paths whose names may contain glob-sensitive characters.</p>
+</dd>
+<dt><strong>-join</strong></dt>
+<dd>
+<p>The remaining pattern arguments, after option processing, are treated
+as a single pattern obtained by joining the arguments with directory
+separators.</p>
+</dd>
+<dt><strong>-nocomplain</strong></dt>
+<dd>
+<p>Allows an empty list to be returned without error; without this
+switch an error is returned if the result list would be empty.</p>
+</dd>
+<dt><strong>-path</strong> <em>pathPrefix</em></dt>
+<dd>
+<p>Search for files with the given <em>pathPrefix</em> where the rest of
+the name matches the given patterns. This allows searching for files
+with names similar to a given file (as opposed to a directory) even when
+the names contain glob-sensitive characters. This option may not be used
+in conjunction with <strong>-directory</strong>. For example, to find
+all files with the same root name as $path, but differing extensions,
+you should use which will work even if <strong>$path</strong> contains
+numerous glob-sensitive characters.</p>
+</dd>
+<dt><strong>-tails</strong></dt>
+<dd>
+<p>Only return the part of each file found which follows the last
+directory named in any <strong>-directory</strong> or
+<strong>-path</strong> path specification. Thus is equivalent to For
+<strong>-path</strong> specifications, the returned names will include
+the last path segment, so will return paths like <strong>foo.aux foo.bib
+foo.tex</strong> etc.</p>
+</dd>
+<dt><strong>-types</strong> <em>typeList</em></dt>
+<dd>
+<p>Only list files or directories which match <em>typeList</em>, where
+the items in the list have two forms. The first form is like the -type
+option of the Unix find command: <em>b</em> (block special file),
+<em>c</em> (character special file), <em>d</em> (directory), <em>f</em>
+(plain file), <em>l</em> (symbolic link), <em>p</em> (named pipe), or
+<em>s</em> (socket), where multiple types may be specified in the list.
+<strong>Glob</strong> will return all files which match at least one of
+the types given. Note that symbolic links will be returned both if
+<strong>-types l</strong> is given, or if the target of a link matches
+the requested type. So, a link to a directory will be returned if
+<strong>-types d</strong> was specified.</p>
+<p>The second form specifies types where all the types given must match.
+These are <em>r</em>, <em>w</em>, <em>x</em> as file permissions, and
+<em>readonly</em>, <em>hidden</em> as special permission cases. On the
+Macintosh, MacOS types and creators are also supported, where any item
+which is four characters long is assumed to be a MacOS type
+(e.g. <strong>TEXT</strong>). Items which are of the form <em>{macintosh
+type XXXX}</em> or <em>{macintosh creator XXXX}</em> will match types or
+creators respectively. Unrecognized types, or specifications of multiple
+MacOS types/creators will signal an error.</p>
+<p>The two forms may be mixed, so <strong>-types {d f r w}</strong> will
+find all regular files OR directories that have both read AND write
+permissions. The following are equivalent:</p>
+<pre><code>glob -type d *
+glob */</code></pre>
+<p>except that the first case doesn't return the trailing and is more
+platform independent.</p>
+</dd>
+<dt><strong>- -</strong></dt>
+<dd>
+<p>Marks the end of switches. The argument following this one will be
+treated as a <em>pattern</em> even if it starts with a
+<strong>-</strong>.</p>
+</dd>
+</dl>
+<h2 id="globbing-patterns">GLOBBING PATTERNS</h2>
+<p>The <em>pattern</em> arguments may contain any of the following
+special characters, which are a superset of those supported by
+<strong>string match</strong>:</p>
+<dl>
+<dt><strong>?</strong></dt>
+<dd>
+<p>Matches any single character.</p>
+</dd>
+<dt><strong>*</strong></dt>
+<dd>
+<p>Matches any sequence of zero or more characters.</p>
+</dd>
+<dt><strong>[</strong><em>chars</em><strong>]</strong></dt>
+<dd>
+<p>Matches any single character in <em>chars</em>. If <em>chars</em>
+contains a sequence of the form <em>a</em><strong>-</strong><em>b</em>
+then any character between <em>a</em> and <em>b</em> (inclusive) will
+match.</p>
+</dd>
+<dt><strong>\</strong><em>x</em></dt>
+<dd>
+<p>Matches the character <em>x</em>.</p>
+</dd>
+<dt><strong>{</strong><em>a</em><strong>,</strong><em>b</em><strong>,</strong><em>...</em>}</dt>
+<dd>
+<p>Matches any of the sub-patterns <em>a</em>, <em>b</em>, etc.</p>
+</dd>
+</dl>
+<p>On Unix, as with csh, a at the beginning of a file's name or just
+after a must be matched explicitly or with a {} construct, unless the
+<strong>-types hidden</strong> flag is given (since at the beginning of
+a file's name indicates that it is hidden). On other platforms, files
+beginning with a are handled no differently to any others, except the
+special directories and which must be matched explicitly (this is to
+avoid a recursive pattern like from recursing up the directory hierarchy
+as well as down). In addition, all characters must be matched
+explicitly.</p>
+<p>If the first character in a <em>pattern</em> is then it refers to the
+home directory for the user whose name follows the If the is followed
+immediately by then the value of the HOME environment variable is
+used.</p>
+<p>The <strong>glob</strong> command differs from csh globbing in two
+ways. First, it does not sort its result list (use the
+<strong>lsort</strong> command if you want the list sorted). Second,
+<strong>glob</strong> only returns the names of files that actually
+exist; in csh no check for existence is made unless a pattern contains a
+?, *, or [] construct.</p>
+<p>When the <strong>glob</strong> command returns relative paths whose
+filenames start with a tilde (for example through <strong>glob
+*</strong> or <strong>glob -tails</strong>, the returned list will not
+quote the tilde with This means care must be taken if those names are
+later to be used with <strong>file join</strong>, to avoid them being
+interpreted as absolute paths pointing to a given user's home
+directory.</p>
+<h1 id="windows-portability-issues">WINDOWS PORTABILITY ISSUES</h1>
+<p>For Windows UNC names, the servername and sharename components of the
+path may not contain ?, *, or [] constructs. On Windows NT, if
+<em>pattern</em> is of the form it refers to the home directory of the
+user whose account information resides on the specified NT domain
+server. Otherwise, user account information is obtained from the local
+computer.</p>
+<p>Since the backslash character has a special meaning to the glob
+command, glob patterns containing Windows style path separators need
+special care. The pattern is interpreted as where will match the single
+character and will match the single character and will not be
+interpreted as a wildcard character. One solution to this problem is to
+use the Unix style forward slash as a path separator. Windows style
+paths can be converted to Unix style paths with the command or</p>
+<h1 id="examples">EXAMPLES</h1>
+<p>Find all the Tcl files in the current directory:</p>
+<pre><code>glob *.tcl</code></pre>
+<p>Find all the Tcl files in the user's home directory, irrespective of
+what the current directory is:</p>
+<pre><code>glob -directory ~ *.tcl</code></pre>
+<p>Find all subdirectories of the current directory:</p>
+<pre><code>glob -type d *</code></pre>
+<p>Find all files whose name contains an a or the sequence</p>
+<pre><code>glob -type f *{a,b,cde}*</code></pre>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-Commands/file.html">file</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>exist, file, glob, pattern</p>

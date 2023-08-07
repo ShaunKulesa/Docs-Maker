@@ -1,0 +1,65 @@
+<h1 id="name">NAME</h1>
+<p>Tcl_DoWhenIdle, Tcl_CancelIdleCall - invoke a procedure when there
+are no pending events</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tcl.h&gt;
+
+Tcl_DoWhenIdle(proc, clientData)
+
+Tcl_CancelIdleCall(proc, clientData)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Procedure to invoke.</p>
+<p>Arbitrary one-word value to pass to <em>proc</em>.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p><strong>Tcl_DoWhenIdle</strong> arranges for <em>proc</em> to be
+invoked when the application becomes idle. The application is considered
+to be idle when <strong>Tcl_DoOneEvent</strong> has been called, could
+not find any events to handle, and is about to go to sleep waiting for
+an event to occur. At this point all pending
+<strong>Tcl_DoWhenIdle</strong> handlers are invoked. For each call to
+<strong>Tcl_DoWhenIdle</strong> there will be a single call to
+<em>proc</em>; after <em>proc</em> is invoked the handler is
+automatically removed. <strong>Tcl_DoWhenIdle</strong> is only usable in
+programs that use <strong>Tcl_DoOneEvent</strong> to dispatch
+events.</p>
+<p><em>Proc</em> should have arguments and result that match the type
+<strong>Tcl_IdleProc</strong>:</p>
+<pre><code>typedef void Tcl_IdleProc(
+        ClientData clientData);</code></pre>
+<p>The <em>clientData</em> parameter to <em>proc</em> is a copy of the
+<em>clientData</em> argument given to <strong>Tcl_DoWhenIdle</strong>.
+Typically, <em>clientData</em> points to a data structure containing
+application-specific information about what <em>proc</em> should do.</p>
+<p><strong>Tcl_CancelIdleCall</strong> may be used to cancel one or more
+previous calls to <strong>Tcl_DoWhenIdle</strong>: if there is a
+<strong>Tcl_DoWhenIdle</strong> handler registered for <em>proc</em> and
+<em>clientData</em>, then it is removed without invoking it. If there is
+more than one handler on the idle list that refers to <em>proc</em> and
+<em>clientData</em>, all of the handlers are removed. If no existing
+handlers match <em>proc</em> and <em>clientData</em> then nothing
+happens.</p>
+<p><strong>Tcl_DoWhenIdle</strong> is most useful in situations where
+(a) a piece of work will have to be done but (b) it is possible that
+something will happen in the near future that will change what has to be
+done or require something different to be done.
+<strong>Tcl_DoWhenIdle</strong> allows the actual work to be deferred
+until all pending events have been processed. At this point the exact
+work to be done will presumably be known and it can be done exactly
+once.</p>
+<p>For example, <strong>Tcl_DoWhenIdle</strong> might be used by an
+editor to defer display updates until all pending commands have been
+processed. Without this feature, redundant redisplays might occur in
+some situations, such as the processing of a command file.</p>
+<h1 id="bugs">BUGS</h1>
+<p>At present it is not safe for an idle callback to reschedule itself
+continuously. This will interact badly with certain features of Tk that
+attempt to wait for all idle callbacks to complete. If you would like
+for an idle callback to reschedule itself continuously, it is better to
+use a timer handler with a zero timeout period.</p>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-Commands/after.html">after</a>, <a
+href="../Tcl-C-API/Tcl_CreateFileHandler.html">Tcl_CreateFileHandler</a>,
+<a
+href="../Tcl-C-API/Tcl_CreateTimerHandler.html">Tcl_CreateTimerHandler</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>callback, defer, idle callback</p>

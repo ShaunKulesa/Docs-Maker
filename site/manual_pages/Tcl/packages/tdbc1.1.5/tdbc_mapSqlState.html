@@ -1,0 +1,36 @@
+<p><br />
+</p>
+<h1 id="name">NAME</h1>
+<p>tdbc::mapSqlState - Map SQLSTATE to error class</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>package require tdbc 1.0
+
+tdbc::mapSqlState sqlstate</code></pre>
+<p><br />
+</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>The <strong>tdbc::mapSqlState</strong> command accepts a string that
+is expected to be a five-character 'SQL state' as returned from a SQL
+database when an error occurs. It examines the first two characters of
+the string, and returns an error class as a human- and machine-readable
+name (for example, <strong>FEATURE_NOT_SUPPORTED</strong>,
+<strong>DATA_EXCEPTION</strong> or
+<strong>INVALID_CURSOR_STATE</strong>).</p>
+<p>The TDBC specification requires database drivers to return a
+description of an error in the error code when an error occurs. The
+description is a string that has at least four elements:
+"<strong>TDBC</strong> <em>errorClass</em> <em>sqlstate</em>
+<em>driverName</em> <em>details...</em>". The
+<strong>tdbc::mapSqlState</strong> command gives a convenient way for a
+TDBC driver to generate the <em>errorClass</em> element given the SQL
+state returned from a database.</p>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../tdbc1.1.5/tdbc.html">tdbc</a>, <a
+href="../tdbc1.1.5/tdbc::tokenize.html">tdbc::tokenize</a>, <a
+href="../tdbc1.1.5/tdbc::connection.html">tdbc::connection</a>, <a
+href="../tdbc1.1.5/tdbc::statement.html">tdbc::statement</a>, <a
+href="../tdbc1.1.5/tdbc::resultset.html">tdbc::resultset</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>TDBC, SQL, database, state</p>
+<h1 id="copyright">COPYRIGHT</h1>
+<p>Copyright (c) 2009 by Kevin B. Kenny.</p>

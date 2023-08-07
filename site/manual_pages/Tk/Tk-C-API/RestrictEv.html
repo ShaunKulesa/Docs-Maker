@@ -1,0 +1,60 @@
+<h1 id="name">NAME</h1>
+<p>Tk_RestrictEvents - filter and selectively delay X events</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tk.h&gt;
+
+Tk_RestrictProc *
+Tk_RestrictEvents(proc, arg, prevArgPtr)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Predicate procedure to call to filter incoming X events. NULL means
+do not restrict events at all.</p>
+<p>Arbitrary argument to pass to <em>proc</em>.</p>
+<p>Pointer to place to save argument to previous restrict procedure.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>This procedure is useful in certain situations where applications are
+only prepared to receive certain X events. After
+<strong>Tk_RestrictEvents</strong> is called,
+<strong>Tcl_DoOneEvent</strong> (and hence <strong>Tk_MainLoop</strong>)
+will filter X input events through <em>proc</em>. <em>Proc</em>
+indicates whether a given event is to be processed immediately, deferred
+until some later time (e.g. when the event restriction is lifted), or
+discarded. <em>Proc</em> is a procedure with arguments and result that
+match the type <strong>Tk_RestrictProc</strong>:</p>
+<pre><code>typedef Tk_RestrictAction Tk_RestrictProc(
+        ClientData arg,
+        XEvent *eventPtr);</code></pre>
+<p>The <em>arg</em> argument is a copy of the <em>arg</em> passed to
+<strong>Tk_RestrictEvents</strong>; it may be used to provide
+<em>proc</em> with information it needs to filter events. The
+<em>eventPtr</em> points to an event under consideration. <em>Proc</em>
+returns a restrict action (enumerated type
+<strong>Tk_RestrictAction</strong>) that indicates what
+<strong>Tcl_DoOneEvent</strong> should do with the event. If the return
+value is <strong>TK_PROCESS_EVENT</strong>, then the event will be
+handled immediately. If the return value is
+<strong>TK_DEFER_EVENT</strong>, then the event will be left on the
+event queue for later processing. If the return value is
+<strong>TK_DISCARD_EVENT</strong>, then the event will be removed from
+the event queue and discarded without being processed.</p>
+<p><strong>Tk_RestrictEvents</strong> uses its return value and
+<em>prevArgPtr</em> to return information about the current event
+restriction procedure (a NULL return value means there are currently no
+restrictions). These values may be used to restore the previous
+restriction state when there is no longer any need for the current
+restriction.</p>
+<p>There are very few places where <strong>Tk_RestrictEvents</strong> is
+needed. In most cases, the best way to restrict events is by changing
+the bindings with the <strong>bind</strong> Tcl command or by calling
+<strong>Tk_CreateEventHandler</strong> and
+<strong>Tk_DeleteEventHandler</strong> from C. The main place where
+<strong>Tk_RestrictEvents</strong> must be used is when performing
+synchronous actions (for example, if you need to wait for a particular
+event to occur on a particular window but you do not want to invoke any
+handlers for any other events). The solution in these situations is to
+call <strong>XNextEvent</strong> or <strong>XWindowEvent</strong>, but
+these procedures cannot be used because Tk keeps its own event queue
+that is separate from the X event queue. Instead, call
+<strong>Tk_RestrictEvents</strong> to set up a filter, then call
+<strong>Tcl_DoOneEvent</strong> to retrieve the desired event(s).</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>delay, event, filter, restriction</p>

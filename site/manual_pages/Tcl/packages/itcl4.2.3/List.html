@@ -1,0 +1,41 @@
+<h1 id="name">NAME</h1>
+<p>Itcl_InitList, Itcl_DeleteList, Itcl_CreateListElem,
+Itcl_DeleteListElem, Itcl_InsertList, Itcl_InsertListElem,
+Itcl_AppendList, Itcl_AppendListElem, Itcl_SetListValue - Manipulate an
+Itcl list object.</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;itcl.h&gt;
+
+void
+Itcl_InitList(list)
+
+void
+Itcl_DeleteList(list)
+
+Itcl_ListElem *
+Itcl_CreateListElem(list)
+
+Itcl_ListElem *
+Itcl_DeleteListElem(elem)
+
+Itcl_ListElem *
+Itcl_InsertList(list, clientData)
+
+Itcl_ListElem *
+Itcl_InsertListElem(elem, clientData)
+
+Itcl_ListElem *
+Itcl_AppendList(list, clientData)
+
+Itcl_ListElem *
+Itcl_AppendListElem(elem, clientData)
+
+void
+Itcl_SetListValue(elem, clientData)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>List info structure.</p>
+<p>List element info structure.</p>
+<p>Arbitrary one-word value to save in the list.</p>
+<h1 id="description">DESCRIPTION</h1>
+<h1 id="keywords">KEYWORDS</h1>
+<p>list</p>

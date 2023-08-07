@@ -1,0 +1,42 @@
+<h1 id="name">NAME</h1>
+<p>linsert - Insert elements into a list</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>linsert</strong> <em>list index</em> ?<em>element element
+...</em>?</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>This command produces a new list from <em>list</em> by inserting all
+of the <em>element</em> arguments just before the <em>index</em>'th
+element of <em>list</em>. Each <em>element</em> argument will become a
+separate element of the new list. If <em>index</em> is less than or
+equal to zero, then the new elements are inserted at the beginning of
+the list, and if <em>index</em> is greater or equal to the length of
+<em>list</em>, it is as if it was <strong>end</strong>. As with
+<strong>string index</strong>, the <em>index</em> value supports both
+simple index arithmetic and end-relative indexing.</p>
+<p>Subject to the restrictions that indices must refer to locations
+inside the list and that the <em>element</em>s will always be inserted
+in order, insertions are done so that when <em>index</em> is
+start-relative, the first <em>element</em> will be at that index in the
+resulting list, and when <em>index</em> is end-relative, the last
+<em>element</em> will be at that index in the resulting list.</p>
+<h1 id="example">EXAMPLE</h1>
+<p>Putting some values into a list, first indexing from the start and
+then indexing from the end, and then chaining them together:</p>
+<pre><code>set oldList {the fox jumps over the dog}
+set midList [linsert $oldList 1 quick]
+set newList [linsert $midList end-1 lazy]
+# The old lists still exist though...
+set newerList [linsert [linsert $oldList end-1 quick] 1 lazy]</code></pre>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-Commands/list.html">list</a>, <a
+href="../Tcl-Commands/lappend.html">lappend</a>, <a
+href="../Tcl-Commands/lindex.html">lindex</a>, <a
+href="../Tcl-Commands/llength.html">llength</a>, <a
+href="../Tcl-Commands/lsearch.html">lsearch</a>, <a
+href="../Tcl-Commands/lset.html">lset</a>, <a
+href="../Tcl-Commands/lsort.html">lsort</a>, <a
+href="../Tcl-Commands/lrange.html">lrange</a>, <a
+href="../Tcl-Commands/lreplace.html">lreplace</a>, <a
+href="../Tcl-Commands/string.html">string</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>element, insert, list</p>

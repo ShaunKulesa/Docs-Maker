@@ -1,0 +1,61 @@
+<p><br />
+</p>
+<h1 id="name">NAME</h1>
+<p>tdbc::sqlite3 - TDBC driver for the SQLite3 database manager</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p>package require <strong>tdbc::sqlite3 1.0</strong></p>
+<p><strong>tdbc::sqlite3::connection create</strong> <em>db</em>
+<em>fileName</em> ?<em>-option value...</em>?</p>
+<p><br />
+</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>The <strong>tdbc::sqlite3</strong> driver provides a database
+interface that conforms to Tcl DataBase Connectivity (TDBC) and allows a
+Tcl script to connect to a SQLite3 database. It is also provided as a
+worked example of how to write a database driver in Tcl, so that driver
+authors have a starting point for further development.</p>
+<p>Connection to a SQLite3 database is established by invoking
+<strong>tdbc::sqlite3::connection create</strong>, passing it a string
+to be used as the connection handle followed by the file name of the
+database. The side effect of <strong>tdbc::sqlite3::connection</strong>
+create is to create a new database connection.. As an alternative,
+<strong>tdbc::sqlite::connection new</strong> may be used to create a
+database connection with an automatically assigned name. The return
+value from <strong>tdbc::sqlite::connection new</strong> is the name
+that was chosen for the connection handle. See
+<strong>tdbc::connection(n)</strong> for the details of how to use the
+connection to manipulate a database.</p>
+<h1 id="configuration-options">CONFIGURATION OPTIONS</h1>
+<p>The standard configuration options <strong>-encoding</strong>,
+<strong>-isolation</strong>, <strong>-readonly</strong> and
+<strong>-timeout</strong> are all recognized, both on
+<strong>tdbc::sqlite3::connection create</strong> and on the
+<strong>configure</strong> method of the resulting connection.</p>
+<p>Since the encoding of a SQLite3 database is always well known, the
+<strong>-encoding</strong> option accepts only <strong>utf-8</strong> as
+an encoding and always returns <strong>utf-8</strong> for an encoding.
+The actual encoding may be set using a SQLite3 <strong>PRAGMA</strong>
+statement when creating a new database.</p>
+<p>Only the isolation levels <strong>readuncommitted</strong> and
+<strong>serializable</strong> are implemented. Other isolation levels
+are promoted to <strong>serializable</strong>.</p>
+<p>The <strong>-readonly</strong> flag is not implemented.
+<strong>-readonly 0</strong> is accepted silently, while
+<strong>-readonly 1</strong> reports an error.</p>
+<h1 id="bugs">BUGS</h1>
+<p>If any column name is not unique among the columns in a result set,
+the results of <strong>-as dicts</strong> returns will be missing all
+but the rightmost of the duplicated columns. This limitation can be
+worked around by adding appropriate <strong>AS</strong> clauses to
+<strong>SELECT</strong> statements to ensure that all returned column
+names are unique. Plans are to fix this bug by using a C implementation
+of the driver, which will also improve performance significantly.</p>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../tdbc1.1.5/tdbc.html">tdbc</a>, <a
+href="../tdbc1.1.5/tdbc::connection.html">tdbc::connection</a>, <a
+href="../tdbc1.1.5/tdbc::resultset.html">tdbc::resultset</a>, <a
+href="../tdbc1.1.5/tdbc::statement.html">tdbc::statement</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>TDBC, SQL, SQLite3, database, connectivity, connection</p>
+<h1 id="copyright">COPYRIGHT</h1>
+<p>Copyright (c) 2008 by Kevin B. Kenny.</p>

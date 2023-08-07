@@ -1,0 +1,471 @@
+<h1 id="name">NAME</h1>
+<p>zlib - compression and decompression operations</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>zlib subcommand arg ...</code></pre>
+<h1 id="description">DESCRIPTION</h1>
+<p>The <strong>zlib</strong> command provides access to the compression
+and check-summing facilities of the Zlib library by Jean-loup Gailly and
+Mark Adler. It has the following subcommands.</p>
+<h2 id="compression-subcommands">COMPRESSION SUBCOMMANDS</h2>
+<dl>
+<dt><strong>zlib compress</strong> <em>string</em> ?<em>level</em>?</dt>
+<dd>
+<p>Returns the zlib-format compressed binary data of the binary string
+in <em>string</em>. If present, <em>level</em> gives the compression
+level to use (from 0, which is uncompressed, to 9, maximally
+compressed).</p>
+</dd>
+<dt><strong>zlib decompress</strong> <em>string</em>
+?<em>bufferSize</em>?</dt>
+<dd>
+<p>Returns the uncompressed version of the raw compressed binary data in
+<em>string</em>. If present, <em>bufferSize</em> is a hint as to what
+size of buffer is to be used to receive the data.</p>
+</dd>
+<dt><strong>zlib deflate</strong> <em>string</em> ?<em>level</em>?</dt>
+<dd>
+<p>Returns the raw compressed binary data of the binary string in
+<em>string</em>. If present, <em>level</em> gives the compression level
+to use (from 0, which is uncompressed, to 9, maximally compressed).</p>
+</dd>
+<dt><strong>zlib gunzip</strong> <em>string</em>
+?<strong>-headerVar</strong> <em>varName</em>?</dt>
+<dd>
+<p>Return the uncompressed contents of binary string <em>string</em>,
+which must have been in gzip format. If <strong>-headerVar</strong> is
+given, store a dictionary describing the contents of the gzip header in
+the variable called <em>varName</em>. The keys of the dictionary that
+may be present are:</p>
+<dl>
+<dt><strong>comment</strong></dt>
+<dd>
+<p>The comment field from the header, if present.</p>
+</dd>
+<dt><strong>crc</strong></dt>
+<dd>
+<p>A boolean value describing whether a CRC of the header is
+computed.</p>
+</dd>
+<dt><strong>filename</strong></dt>
+<dd>
+<p>The filename field from the header, if present.</p>
+</dd>
+<dt><strong>os</strong></dt>
+<dd>
+<p>The operating system type code field from the header (if not the QW
+unknown value). See RFC 1952 for the meaning of these codes.</p>
+</dd>
+<dt><strong>size</strong></dt>
+<dd>
+<p>The size of the uncompressed data.</p>
+</dd>
+<dt><strong>time</strong></dt>
+<dd>
+<p>The time field from the header if non-zero, expected to be time that
+the file named by the <strong>filename</strong> field was modified.
+Suitable for use with <strong>clock format</strong>.</p>
+</dd>
+<dt><strong>type</strong></dt>
+<dd>
+<p>The type of the uncompressed data (<strong>binary</strong> or
+<strong>text</strong>) if known.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>zlib gzip</strong> <em>string</em> ?<strong>-level</strong>
+<em>level</em>? ?<strong>-header</strong> <em>dict</em>?</dt>
+<dd>
+<p>Return the compressed contents of binary string <em>string</em> in
+gzip format. If <strong>-level</strong> is given, <em>level</em> gives
+the compression level to use (from 0, which is uncompressed, to 9,
+maximally compressed). If <strong>-header</strong> is given,
+<em>dict</em> is a dictionary containing values used for the gzip
+header. The following keys may be defined:</p>
+<dl>
+<dt><strong>comment</strong></dt>
+<dd>
+<p>Add the given comment to the header of the gzip-format data.</p>
+</dd>
+<dt><strong>crc</strong></dt>
+<dd>
+<p>A boolean saying whether to compute a CRC of the header. Note that if
+the data is to be interchanged with the <strong>gzip</strong> program, a
+header CRC should <em>not</em> be computed.</p>
+</dd>
+<dt><strong>filename</strong></dt>
+<dd>
+<p>The name of the file that the data to be compressed came from.</p>
+</dd>
+<dt><strong>os</strong></dt>
+<dd>
+<p>The operating system type code, which should be one of the values
+described in RFC 1952.</p>
+</dd>
+<dt><strong>time</strong></dt>
+<dd>
+<p>The time that the file named in the <strong>filename</strong> key was
+last modified. This will be in the same as is returned by <strong>clock
+seconds</strong> or <strong>file mtime</strong>.</p>
+</dd>
+<dt><strong>type</strong></dt>
+<dd>
+<p>The type of the data being compressed, being <strong>binary</strong>
+or <strong>text</strong>.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>zlib inflate</strong> <em>string</em>
+?<em>bufferSize</em>?</dt>
+<dd>
+<p>Returns the uncompressed version of the raw compressed binary data in
+<em>string</em>. If present, <em>bufferSize</em> is a hint as to what
+size of buffer is to be used to receive the data.</p>
+</dd>
+</dl>
+<h2 id="channel-subcommand">CHANNEL SUBCOMMAND</h2>
+<dl>
+<dt><strong>zlib push</strong> <em>mode channel</em> ?<em>options
+...</em>?</dt>
+<dd>
+<p>Pushes a compressing or decompressing transformation onto the channel
+<em>channel</em>. The transformation can be removed again with
+<strong>chan pop</strong>. The <em>mode</em> argument determines what
+type of transformation is pushed; the following are supported:</p>
+<dl>
+<dt><strong>compress</strong></dt>
+<dd>
+<p>The transformation will be a compressing transformation that produces
+zlib-format data on <em>channel</em>, which must be writable.</p>
+</dd>
+<dt><strong>decompress</strong></dt>
+<dd>
+<p>The transformation will be a decompressing transformation that reads
+zlib-format data from <em>channel</em>, which must be readable.</p>
+</dd>
+<dt><strong>deflate</strong></dt>
+<dd>
+<p>The transformation will be a compressing transformation that produces
+raw compressed data on <em>channel</em>, which must be writable.</p>
+</dd>
+<dt><strong>gunzip</strong></dt>
+<dd>
+<p>The transformation will be a decompressing transformation that reads
+gzip-format data from <em>channel</em>, which must be readable.</p>
+</dd>
+<dt><strong>gzip</strong></dt>
+<dd>
+<p>The transformation will be a compressing transformation that produces
+gzip-format data on <em>channel</em>, which must be writable.</p>
+</dd>
+<dt><strong>inflate</strong></dt>
+<dd>
+<p>The transformation will be a decompressing transformation that reads
+raw compressed data from <em>channel</em>, which must be readable.</p>
+</dd>
+</dl>
+<p>The following options may be set when creating a transformation via
+the to the <strong>zlib push</strong> command:</p>
+<dl>
+<dt><strong>-dictionary</strong> <em>binData</em></dt>
+<dd>
+
+</dd>
+</dl>
+<p>Sets the compression dictionary to use when working with compressing
+or decompressing the data to be <em>binData</em>. Not valid for
+transformations that work with gzip-format data. The dictionary should
+consist of strings (byte sequences) that are likely to be encountered
+later in the data to be compressed, with the most commonly used strings
+preferably put towards the end of the dictionary. Tcl provides no
+mechanism for choosing a good such dictionary for a particular data
+sequence.</p>
+<dl>
+<dt><strong>-header</strong> <em>dictionary</em></dt>
+<dd>
+<p>Passes a description of the gzip header to create, in the same format
+that <strong>zlib gzip</strong> understands.</p>
+</dd>
+<dt><strong>-level</strong> <em>compressionLevel</em></dt>
+<dd>
+<p>How hard to compress the data. Must be an integer from 0
+(uncompressed) to 9 (maximally compressed).</p>
+</dd>
+<dt><strong>-limit</strong> <em>readaheadLimit</em></dt>
+<dd>
+<p>The maximum number of bytes ahead to read when decompressing.</p>
+<p>This option has become <strong>irrelevant</strong>. It was originally
+introduced to prevent Tcl from reading beyond the end of a compressed
+stream in multi-stream channels to ensure that the data after was left
+alone for further reading, at the cost of speed.</p>
+<p>Tcl now automatically returns any bytes it has read beyond the end of
+a compressed stream back to the channel, making them appear as unread to
+further readers.</p>
+</dd>
+</dl>
+<p>Both compressing and decompressing channel transformations add extra
+configuration options that may be accessed through <strong>chan
+configure</strong>. The options are:</p>
+<dl>
+<dt><strong>-checksum</strong> <em>checksum</em></dt>
+<dd>
+<p>This read-only option gets the current checksum for the uncompressed
+data that the compression engine has seen so far. It is valid for both
+compressing and decompressing transforms, but not for the raw inflate
+and deflate formats. The compression algorithm depends on what format is
+being produced or consumed.</p>
+</dd>
+<dt><strong>-dictionary</strong> <em>binData</em></dt>
+<dd>
+
+</dd>
+</dl>
+<p>This read-write options gets or sets the initial compression
+dictionary to use when working with compressing or decompressing the
+data to be <em>binData</em>. It is not valid for transformations that
+work with gzip-format data, and should not normally be set on
+compressing transformations other than at the point where the
+transformation is stacked. Note that this cannot be used to get the
+current active compression dictionary mid-stream, as that information is
+not exposed by the underlying library.</p>
+<dl>
+<dt><strong>-flush</strong> <em>type</em></dt>
+<dd>
+<p>This write-only operation flushes the current state of the compressor
+to the underlying channel. It is only valid for compressing
+transformations. The <em>type</em> must be either <strong>sync</strong>
+or <strong>full</strong> for a normal flush or an expensive flush
+respectively. Flushing degrades the compression ratio, but makes it
+easier for a decompressor to recover more of the file in the case of
+data corruption.</p>
+</dd>
+<dt><strong>-header</strong> <em>dictionary</em></dt>
+<dd>
+<p>This read-only option, only valid for decompressing transforms that
+are processing gzip-format data, returns the dictionary describing the
+header read off the data stream.</p>
+</dd>
+<dt><strong>-limit</strong> <em>readaheadLimit</em></dt>
+<dd>
+<p>This read-write option is used by decompressing channels to control
+the maximum number of bytes ahead to read from the underlying data
+source. See above for more information.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<h2 id="streaming-subcommand">STREAMING SUBCOMMAND</h2>
+<dl>
+<dt><strong>zlib stream</strong> <em>mode</em> ?<em>options</em>?</dt>
+<dd>
+<p>Creates a streaming compression or decompression command based on the
+<em>mode</em>, and return the name of the command. For a description of
+how that command works, see <strong>STREAMING INSTANCE COMMAND</strong>
+below. The following modes and <em>options</em> are supported:</p>
+<dl>
+<dt><strong>zlib stream compress</strong> ?<strong>-dictionary</strong>
+<em>bindata</em>? ?<strong>-level</strong> <em>level</em>?</dt>
+<dd>
+<p>The stream will be a compressing stream that produces zlib-format
+output, using compression level <em>level</em> (if specified) which will
+be an integer from 0 to 9,</p>
+</dd>
+</dl>
+<p>and the compression dictionary <em>bindata</em> (if specified).</p>
+<dl>
+<dt><strong>zlib stream decompress</strong>
+?<strong>-dictionary</strong> <em>bindata</em>?</dt>
+<dd>
+<p>The stream will be a decompressing stream that takes zlib-format
+input and produces uncompressed output.</p>
+</dd>
+</dl>
+<p>If <em>bindata</em> is supplied, it is a compression dictionary to
+use if required.</p>
+<dl>
+<dt><strong>zlib stream deflate</strong> ?<strong>-dictionary</strong>
+<em>bindata</em>? ?<strong>-level</strong> <em>level</em>?</dt>
+<dd>
+<p>The stream will be a compressing stream that produces raw output,
+using compression level <em>level</em> (if specified) which will be an
+integer from 0 to 9,</p>
+</dd>
+</dl>
+<p>and the compression dictionary <em>bindata</em> (if specified). Note
+that the raw compressed data includes no metadata about what compression
+dictionary was used, if any; that is a feature of the zlib-format
+data.</p>
+<dl>
+<dt><strong>zlib stream gunzip</strong></dt>
+<dd>
+<p>The stream will be a decompressing stream that takes gzip-format
+input and produces uncompressed output.</p>
+</dd>
+<dt><strong>zlib stream gzip</strong> ?<strong>-header</strong>
+<em>header</em>? ?<strong>-level</strong> <em>level</em>?</dt>
+<dd>
+<p>The stream will be a compressing stream that produces gzip-format
+output, using compression level <em>level</em> (if specified) which will
+be an integer from 0 to 9, and the header descriptor dictionary
+<em>header</em> (if specified; for keys see <strong>zlib
+gzip</strong>).</p>
+</dd>
+<dt><strong>zlib stream inflate</strong> ?<strong>-dictionary</strong>
+<em>bindata</em>?</dt>
+<dd>
+<p>The stream will be a decompressing stream that takes raw compressed
+input and produces uncompressed output.</p>
+</dd>
+</dl>
+<p>If <em>bindata</em> is supplied, it is a compression dictionary to
+use. Note that there are no checks in place to determine whether the
+compression dictionary is correct.</p>
+</dd>
+</dl>
+<h2 id="checksumming-subcommands">CHECKSUMMING SUBCOMMANDS</h2>
+<dl>
+<dt><strong>zlib adler32</strong> <em>string</em>
+?<em>initValue</em>?</dt>
+<dd>
+<p>Compute a checksum of binary string <em>string</em> using the
+Adler-32 algorithm. If given, <em>initValue</em> is used to initialize
+the checksum engine.</p>
+</dd>
+<dt><strong>zlib crc32</strong> <em>string</em>
+?<em>initValue</em>?</dt>
+<dd>
+<p>Compute a checksum of binary string <em>string</em> using the CRC-32
+algorithm. If given, <em>initValue</em> is used to initialize the
+checksum engine.</p>
+</dd>
+</dl>
+<h1 id="streaming-instance-command">STREAMING INSTANCE COMMAND</h1>
+<p>Streaming compression instance commands are produced by the
+<strong>zlib stream</strong> command. They are used by calling their
+<strong>put</strong> subcommand one or more times to load data in, and
+their <strong>get</strong> subcommand one or more times to extract the
+transformed data.</p>
+<p>The full set of subcommands supported by a streaming instance
+command, <em>stream</em>, is as follows:</p>
+<dl>
+<dt><em>stream</em> <strong>add</strong> ?<em>option...</em>?
+<em>data</em></dt>
+<dd>
+<p>A short-cut for followed by</p>
+</dd>
+<dt><em>stream</em> <strong>checksum</strong></dt>
+<dd>
+<p>Returns the checksum of the uncompressed data seen so far by this
+stream.</p>
+</dd>
+<dt><em>stream</em> <strong>close</strong></dt>
+<dd>
+<p>Deletes this stream and frees up all resources associated with
+it.</p>
+</dd>
+<dt><em>stream</em> <strong>eof</strong></dt>
+<dd>
+<p>Returns a boolean indicating whether the end of the stream (as
+determined by the compressed data itself) has been reached. Not all
+formats support detection of the end of the stream.</p>
+</dd>
+<dt><em>stream</em> <strong>finalize</strong></dt>
+<dd>
+<p>A short-cut for</p>
+</dd>
+<dt><em>stream</em> <strong>flush</strong></dt>
+<dd>
+<p>A short-cut for</p>
+</dd>
+<dt><em>stream</em> <strong>fullflush</strong></dt>
+<dd>
+<p>A short-cut for</p>
+</dd>
+<dt><em>stream</em> <strong>get</strong> ?<em>count</em>?</dt>
+<dd>
+<p>Return up to <em>count</em> bytes from <em>stream</em>'s internal
+buffers with the transformation applied. If <em>count</em> is omitted,
+the entire contents of the buffers are returned. <em>stream</em>
+<strong>header</strong> Return the gzip header description dictionary
+extracted from the stream. Only supported for streams created with their
+<em>mode</em> parameter set to <strong>gunzip</strong>.</p>
+</dd>
+<dt><em>stream</em> <strong>put</strong> ?<em>option...</em>?
+<em>data</em></dt>
+<dd>
+<p>Append the contents of the binary string <em>data</em> to
+<em>stream</em>'s internal buffers while applying the transformation.
+The following <em>option</em>s are supported (or an unambiguous prefix
+of them), which are used to modify the way in which the transformation
+is applied:</p>
+<dl>
+<dt><strong>-dictionary</strong> <em>binData</em></dt>
+<dd>
+
+</dd>
+</dl>
+<p>Sets the compression dictionary to use when working with compressing
+or decompressing the data to be <em>binData</em>.</p>
+<dl>
+<dt><strong>-finalize</strong></dt>
+<dd>
+<p>Mark the stream as finished, ensuring that all bytes have been wholly
+compressed or decompressed. For gzip streams, this also ensures that the
+footer is written to the stream. The stream will need to be reset before
+having more data written to it after this, though data can still be read
+out of the stream with the <strong>get</strong> subcommand.</p>
+<p>This option is mutually exclusive with the <strong>-flush</strong>
+and <strong>-fullflush</strong> options.</p>
+</dd>
+<dt><strong>-flush</strong></dt>
+<dd>
+<p>Ensure that a decompressor consuming the bytes that the current
+(compressing) stream is producing will be able to produce all the bytes
+that have been compressed so far, at some performance penalty.</p>
+<p>This option is mutually exclusive with the <strong>-finalize</strong>
+and <strong>-fullflush</strong> options.</p>
+</dd>
+<dt><strong>-fullflush</strong></dt>
+<dd>
+<p>Ensure that not only can a decompressor handle all the bytes produced
+so far (as with <strong>-flush</strong> above) but also that it can
+restart from this point if it detects that the stream is partially
+corrupt. This incurs a substantial performance penalty.</p>
+<p>This option is mutually exclusive with the <strong>-finalize</strong>
+and <strong>-flush</strong> options.</p>
+</dd>
+</dl>
+</dd>
+<dt><em>stream</em> <strong>reset</strong></dt>
+<dd>
+<p>Puts any stream, including those that have been finalized or that
+have reached eof, back into a state where it can process more data.
+Throws away all internally buffered data.</p>
+</dd>
+</dl>
+<h1 id="examples">EXAMPLES</h1>
+<p>To compress a Tcl string, it should be first converted to a
+particular charset encoding since the <strong>zlib</strong> command
+always operates on binary strings.</p>
+<pre><code>set binData [encoding convertto utf-8 $string]
+set compData [zlib compress $binData]</code></pre>
+<p>When converting back, it is also important to reverse the charset
+encoding:</p>
+<pre><code>set binData [zlib decompress $compData]
+set string [encoding convertfrom utf-8 $binData]</code></pre>
+<p>The compression operation from above can also be done with streams,
+which is especially helpful when you want to accumulate the data by
+stages:</p>
+<pre><code>set strm [zlib stream compress]
+$strm put [encoding convertto utf-8 $string]
+# ...
+$strm finalize
+set compData [$strm get]
+$strm close</code></pre>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-Commands/binary.html">binary</a>, <a
+href="../Tcl-Commands/chan.html">chan</a>, <a
+href="../Tcl-Commands/encoding.html">encoding</a>, <a
+href="../Tcl-C-API/Tcl_ZlibDeflate.html">Tcl_ZlibDeflate</a>, RFC1950 -
+RFC1952</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>compress, decompress, deflate, gzip, inflate, zlib</p>

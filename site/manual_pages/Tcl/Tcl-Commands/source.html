@@ -1,0 +1,44 @@
+<h1 id="name">NAME</h1>
+<p>source - Evaluate a file or resource as a Tcl script</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>source</strong> <em>fileName</em></p>
+<p><strong>source</strong> <strong>-encoding</strong> <em>encodingName
+fileName</em></p>
+<h1 id="description">DESCRIPTION</h1>
+<p>This command takes the contents of the specified file or resource and
+passes it to the Tcl interpreter as a text script. The return value from
+<strong>source</strong> is the return value of the last command executed
+in the script. If an error occurs in evaluating the contents of the
+script then the <strong>source</strong> command will return that error.
+If a <strong>return</strong> command is invoked from within the script
+then the remainder of the file will be skipped and the
+<strong>source</strong> command will return normally with the result
+from the <strong>return</strong> command.</p>
+<p>The end-of-file character for files is (^Z) for all platforms. The
+source command will read files up to this character. This restriction
+does not exist for the <strong>read</strong> or <strong>gets</strong>
+commands, allowing for files containing code and data segments (scripted
+documents). If you require a in code for string comparison, you can use
+or which will be safely substituted by the Tcl interpreter into</p>
+<p>A leading BOM (Byte order mark) contained in the file is ignored for
+unicode encodings (utf-8, unicode).</p>
+<p>The <strong>-encoding</strong> option is used to specify the encoding
+of the data stored in <em>fileName</em>. When the
+<strong>-encoding</strong> option is omitted, the system encoding is
+assumed.</p>
+<h1 id="example">EXAMPLE</h1>
+<p>Run the script in the file <strong>foo.tcl</strong> and then the
+script in the file <strong>bar.tcl</strong>:</p>
+<pre><code>source foo.tcl
+source bar.tcl</code></pre>
+<p>Alternatively:</p>
+<pre><code>foreach scriptFile {foo.tcl bar.tcl} {
+    source $scriptFile
+}</code></pre>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-Commands/file.html">file</a>, <a
+href="../Tcl-Commands/cd.html">cd</a>, <a
+href="../Tcl-Commands/encoding.html">encoding</a>, <a
+href="../Tcl-Commands/info.html">info</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>file, script</p>

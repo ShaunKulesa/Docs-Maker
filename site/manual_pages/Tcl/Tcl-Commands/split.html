@@ -1,0 +1,60 @@
+<h1 id="name">NAME</h1>
+<p>split - Split a string into a proper Tcl list</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>split</strong> <em>string</em> ?<em>splitChars</em>?</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>Returns a list created by splitting <em>string</em> at each character
+that is in the <em>splitChars</em> argument. Each element of the result
+list will consist of the characters from <em>string</em> that lie
+between instances of the characters in <em>splitChars</em>. Empty list
+elements will be generated if <em>string</em> contains adjacent
+characters in <em>splitChars</em>, or if the first or last character of
+<em>string</em> is in <em>splitChars</em>. If <em>splitChars</em> is an
+empty string then each character of <em>string</em> becomes a separate
+element of the result list. <em>SplitChars</em> defaults to the standard
+white-space characters.</p>
+<h1 id="examples">EXAMPLES</h1>
+<p>Divide up a USENET group name into its hierarchical components:</p>
+<pre><code>split &quot;comp.lang.tcl&quot; .
+      → comp lang tcl</code></pre>
+<p>See how the <strong>split</strong> command splits on <em>every</em>
+character in <em>splitChars</em>, which can result in information loss
+if you are not careful:</p>
+<pre><code>split &quot;alpha beta gamma&quot; &quot;temp&quot;
+      → al {ha b} {} {a ga} {} a</code></pre>
+<p>Extract the list words from a string that is not a well-formed
+list:</p>
+<pre><code>split &quot;Example with {unbalanced brace character&quot;
+      → Example with \{unbalanced brace character</code></pre>
+<p>Split a string into its constituent characters</p>
+<pre><code>split &quot;Hello world&quot; {}
+      → H e l l o { } w o r l d</code></pre>
+<h2 id="parsing-record-oriented-files">PARSING RECORD-ORIENTED
+FILES</h2>
+<p>Parse a Unix /etc/passwd file, which consists of one entry per line,
+with each line consisting of a colon-separated list of fields:</p>
+<pre><code>## Read the file
+set fid [open /etc/passwd]
+set content [read $fid]
+close $fid
+
+## Split into records on newlines
+set records [split $content &quot;\n&quot;]
+
+## Iterate over the records
+foreach rec $records {
+
+    ## Split into fields on colons
+    set fields [split $rec &quot;:&quot;]
+
+    ## Assign fields to variables and print some out...
+    lassign $fields \
+            userName password uid grp longName homeDir shell
+    puts &quot;$longName uses [file tail $shell] for a login shell&quot;
+}</code></pre>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-Commands/join.html">join</a>, <a
+href="../Tcl-Commands/list.html">list</a>, <a
+href="../Tcl-Commands/string.html">string</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>list, split, string</p>

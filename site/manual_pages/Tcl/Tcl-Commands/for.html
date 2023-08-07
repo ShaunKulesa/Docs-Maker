@@ -1,0 +1,57 @@
+<h1 id="name">NAME</h1>
+<p>for - 'For' loop</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>for</strong> <em>start test next body</em></p>
+<h1 id="description">DESCRIPTION</h1>
+<p><strong>For</strong> is a looping command, similar in structure to
+the C <strong>for</strong> statement. The <em>start</em>, <em>next</em>,
+and <em>body</em> arguments must be Tcl command strings, and
+<em>test</em> is an expression string. The <strong>for</strong> command
+first invokes the Tcl interpreter to execute <em>start</em>. Then it
+repeatedly evaluates <em>test</em> as an expression; if the result is
+non-zero it invokes the Tcl interpreter on <em>body</em>, then invokes
+the Tcl interpreter on <em>next</em>, then repeats the loop. The command
+terminates when <em>test</em> evaluates to 0. If a
+<strong>continue</strong> command is invoked within <em>body</em> then
+any remaining commands in the current execution of <em>body</em> are
+skipped; processing continues by invoking the Tcl interpreter on
+<em>next</em>, then evaluating <em>test</em>, and so on. If a
+<strong>break</strong> command is invoked within <em>body</em> or
+<em>next</em>, then the <strong>for</strong> command will return
+immediately. The operation of <strong>break</strong> and
+<strong>continue</strong> are similar to the corresponding statements in
+C. <strong>For</strong> returns an empty string.</p>
+<p>Note: <em>test</em> should almost always be enclosed in braces. If
+not, variable substitutions will be made before the <strong>for</strong>
+command starts executing, which means that variable changes made by the
+loop body will not be considered in the expression. This is likely to
+result in an infinite loop. If <em>test</em> is enclosed in braces,
+variable substitutions are delayed until the expression is evaluated
+(before each loop iteration), so changes in the variables will be
+visible. See below for an example:</p>
+<h1 id="examples">EXAMPLES</h1>
+<p>Print a line for each of the integers from 0 to 9:</p>
+<pre><code>for {set x 0} {$x&lt;10} {incr x} {
+    puts &quot;x is $x&quot;
+}</code></pre>
+<p>Either loop infinitely or not at all because the expression being
+evaluated is actually the constant, or even generate an error! The
+actual behaviour will depend on whether the variable <em>x</em> exists
+before the <strong>for</strong> command is run and whether its value is
+a value that is less than or greater than/equal to ten, and this is
+because the expression will be substituted before the
+<strong>for</strong> command is executed.</p>
+<pre><code>for {set x 0} $x&lt;10 {incr x} {
+    puts &quot;x is $x&quot;
+}</code></pre>
+<p>Print out the powers of two from 1 to 1024:</p>
+<pre><code>for {set x 1} {$x&lt;=1024} {set x [expr {$x * 2}]} {
+    puts &quot;x is $x&quot;
+}</code></pre>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-Commands/break.html">break</a>, <a
+href="../Tcl-Commands/continue.html">continue</a>, <a
+href="../Tcl-Commands/foreach.html">foreach</a>, <a
+href="../Tcl-Commands/while.html">while</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>boolean, for, iteration, loop</p>

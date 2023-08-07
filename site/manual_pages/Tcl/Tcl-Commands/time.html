@@ -1,0 +1,23 @@
+<h1 id="name">NAME</h1>
+<p>time - Time the execution of a script</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>time</strong> <em>script</em> ?<em>count</em>?</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>This command will call the Tcl interpreter <em>count</em> times to
+evaluate <em>script</em> (or once if <em>count</em> is not specified).
+It will then return a string of the form</p>
+<pre><code>503.2 microseconds per iteration</code></pre>
+<p>which indicates the average amount of time required per iteration, in
+microseconds. Time is measured in elapsed time, not CPU time.</p>
+<h1 id="example">EXAMPLE</h1>
+<p>Estimate how long it takes for a simple Tcl <strong>for</strong> loop
+to count to a thousand:</p>
+<pre><code>time {
+    for {set i 0} {$i&lt;1000} {incr i} {
+        # empty body
+    }
+}</code></pre>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-Commands/clock.html">clock</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>script, time</p>

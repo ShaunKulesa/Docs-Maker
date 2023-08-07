@@ -1,0 +1,162 @@
+<h1 id="name">NAME</h1>
+<p>Tk_AllocColorFromObj, Tk_GetColor, Tk_GetColorFromObj,
+Tk_GetColorByValue, Tk_NameOfColor, Tk_FreeColorFromObj, Tk_FreeColor -
+maintain database of colors</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tk.h&gt;
+
+XColor *
+Tk_AllocColorFromObj(interp, tkwin, objPtr)
+
+XColor *
+Tk_GetColor(interp, tkwin, name)
+
+XColor *
+Tk_GetColorFromObj(tkwin, objPtr)
+
+XColor *
+Tk_GetColorByValue(tkwin, prefPtr)
+
+const char *
+Tk_NameOfColor(colorPtr)
+
+GC
+Tk_GCForColor(colorPtr, drawable)
+
+Tk_FreeColorFromObj(tkwin, objPtr)
+
+Tk_FreeColor(colorPtr)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Interpreter to use for error reporting.</p>
+<p>Token for window in which color will be used.</p>
+<p>String value describes desired color; internal rep will be modified
+to cache pointer to corresponding (XColor *).</p>
+<p>Same as <em>objPtr</em> except description of color is passed as a
+string and resulting (XColor *) is not cached.</p>
+<p>Indicates red, green, and blue intensities of desired color.</p>
+<p>Pointer to X color information. Must have been allocated by previous
+call to <strong>Tk_AllocColorFromObj</strong>,
+<strong>Tk_GetColor</strong> or <strong>Tk_GetColorByValue</strong>,
+except when passed to <strong>Tk_NameOfColor</strong>.</p>
+<p>Drawable in which the result graphics context will be used. Must have
+same screen and depth as the window for which the color was
+allocated.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>These procedures manage the colors being used by a Tk application.
+They allow colors to be shared whenever possible, so that colormap space
+is preserved, and they pick closest available colors when colormap space
+is exhausted.</p>
+<p>Given a textual description of a color,
+<strong>Tk_AllocColorFromObj</strong> locates a pixel value that may be
+used to render the color in a particular window. The desired color is
+specified with a value whose string value must have one of the following
+forms:</p>
+<dl>
+<dt><em>colorname</em></dt>
+<dd>
+<p>Any of the valid textual names for a color defined in the server's
+color database file, such as <strong>red</strong> or
+<strong>PeachPuff</strong>.</p>
+</dd>
+<dt><strong>#</strong><em>RGB</em></dt>
+<dd>
+
+</dd>
+<dt><strong>#</strong><em>RRGGBB</em></dt>
+<dd>
+
+</dd>
+<dt><strong>#</strong><em>RRRGGGBBB</em></dt>
+<dd>
+
+</dd>
+<dt><strong>#</strong><em>RRRRGGGGBBBB</em></dt>
+<dd>
+<p>A numeric specification of the red, green, and blue intensities to
+use to display the color. Each <em>R</em>, <em>G</em>, or <em>B</em>
+represents a single hexadecimal digit. The four forms permit colors to
+be specified with 4-bit, 8-bit, 12-bit or 16-bit values. When fewer than
+16 bits are provided for each color, they represent the most significant
+bits of the color, while the lower unfilled bits will be repeatedly
+replicated from the available higher bits. For example, #3a7 is the same
+as #3333aaaa7777.</p>
+</dd>
+</dl>
+<p><strong>Tk_AllocColorFromObj</strong> returns a pointer to an XColor
+structure; the structure indicates the exact intensities of the
+allocated color (which may differ slightly from those requested,
+depending on the limitations of the screen) and a pixel value that may
+be used to draw with the color in <em>tkwin</em>. If an error occurs in
+<strong>Tk_AllocColorFromObj</strong> (such as an unknown color name)
+then NULL is returned and an error message is stored in
+<em>interp</em>'s result if <em>interp</em> is not NULL. If the colormap
+for <em>tkwin</em> is full, <strong>Tk_AllocColorFromObj</strong> will
+use the closest existing color in the colormap.
+<strong>Tk_AllocColorFromObj</strong> caches information about the
+return value in <em>objPtr</em>, which speeds up future calls to
+procedures such as <strong>Tk_AllocColorFromObj</strong> and
+<strong>Tk_GetColorFromObj</strong>.</p>
+<p><strong>Tk_GetColor</strong> is identical to
+<strong>Tk_AllocColorFromObj</strong> except that the description of the
+color is specified with a string instead of a value. This prevents
+<strong>Tk_GetColor</strong> from caching the return value, so
+<strong>Tk_GetColor</strong> is less efficient than
+<strong>Tk_AllocColorFromObj</strong>.</p>
+<p><strong>Tk_GetColorFromObj</strong> returns the token for an existing
+color, given the window and description used to create the color.
+<strong>Tk_GetColorFromObj</strong> does not actually create the color;
+the color must already have been created with a previous call to
+<strong>Tk_AllocColorFromObj</strong> or <strong>Tk_GetColor</strong>.
+The return value is cached in <em>objPtr</em>, which speeds up future
+calls to <strong>Tk_GetColorFromObj</strong> with the same
+<em>objPtr</em> and <em>tkwin</em>.</p>
+<p><strong>Tk_GetColorByValue</strong> is similar to
+<strong>Tk_GetColor</strong> except that the desired color is indicated
+with the <em>red</em>, <em>green</em>, and <em>blue</em> fields of the
+structure pointed to by <em>colorPtr</em>.</p>
+<p>This package maintains a database of all the colors currently in use.
+If the same color is requested multiple times from
+<strong>Tk_GetColor</strong> or <strong>Tk_AllocColorFromObj</strong>
+(e.g. by different windows), or if the same intensities are requested
+multiple times from <strong>Tk_GetColorByValue</strong>, then existing
+pixel values will be re-used. Re-using an existing pixel avoids any
+interaction with the window server, which makes the allocation much more
+efficient. These procedures also provide a portable interface that works
+across all platforms. For this reason, you should generally use
+<strong>Tk_AllocColorFromObj</strong>, <strong>Tk_GetColor</strong>, or
+<strong>Tk_GetColorByValue</strong> instead of lower level procedures
+like <strong>XAllocColor</strong>.</p>
+<p>Since different calls to this package may return the same shared
+pixel value, callers should never change the color of a pixel returned
+by the procedures. If you need to change a color value dynamically, you
+should use <strong>XAllocColorCells</strong> to allocate the pixel value
+for the color.</p>
+<p>The procedure <strong>Tk_NameOfColor</strong> is roughly the inverse
+of <strong>Tk_GetColor</strong>. If its <em>colorPtr</em> argument was
+created by <strong>Tk_AllocColorFromObj</strong> or
+<strong>Tk_GetColor</strong> then the return value is the string that
+was used to create the color. If <em>colorPtr</em> was created by a call
+to <strong>Tk_GetColorByValue</strong>, or by any other mechanism, then
+the return value is a string that could be passed to
+<strong>Tk_GetColor</strong> to return the same color. Note: the string
+returned by <strong>Tk_NameOfColor</strong> is only guaranteed to
+persist until the next call to <strong>Tk_NameOfColor</strong>.</p>
+<p><strong>Tk_GCForColor</strong> returns a graphics context whose
+<strong>foreground</strong> field is the pixel allocated for
+<em>colorPtr</em> and whose other fields all have default values. This
+provides an easy way to do basic drawing with a color. The graphics
+context is cached with the color and will exist only as long as
+<em>colorPtr</em> exists; it is freed when the last reference to
+<em>colorPtr</em> is freed by calling <strong>Tk_FreeColor</strong>.</p>
+<p>When a color is no longer needed <strong>Tk_FreeColorFromObj</strong>
+or <strong>Tk_FreeColor</strong> should be called to release it. For
+<strong>Tk_FreeColorFromObj</strong> the color to release is specified
+with the same information used to create it; for
+<strong>Tk_FreeColor</strong> the color to release is specified with a
+pointer to its XColor structure. There should be exactly one call to
+<strong>Tk_FreeColorFromObj</strong> or <strong>Tk_FreeColor</strong>
+for each call to <strong>Tk_AllocColorFromObj</strong>,
+<strong>Tk_GetColor</strong>, or
+<strong>Tk_GetColorByValue</strong>.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>color, intensity, value, pixel value</p>

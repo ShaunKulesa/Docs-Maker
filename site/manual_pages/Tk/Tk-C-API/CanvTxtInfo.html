@@ -1,0 +1,80 @@
+<h1 id="name">NAME</h1>
+<p>Tk_CanvasTextInfo - additional information for managing text items in
+canvases</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tk.h&gt;
+
+Tk_CanvasTextInfo *
+Tk_CanvasGetTextInfo(canvas)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>A token that identifies a particular canvas widget.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>Textual canvas items are somewhat more complicated to manage than
+other items, due to things like the selection and the input focus.
+<strong>Tk_CanvasGetTextInfo</strong> may be invoked by a type manager
+to obtain additional information needed for items that display text. The
+return value from <strong>Tk_CanvasGetTextInfo</strong> is a pointer to
+a structure that is shared between Tk and all the items that display
+text. The structure has the following form:</p>
+<pre><code>typedef struct Tk_CanvasTextInfo {
+    Tk_3DBorder selBorder;
+    int selBorderWidth;
+    XColor *selFgColorPtr;
+    Tk_Item *selItemPtr;
+    int selectFirst;
+    int selectLast;
+    Tk_Item *anchorItemPtr;
+    int selectAnchor;
+    Tk_3DBorder insertBorder;
+    int insertWidth;
+    int insertBorderWidth;
+    Tk_Item *focusItemPtr;
+    int gotFocus;
+    int cursorOn;
+} Tk_CanvasTextInfo;</code></pre>
+<p>The <strong>selBorder</strong> field identifies a Tk_3DBorder that
+should be used for drawing the background under selected text.
+<em>selBorderWidth</em> gives the width of the raised border around
+selected text, in pixels. <em>selFgColorPtr</em> points to an XColor
+that describes the foreground color to be used when drawing selected
+text. <em>selItemPtr</em> points to the item that is currently selected,
+or NULL if there is no item selected or if the canvas does not have the
+selection. <em>selectFirst</em> and <em>selectLast</em> give the indices
+of the first and last selected characters in <em>selItemPtr</em>, as
+returned by the <em>indexProc</em> for that item. <em>anchorItemPtr</em>
+points to the item that currently has the selection anchor; this is not
+necessarily the same as <em>selItemPtr</em>. <em>selectAnchor</em> is an
+index that identifies the anchor position within <em>anchorItemPtr</em>.
+<em>insertBorder</em> contains a Tk_3DBorder to use when drawing the
+insertion cursor; <em>insertWidth</em> gives the total width of the
+insertion cursor in pixels, and <em>insertBorderWidth</em> gives the
+width of the raised border around the insertion cursor.
+<em>focusItemPtr</em> identifies the item that currently has the input
+focus, or NULL if there is no such item. <em>gotFocus</em> is 1 if the
+canvas widget has the input focus and 0 otherwise. <em>cursorOn</em> is
+1 if the insertion cursor should be drawn in <em>focusItemPtr</em> and 0
+if it should not be drawn; this field is toggled on and off by Tk to
+make the cursor blink.</p>
+<p>The structure returned by <strong>Tk_CanvasGetTextInfo</strong> is
+shared between Tk and the type managers; typically the type manager
+calls <strong>Tk_CanvasGetTextInfo</strong> once when an item is created
+and then saves the pointer in the item's record. Tk will update
+information in the Tk_CanvasTextInfo; for example, a
+<strong>configure</strong> widget command might change the
+<em>selBorder</em> field, or a <strong>select</strong> widget command
+might change the <em>selectFirst</em> field, or Tk might change
+<em>cursorOn</em> in order to make the insertion cursor flash on and off
+during successive redisplays.</p>
+<p>Type managers should treat all of the fields of the Tk_CanvasTextInfo
+structure as read-only, except for <em>selItemPtr</em>,
+<em>selectFirst</em>, <em>selectLast</em>, and <em>selectAnchor</em>.
+Type managers may change <em>selectFirst</em>, <em>selectLast</em>, and
+<em>selectAnchor</em> to adjust for insertions and deletions in the item
+(but only if the item is the current owner of the selection or anchor,
+as determined by <em>selItemPtr</em> or <em>anchorItemPtr</em>). If all
+of the selected text in the item is deleted, the item should set
+<em>selItemPtr</em> to NULL to indicate that there is no longer a
+selection.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>canvas, focus, insertion cursor, selection, selection anchor,
+text</p>

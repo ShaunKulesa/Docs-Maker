@@ -1,0 +1,72 @@
+<h1 id="name">NAME</h1>
+<p>Tcl_ExprLong, Tcl_ExprDouble, Tcl_ExprBoolean, Tcl_ExprString -
+evaluate an expression</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tcl.h&gt;
+
+int
+Tcl_ExprLong(interp, expr, longPtr)
+
+int
+Tcl_ExprDouble(interp, expr, doublePtr)
+
+int
+Tcl_ExprBoolean(interp, expr, booleanPtr)
+
+int
+Tcl_ExprString(interp, expr)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Interpreter in whose context to evaluate <em>expr</em>.</p>
+<p>Expression to be evaluated.</p>
+<p>Pointer to location in which to store the integer value of the
+expression.</p>
+<p>Pointer to location in which to store the floating-point value of the
+expression.</p>
+<p>Pointer to location in which to store the 0/1 boolean value of the
+expression.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>These four procedures all evaluate the expression given by the
+<em>expr</em> argument and return the result in one of four different
+forms. The expression can have any of the forms accepted by the
+<strong>expr</strong> command. Note that these procedures have been
+largely replaced by the value-based procedures
+<strong>Tcl_ExprLongObj</strong>, <strong>Tcl_ExprDoubleObj</strong>,
+<strong>Tcl_ExprBooleanObj</strong>, and <strong>Tcl_ExprObj</strong>.
+Those value-based procedures evaluate an expression held in a Tcl value
+instead of a string. The value argument can retain an internal
+representation that is more efficient to execute.</p>
+<p>The <em>interp</em> argument refers to an interpreter used to
+evaluate the expression (e.g. for variables and nested Tcl commands) and
+to return error information.</p>
+<p>For all of these procedures the return value is a standard Tcl
+result: <strong>TCL_OK</strong> means the expression was successfully
+evaluated, and <strong>TCL_ERROR</strong> means that an error occurred
+while evaluating the expression. If <strong>TCL_ERROR</strong> is
+returned then the interpreter's result will hold a message describing
+the error. If an error occurs while executing a Tcl command embedded in
+the expression then that error will be returned.</p>
+<p>If the expression is successfully evaluated, then its value is
+returned in one of four forms, depending on which procedure is invoked.
+<strong>Tcl_ExprLong</strong> stores an integer value at
+<em>*longPtr</em>. If the expression's actual value is a floating-point
+number, then it is truncated to an integer. If the expression's actual
+value is a non-numeric string then an error is returned.</p>
+<p><strong>Tcl_ExprDouble</strong> stores a floating-point value at
+<em>*doublePtr</em>. If the expression's actual value is an integer, it
+is converted to floating-point. If the expression's actual value is a
+non-numeric string then an error is returned.</p>
+<p><strong>Tcl_ExprBoolean</strong> stores a 0/1 integer value at
+<em>*booleanPtr</em>. If the expression's actual value is an integer or
+floating-point number, then they store 0 at <em>*booleanPtr</em> if the
+value was zero and 1 otherwise. If the expression's actual value is a
+non-numeric string then it must be one of the values accepted by
+<strong>Tcl_GetBoolean</strong> such as or or else an error occurs.</p>
+<p><strong>Tcl_ExprString</strong> returns the value of the expression
+as a string stored in the interpreter's result.</p>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-C-API/Tcl_ExprLongObj.html">Tcl_ExprLongObj</a>, <a
+href="../Tcl-C-API/Tcl_ExprDoubleObj.html">Tcl_ExprDoubleObj</a>, <a
+href="../Tcl-C-API/Tcl_ExprBooleanObj.html">Tcl_ExprBooleanObj</a>, <a
+href="../Tcl-C-API/Tcl_ExprObj.html">Tcl_ExprObj</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>boolean, double, evaluate, expression, integer, value, string</p>

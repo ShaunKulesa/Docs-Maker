@@ -1,0 +1,40 @@
+<h1 id="name">NAME</h1>
+<p>Tcl_RecordAndEval - save command on history list before
+evaluating</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tcl.h&gt;
+
+int
+Tcl_RecordAndEval(interp, cmd, flags)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Tcl interpreter in which to evaluate command.</p>
+<p>Command (or sequence of commands) to execute.</p>
+<p>An OR'ed combination of flag bits. <strong>TCL_NO_EVAL</strong> means
+record the command but do not evaluate it.
+<strong>TCL_EVAL_GLOBAL</strong> means evaluate the command at global
+level instead of the current stack level.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p><strong>Tcl_RecordAndEval</strong> is invoked to record a command as
+an event on the history list and then execute it using
+<strong>Tcl_Eval</strong> (or <strong>Tcl_GlobalEval</strong> if the
+<strong>TCL_EVAL_GLOBAL</strong> bit is set in <em>flags</em>). It
+returns a completion code such as <strong>TCL_OK</strong> just like
+<strong>Tcl_Eval</strong> and it leaves information in the interpreter's
+result. If you do not want the command recorded on the history list then
+you should invoke <strong>Tcl_Eval</strong> instead of
+<strong>Tcl_RecordAndEval</strong>. Normally
+<strong>Tcl_RecordAndEval</strong> is only called with top-level
+commands typed by the user, since the purpose of history is to allow the
+user to re-issue recently-invoked commands. If the <em>flags</em>
+argument contains the <strong>TCL_NO_EVAL</strong> bit then the command
+is recorded without being evaluated.</p>
+<p>Note that <strong>Tcl_RecordAndEval</strong> has been largely
+replaced by the value-based procedure
+<strong>Tcl_RecordAndEvalObj</strong>. That value-based procedure
+records and optionally executes a command held in a Tcl value instead of
+a string.</p>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a
+href="../Tcl-C-API/Tcl_RecordAndEvalObj.html">Tcl_RecordAndEvalObj</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>command, event, execute, history, interpreter, record</p>

@@ -1,0 +1,29 @@
+<h1 id="name">NAME</h1>
+<p>rename - Rename or delete a command</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>rename</strong> <em>oldName newName</em></p>
+<h1 id="description">DESCRIPTION</h1>
+<p>Rename the command that used to be called <em>oldName</em> so that it
+is now called <em>newName</em>. If <em>newName</em> is an empty string
+then <em>oldName</em> is deleted. <em>oldName</em> and <em>newName</em>
+may include namespace qualifiers (names of containing namespaces). If a
+command is renamed into a different namespace, future invocations of it
+will execute in the new namespace. The <strong>rename</strong> command
+returns an empty string as result.</p>
+<h1 id="example">EXAMPLE</h1>
+<p>The <strong>rename</strong> command can be used to wrap the standard
+Tcl commands with your own monitoring machinery. For example, you might
+wish to count how often the <strong>source</strong> command is
+called:</p>
+<pre><code>rename ::source ::theRealSource
+set sourceCount 0
+proc ::source args {
+    global sourceCount
+    puts &quot;called source for the [incr sourceCount]&#39;th time&quot;
+    uplevel 1 ::theRealSource $args
+}</code></pre>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-Commands/namespace.html">namespace</a>, <a
+href="../Tcl-Commands/proc.html">proc</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>command, delete, namespace, rename</p>

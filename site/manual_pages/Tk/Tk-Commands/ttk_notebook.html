@@ -1,0 +1,282 @@
+<h1 id="name">NAME</h1>
+<p>ttk::notebook - Multi-paned container widget</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>ttk::notebook pathname ?options...?
+
+
+pathname add window ?options...?
+pathname insert index window ?options...?</code></pre>
+<h1 id="description">DESCRIPTION</h1>
+<p>A <strong>ttk::notebook</strong> widget manages a collection of
+windows and displays a single one at a time. Each content window is
+associated with a <em>tab</em>, which the user may select to change the
+currently-displayed window.</p>
+<h1 id="standard-options">STANDARD OPTIONS</h1>
+<pre><code>-class   -cursor -takefocus
+-style</code></pre>
+<p>See the manual entry for details on the standard options.</p>
+<h1 id="widget-specific-options">WIDGET-SPECIFIC OPTIONS</h1>
+<pre><code>Command-Line Name:   -height
+Database Name:  height
+Database Class: Height</code></pre>
+<blockquote>
+<p>If present and greater than zero, specifies the desired height of the
+pane area (not including internal padding or tabs). Otherwise, the
+maximum height of all panes is used.</p>
+</blockquote>
+<pre><code>Command-Line Name:   -padding
+Database Name:  padding
+Database Class: Padding</code></pre>
+<blockquote>
+<p>Specifies the amount of extra space to add around the outside of the
+notebook. The padding is a list of up to four length specifications
+<em>left top right bottom</em>. If fewer than four elements are
+specified, <em>bottom</em> defaults to <em>top</em>, <em>right</em>
+defaults to <em>left</em>, and <em>top</em> defaults to <em>left</em>.
+In other words, a list of three numbers specify the left, vertical, and
+right padding; a list of two numbers specify the horizontal and the
+vertical padding; a single number specifies the same padding all the way
+around the widget.</p>
+</blockquote>
+<pre><code>Command-Line Name:   -width
+Database Name:  width
+Database Class: Width</code></pre>
+<blockquote>
+<p>If present and greater than zero, specifies the desired width of the
+pane area (not including internal padding). Otherwise, the maximum width
+of all panes is used.</p>
+</blockquote>
+<h1 id="tab-options">TAB OPTIONS</h1>
+<p>The following options may be specified for individual notebook
+panes:</p>
+<pre><code>Command-Line Name:   -state
+Database Name:  state
+Database Class: State</code></pre>
+<blockquote>
+<p>Either <strong>normal</strong>, <strong>disabled</strong> or
+<strong>hidden</strong>. If <strong>disabled</strong>, then the tab is
+not selectable. If <strong>hidden</strong>, then the tab is not
+shown.</p>
+</blockquote>
+<pre><code>Command-Line Name:   -sticky
+Database Name:  sticky
+Database Class: Sticky</code></pre>
+<blockquote>
+<p>Specifies how the content window is positioned within the pane area.
+Value is a string containing zero or more of the characters <strong>n,
+s, e,</strong> or <strong>w</strong>. Each letter refers to a side
+(north, south, east, or west) that the content window will to, as per
+the <strong>grid</strong> geometry manager.</p>
+</blockquote>
+<pre><code>Command-Line Name:   -padding
+Database Name:  padding
+Database Class: Padding</code></pre>
+<blockquote>
+<p>Specifies the amount of extra space to add between the notebook and
+this pane. Syntax is the same as for the widget
+<strong>-padding</strong> option.</p>
+</blockquote>
+<pre><code>Command-Line Name:   -text
+Database Name:  text
+Database Class: Text</code></pre>
+<blockquote>
+<p>Specifies a string to be displayed in the tab.</p>
+</blockquote>
+<pre><code>Command-Line Name:   -image
+Database Name:  image
+Database Class: Image</code></pre>
+<blockquote>
+<p>Specifies an image to display in the tab. See <em>ttk_widget(n)</em>
+for details.</p>
+</blockquote>
+<pre><code>Command-Line Name:   -compound
+Database Name:  compound
+Database Class: Compound</code></pre>
+<blockquote>
+<p>Specifies how to display the image relative to the text, in the case
+both <strong>-text</strong> and <strong>-image</strong> are present. See
+<em>label(n)</em> for legal values.</p>
+</blockquote>
+<pre><code>Command-Line Name:   -underline
+Database Name:  underline
+Database Class: Underline</code></pre>
+<blockquote>
+<p>Specifies the integer index (0-based) of a character to underline in
+the text string. The underlined character is used for mnemonic
+activation if <strong>ttk::notebook::enableTraversal</strong> is
+called.</p>
+</blockquote>
+<h1 id="tab-identifiers">TAB IDENTIFIERS</h1>
+<p>The <em>tabid</em> argument to the following commands may take any of
+the following forms:</p>
+<ul>
+<li><p>An integer between zero and the number of tabs;</p></li>
+<li><p>The name of a content window;</p></li>
+<li><p>A positional specification of the form which identifies the
+tab</p></li>
+<li><p>The literal string which identifies the currently-selected tab;
+or:</p></li>
+<li><p>The literal string which returns the number of tabs (only valid
+for</p></li>
+</ul>
+<h1 id="widget-command">WIDGET COMMAND</h1>
+<dl>
+<dt><em>pathname</em> <strong>add</strong> <em>window</em>
+?<em>options...</em>?</dt>
+<dd>
+<p>Adds a new tab to the notebook. See <strong>TAB OPTIONS</strong> for
+the list of available <em>options</em>. If <em>window</em> is currently
+managed by the notebook but hidden, it is restored to its previous
+position.</p>
+</dd>
+<dt><em>pathname</em> <strong>configure</strong> ?<em>options</em>?</dt>
+<dd>
+<p>See <em>ttk::widget(n)</em>.</p>
+</dd>
+<dt><em>pathname</em> <strong>cget</strong> <em>option</em></dt>
+<dd>
+<p>See <em>ttk::widget(n)</em>.</p>
+</dd>
+<dt><em>pathname</em> <strong>forget</strong> <em>tabid</em></dt>
+<dd>
+<p>Removes the tab specified by <em>tabid</em>, unmaps and unmanages the
+associated window.</p>
+</dd>
+<dt><em>pathname</em> <strong>hide</strong> <em>tabid</em></dt>
+<dd>
+<p>Hides the tab specified by <em>tabid</em>. The tab will not be
+displayed, but the associated window remains managed by the notebook and
+its configuration remembered. Hidden tabs may be restored with the
+<strong>add</strong> command.</p>
+</dd>
+<dt><em>pathname</em> <strong>identify</strong> <em>component x
+y</em></dt>
+<dd>
+<p>Returns the name of the element under the point given by <em>x</em>
+and <em>y</em>, or the empty string if no component is present at that
+location. The following subcommands are supported:</p>
+<dl>
+<dt><em>pathname</em> <strong>identify element</strong> <em>x
+y</em></dt>
+<dd>
+<p>Returns the name of the element at the specified location.</p>
+</dd>
+<dt><em>pathname</em> <strong>identify tab</strong> <em>x y</em></dt>
+<dd>
+<p>Returns the index of the tab at the specified location.</p>
+</dd>
+</dl>
+</dd>
+<dt><em>pathname</em> <strong>index</strong> <em>tabid</em></dt>
+<dd>
+<p>Returns the numeric index of the tab specified by <em>tabid</em>, or
+the total number of tabs if <em>tabid</em> is the string</p>
+</dd>
+<dt><em>pathname</em> <strong>insert</strong> <em>pos subwindow
+options...</em></dt>
+<dd>
+<p>Inserts a pane at the specified position. <em>pos</em> is either the
+string <strong>end</strong>, an integer index, or the name of a managed
+subwindow. If <em>subwindow</em> is already managed by the notebook,
+moves it to the specified position. See <strong>TAB OPTIONS</strong> for
+the list of available options.</p>
+</dd>
+<dt><em>pathname</em> <strong>instate</strong> <em>statespec</em>
+?<em>script...</em>?</dt>
+<dd>
+<p>See <em>ttk::widget(n)</em>.</p>
+</dd>
+<dt><em>pathname</em> <strong>select</strong> ?<em>tabid</em>?</dt>
+<dd>
+<p>Selects the specified tab. The associated content window will be
+displayed, and the previously-selected window (if different) is
+unmapped. If <em>tabid</em> is omitted, returns the widget name of the
+currently selected pane.</p>
+</dd>
+<dt><em>pathname</em> <strong>state</strong> ?<em>statespec</em>?</dt>
+<dd>
+<p>See <em>ttk::widget(n)</em>.</p>
+</dd>
+<dt><em>pathname</em> <strong>tab</strong> <em>tabid</em>
+?<em>-option</em> ?<em>value ...</em></dt>
+<dd>
+<p>Query or modify the options of the specific tab. If no
+<em>-option</em> is specified, returns a dictionary of the tab option
+values. If one <em>-option</em> is specified, returns the value of that
+<em>option</em>. Otherwise, sets the <em>-option</em>s to the
+corresponding <em>value</em>s. See <strong>TAB OPTIONS</strong> for the
+available options.</p>
+</dd>
+<dt><em>pathname</em> <strong>tabs</strong></dt>
+<dd>
+<p>Returns the list of windows managed by the notebook, in the index
+order of their associated tabs.</p>
+</dd>
+</dl>
+<h1 id="keyboard-traversal">KEYBOARD TRAVERSAL</h1>
+<p>To enable keyboard traversal for a toplevel window containing a
+notebook widget <em>$nb</em>, call:</p>
+<pre><code>ttk::notebook::enableTraversal $nb</code></pre>
+<p>This will extend the bindings for the toplevel window containing the
+notebook as follows:</p>
+<ul>
+<li><p><strong>Control-Tab</strong> selects the tab following the
+currently selected one.</p></li>
+<li><p><strong>Control-Shift-Tab</strong> selects the tab preceding the
+currently selected one.</p></li>
+<li><p><strong>Alt-</strong><em>K</em>, where <em>K</em> is the mnemonic
+(underlined) character of any tab, will select that tab.</p></li>
+</ul>
+<p>Multiple notebooks in a single toplevel may be enabled for traversal,
+including nested notebooks. However, notebook traversal only works
+properly if all panes are direct children of the notebook.</p>
+<h1 id="virtual-events">VIRTUAL EVENTS</h1>
+<p>The notebook widget generates a
+<strong>&lt;&lt;NotebookTabChanged&gt;&gt;</strong> virtual event after
+a new tab is selected.</p>
+<h1 id="example">EXAMPLE</h1>
+<pre><code>pack [ttk::notebook .nb]
+.nb add [frame .nb.f1] -text &quot;First tab&quot;
+.nb add [frame .nb.f2] -text &quot;Second tab&quot;
+.nb select .nb.f2
+ttk::notebook::enableTraversal .nb</code></pre>
+<h1 id="styling-options">STYLING OPTIONS</h1>
+<p>The class name for a <strong>ttk::notebook</strong> is
+<strong>TNotebook</strong>. The tab has a class name of
+<strong>TNotebook.Tab</strong></p>
+<p>Dynamic states: <strong>active</strong>, <strong>disabled</strong>,
+<strong>selected</strong>.</p>
+<p><strong>TNotebook</strong> styling options configurable with
+<strong>ttk::style</strong> are:</p>
+<p><strong>-background</strong> <em>color</em><br />
+<strong>-bordercolor</strong> <em>color</em><br />
+<strong>-darkcolor</strong> <em>color</em><br />
+<strong>-foreground</strong> <em>color</em><br />
+<strong>-lightcolor</strong> <em>color</em><br />
+<strong>-padding</strong> <em>padding</em><br />
+<strong>-tabmargins</strong> <em>padding</em><br />
+<strong>-tabposition</strong> <em>side</em><br />
+</p>
+<p><strong>TNotebook.Tab</strong> styling options configurable with
+<strong>ttk::style</strong> are:</p>
+<p><strong>-background</strong> <em>color</em><br />
+<strong>-bordercolor</strong> <em>color</em><br />
+<strong>-compound</strong> <em>compound</em><br />
+<strong>-expand</strong> <em>padding</em></p>
+<blockquote>
+<p>Defines how much the tab grows in size. Usually used with the
+<strong>selected</strong> dynamic state. <strong>-tabmargins</strong>
+should be set appropriately so that there is room for the tab
+growth.</p>
+</blockquote>
+<p><strong>-font</strong> <em>font</em><br />
+<strong>-foreground</strong> <em>color</em><br />
+<strong>-padding</strong> <em>padding</em></p>
+<p>Some options are only available for specific themes.</p>
+<p>See the <strong>ttk::style</strong> manual page for information on
+how to configure ttk styles.</p>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tk-Commands/ttk::widget.html">ttk::widget</a>, <a
+href="../Tk-Commands/grid.html">grid</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>pane, tab</p>

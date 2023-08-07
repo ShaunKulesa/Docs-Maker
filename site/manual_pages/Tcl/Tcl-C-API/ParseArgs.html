@@ -1,0 +1,171 @@
+<h1 id="name">NAME</h1>
+<p>Tcl_ParseArgsObjv - parse arguments according to a tabular
+description</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tcl.h&gt;
+
+int
+Tcl_ParseArgsObjv(interp, argTable, objcPtr, objv, remObjv)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Where to store error messages.</p>
+<p>Pointer to array of option descriptors.</p>
+<p>A pointer to variable holding number of arguments in <em>objv</em>.
+Will be modified to hold number of arguments left in the unprocessed
+argument list stored in <em>remObjv</em>.</p>
+<p>The array of arguments to be parsed.</p>
+<p>Pointer to a variable that will hold the array of unprocessed
+arguments. Should be NULL if no return of unprocessed arguments is
+required. If <em>objcPtr</em> is updated to a non-zero value, the array
+returned through this must be deallocated using
+<strong>ckfree</strong>.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>The <strong>Tcl_ParseArgsObjv</strong> function provides a system for
+parsing argument lists of the form Such argument lists are commonly
+found both in the arguments to a program and in the arguments to an
+individual Tcl command. This parser assumes that the order of the
+arguments does not matter, other than in so far as later copies of a
+duplicated option overriding earlier ones.</p>
+<p>The argument array is described by the <em>objcPtr</em> and
+<em>objv</em> parameters, and an array of unprocessed arguments is
+returned through the <em>objcPtr</em> and <em>remObjv</em> parameters;
+if no return of unprocessed arguments is desired, the <em>remObjv</em>
+parameter should be NULL. If any problems happen, including if the
+option is selected, an error message is left in the interpreter result
+and TCL_ERROR is returned. Otherwise, the interpreter result is left
+unchanged and TCL_OK is returned.</p>
+<p>The collection of arguments to be parsed is described by the
+<em>argTable</em> parameter. This points to a table of descriptor
+structures that is terminated by an entry with the <em>type</em> field
+set to TCL_ARGV_END. As convenience, the following prototypical entries
+are provided:</p>
+<dl>
+<dt><strong>TCL_ARGV_AUTO_HELP</strong></dt>
+<dd>
+<p>Enables the argument processor to provide help when passed the
+argument</p>
+</dd>
+<dt><strong>TCL_ARGV_AUTO_REST</strong></dt>
+<dd>
+<p>Instructs the argument processor that arguments after are to be
+unprocessed.</p>
+</dd>
+<dt><strong>TCL_ARGV_TABLE_END</strong></dt>
+<dd>
+<p>Marks the end of the table of argument descriptors.</p>
+</dd>
+</dl>
+<h2 id="argument-descriptor-entries">ARGUMENT DESCRIPTOR ENTRIES</h2>
+<p>Each entry of the argument descriptor table must be a structure of
+type <strong>Tcl_ArgvInfo</strong>. The structure is defined as
+this:</p>
+<pre><code>typedef struct {
+    int type;
+    const char *keyStr;
+    void *srcPtr;
+    void *dstPtr;
+    const char *helpStr;
+    ClientData clientData;
+} Tcl_ArgvInfo;</code></pre>
+<p>The <em>keyStr</em> field contains the name of the option; by
+convention, this will normally begin with a character. The
+<em>type</em>, <em>srcPtr</em>, <em>dstPtr</em> and <em>clientData</em>
+fields describe the interpretation of the value of the argument, as
+described below. The <em>helpStr</em> field gives some text that is used
+to provide help to users when they request it.</p>
+<p>As noted above, the <em>type</em> field is used to describe the
+interpretation of the argument's value. The following values are
+acceptable values for <em>type</em>:</p>
+<dl>
+<dt><strong>TCL_ARGV_CONSTANT</strong></dt>
+<dd>
+<p>The argument does not take any following value argument. If this
+argument is present, the (integer) value of the <em>srcPtr</em> field is
+copied to the variable pointed to by the <em>dstPtr</em> field. The
+<em>clientData</em> field is ignored.</p>
+</dd>
+<dt><strong>TCL_ARGV_END</strong></dt>
+<dd>
+<p>This value marks the end of all option descriptors in the table. All
+other fields are ignored.</p>
+</dd>
+<dt><strong>TCL_ARGV_FLOAT</strong></dt>
+<dd>
+<p>This argument takes a following floating point value argument. The
+value (once parsed by <strong>Tcl_GetDoubleFromObj</strong>) will be
+stored as a double-precision value in the variable pointed to by the
+<em>dstPtr</em> field. The <em>srcPtr</em> and <em>clientData</em>
+fields are ignored.</p>
+</dd>
+<dt><strong>TCL_ARGV_FUNC</strong></dt>
+<dd>
+<p>This argument optionally takes a following value argument; it is up
+to the handler callback function passed in <em>srcPtr</em> to decide.
+That function will have the following signature:</p>
+<pre><code>typedef int (Tcl_ArgvFuncProc)(
+        ClientData clientData,
+        Tcl_Obj *objPtr,
+        void *dstPtr);</code></pre>
+<p>The result is a boolean value indicating whether to consume the
+following argument. The <em>clientData</em> is the value from the table
+entry, the <em>objPtr</em> is the value that represents the following
+argument or NULL if there are no following arguments at all, and the
+<em>dstPtr</em> argument to the <strong>Tcl_ArgvFuncProc</strong> is the
+location to write the parsed value to.</p>
+</dd>
+<dt><strong>TCL_ARGV_GENFUNC</strong></dt>
+<dd>
+<p>This argument takes zero or more following arguments; the handler
+callback function passed in <em>srcPtr</em> returns how many (or a
+negative number to signal an error, in which case it should also set the
+interpreter result). The function will have the following signature:</p>
+<pre><code>typedef int (Tcl_ArgvGenFuncProc)(
+        ClientData clientData,
+        Tcl_Interp *interp,
+        int objc,
+        Tcl_Obj *const *objv,
+        void *dstPtr);</code></pre>
+<p>The <em>clientData</em> is the value from the table entry, the
+<em>interp</em> is where to store any error messages, the
+<em>keyStr</em> is the name of the argument, <em>objc</em> and
+<em>objv</em> describe an array of all the remaining arguments, and
+<em>dstPtr</em> argument to the <strong>Tcl_ArgvGenFuncProc</strong> is
+the location to write the parsed value (or values) to.</p>
+</dd>
+<dt><strong>TCL_ARGV_HELP</strong></dt>
+<dd>
+<p>This special argument does not take any following value argument, but
+instead causes <strong>Tcl_ParseArgsObjv</strong> to generate an error
+message describing the arguments supported. All other fields except the
+<em>helpStr</em> field are ignored.</p>
+</dd>
+<dt><strong>TCL_ARGV_INT</strong></dt>
+<dd>
+<p>This argument takes a following integer value argument. The value
+(once parsed by <strong>Tcl_GetIntFromObj</strong>) will be stored as an
+int in the variable pointed to by the <em>dstPtr</em> field. The
+<em>srcPtr</em> field is ignored.</p>
+</dd>
+<dt><strong>TCL_ARGV_REST</strong></dt>
+<dd>
+<p>This special argument does not take any following value argument, but
+instead marks all following arguments to be left unprocessed. The
+<em>srcPtr</em>, <em>dstPtr</em> and <em>clientData</em> fields are
+ignored.</p>
+</dd>
+<dt><strong>TCL_ARGV_STRING</strong></dt>
+<dd>
+<p>This argument takes a following string value argument. A pointer to
+the string will be stored at <em>dstPtr</em>; the string inside will
+have a lifetime linked to the lifetime of the string representation of
+the argument value that it came from, and so should be copied if it
+needs to be retained. The <em>srcPtr</em> and <em>clientData</em> fields
+are ignored.</p>
+</dd>
+</dl>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a
+href="../Tcl-C-API/Tcl_GetIndexFromObj.html">Tcl_GetIndexFromObj</a>, <a
+href="../Tcl-C-API/Tcl_Main.html">Tcl_Main</a>, <a
+href="../Tcl-C-API/Tcl_CreateObjCommand.html">Tcl_CreateObjCommand</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>argument, parse</p>

@@ -1,0 +1,28 @@
+<h1 id="name">NAME</h1>
+<p>Tcl_Backslash - parse a backslash sequence</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tcl.h&gt;
+
+char
+Tcl_Backslash(src, countPtr)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Pointer to a string starting with a backslash.</p>
+<p>If <em>countPtr</em> is not NULL, <em>*countPtr</em> gets filled in
+with number of characters in the backslash sequence, including the
+backslash character.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>The use of <strong>Tcl_Backslash</strong> is deprecated in favor of
+<strong>Tcl_UtfBackslash</strong>.</p>
+<p>This is a utility procedure provided for backwards compatibility with
+non-internationalized Tcl extensions. It parses a backslash sequence and
+returns the low byte of the Unicode character corresponding to the
+sequence. <strong>Tcl_Backslash</strong> modifies <em>*countPtr</em> to
+contain the number of characters in the backslash sequence.</p>
+<p>See the Tcl manual entry for information on the valid backslash
+sequences. All of the sequences described in the Tcl manual entry are
+supported by <strong>Tcl_Backslash</strong>.</p>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-Commands/Tcl.html">Tcl</a>, <a
+href="../Tcl-C-API/Tcl_UtfBackslash.html">Tcl_UtfBackslash</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>backslash, parse</p>

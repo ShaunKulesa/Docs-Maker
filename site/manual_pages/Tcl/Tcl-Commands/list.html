@@ -1,0 +1,36 @@
+<h1 id="name">NAME</h1>
+<p>list - Create a list</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>list</strong> ?<em>arg arg ...</em>?</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>This command returns a list comprised of all the <em>arg</em>s, or an
+empty string if no <em>arg</em>s are specified. Braces and backslashes
+get added as necessary, so that the <strong>lindex</strong> command may
+be used on the result to re-extract the original arguments, and also so
+that <strong>eval</strong> may be used to execute the resulting list,
+with <em>arg1</em> comprising the command's name and the other
+<em>arg</em>s comprising its arguments. <strong>List</strong> produces
+slightly different results than <strong>concat</strong>:
+<strong>concat</strong> removes one level of grouping before forming the
+list, while <strong>list</strong> works directly from the original
+arguments.</p>
+<h1 id="example">EXAMPLE</h1>
+<p>The command</p>
+<pre><code>list a b &quot;c d e  &quot; &quot;  f {g h}&quot;</code></pre>
+<p>will return</p>
+<pre><code>a b {c d e  } {  f {g h}}</code></pre>
+<p>while <strong>concat</strong> with the same arguments will return</p>
+<pre><code>a b c d e f {g h}</code></pre>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-Commands/lappend.html">lappend</a>, <a
+href="../Tcl-Commands/lindex.html">lindex</a>, <a
+href="../Tcl-Commands/linsert.html">linsert</a>, <a
+href="../Tcl-Commands/llength.html">llength</a>, <a
+href="../Tcl-Commands/lrange.html">lrange</a>, <a
+href="../Tcl-Commands/lrepeat.html">lrepeat</a>, <a
+href="../Tcl-Commands/lreplace.html">lreplace</a>, <a
+href="../Tcl-Commands/lsearch.html">lsearch</a>, <a
+href="../Tcl-Commands/lset.html">lset</a>, <a
+href="../Tcl-Commands/lsort.html">lsort</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>element, list, quoting</p>

@@ -1,0 +1,49 @@
+<h1 id="name">NAME</h1>
+<p>itcl::is - test argument to see if it is a class or an object</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>itcl::is</strong> <em>option</em> ?<em>arg arg ...</em>?</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>The <strong>is</strong> command is used to check if the argument
+given is a class or an object; depending on the option given. If the
+argument if a class or object, then 1 is returned. Otherwise, 0 is
+returned. The <strong>is</strong> command also recognizes the commands
+wrapped in the itcl <strong>code</strong> command.</p>
+<p>The <em>option</em> argument determines what action is carried out by
+the command. The legal <em>options</em> (which may be abbreviated)
+are:</p>
+<dl>
+<dt><strong>is class</strong> <em>command</em></dt>
+<dd>
+<p>Returns 1 if command is a class, and returns 0 otherwise.</p>
+<p>The fully qualified name of the class needs to be given as the
+<em>command</em> argument. So, if a class resides in a namespace, then
+the namespace needs to be specified as well. So, if a class
+<strong>C</strong> resides in a namespace <strong>N</strong>, then the
+command should be called like:</p>
+<pre><code>is N::C
+    or
+is ::N::C</code></pre>
+</dd>
+<dt><strong>is</strong> object ?<strong>-class</strong>
+<em>className</em>? <em>command</em></dt>
+<dd>
+<p>Returns 1 if <em>command</em> is an object, and returns 0
+otherwise.</p>
+<p>If the optional "<strong>-class</strong>" parameter is specified,
+then the <em>command</em> will be checked within the context of the
+class given. Note that <em>className</em> has to exist. If not, then an
+error will be given. So, if <em>className</em> is uncertain to be a
+class, then the programmer will need to check it's existance beforehand,
+or wrap it in a catch statement.</p>
+<p>So, if <strong>c</strong> is an object in the class
+<strong>C</strong>, in namespace N then these are the possibilities (all
+return 1):</p>
+<pre><code>set obj [N::C c]
+itcl::is object N::c
+itcl::is object c
+itcl::is object $obj
+itcl::is object [itcl::code c]</code></pre>
+</dd>
+</dl>
+<h1 id="keywords">KEYWORDS</h1>
+<p>class, object</p>

@@ -1,0 +1,89 @@
+<h1 id="name">NAME</h1>
+<p>tcl::prefix - facilities for prefix matching</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>::tcl::prefix all table string
+::tcl::prefix longest table string
+::tcl::prefix match ?option ...? table string</code></pre>
+<h1 id="description">DESCRIPTION</h1>
+<p>This document describes commands looking up a prefix in a list of
+strings. The following commands are supported:</p>
+<dl>
+<dt><strong>::tcl::prefix all</strong> <em>table</em>
+<em>string</em></dt>
+<dd>
+<p>Returns a list of all elements in <em>table</em> that begin with the
+prefix <em>string</em>.</p>
+</dd>
+<dt><strong>::tcl::prefix longest</strong> <em>table</em>
+<em>string</em></dt>
+<dd>
+<p>Returns the longest common prefix of all elements in <em>table</em>
+that begin with the prefix <em>string</em>.</p>
+</dd>
+<dt><strong>::tcl::prefix match</strong> ?<em>options</em>?
+<em>table</em> <em>string</em></dt>
+<dd>
+<p>If <em>string</em> equals one element in <em>table</em> or is a
+prefix to exactly one element, the matched element is returned. If not,
+the result depends on the <strong>-error</strong> option. (It is
+recommended that the <em>table</em> be sorted before use with this
+subcommand, so that the list of matches presented in the error message
+also becomes sorted, though this is not strictly necessary for the
+operation of this subcommand itself.)</p>
+<dl>
+<dt><strong>-exact</strong> </dt>
+<dd>
+<p>Accept only exact matches.</p>
+</dd>
+<dt><strong>-message </strong><em>string</em></dt>
+<dd>
+<p>Use <em>string</em> in the error message at a mismatch. Default
+is</p>
+</dd>
+<dt><strong>-error </strong><em>options</em></dt>
+<dd>
+<p>The <em>options</em> are used when no match is found. If
+<em>options</em> is empty, no error is generated and an empty string is
+returned. Otherwise the <em>options</em> are used as
+<strong>return</strong> options when generating the error message. The
+default corresponds to setting Example: If is used, an error would be
+generated as:</p>
+<pre><code>return -errorcode MyError -level 1 -code error \
+       &quot;ambiguous option ...&quot;</code></pre>
+</dd>
+</dl>
+</dd>
+</dl>
+<h1 id="examples">EXAMPLES</h1>
+<p>Basic use:</p>
+<pre><code>namespace import ::tcl::prefix
+prefix match {apa bepa cepa} apa
+     → apa
+prefix match {apa bepa cepa} a
+     → apa
+prefix match -exact {apa bepa cepa} a
+     → bad option &quot;a&quot;: must be apa, bepa, or cepa
+prefix match -message &quot;switch&quot; {apa ada bepa cepa} a
+     → ambiguous switch &quot;a&quot;: must be apa, ada, bepa, or cepa
+prefix longest {fblocked fconfigure fcopy file fileevent flush} fc
+     → fco
+prefix all {fblocked fconfigure fcopy file fileevent flush} fc
+     → fconfigure fcopy</code></pre>
+<p>Simplifying option matching:</p>
+<pre><code>array set opts {-apa 1 -bepa &quot;&quot; -cepa 0}
+foreach {arg val} $args {
+    set opts([prefix match {-apa -bepa -cepa} $arg]) $val
+}</code></pre>
+<p>Creating a <strong>switch</strong> that supports prefixes:</p>
+<pre><code>switch [prefix match {apa bepa cepa} $arg] {
+    apa  { }
+    bepa { }
+    cepa { }
+}</code></pre>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-Commands/lsearch.html">lsearch</a>, <a
+href="../Tcl-Commands/namespace.html">namespace</a>, <a
+href="../Tcl-Commands/string.html">string</a>, <a
+href="../Tcl-C-API/Tcl_GetIndexFromObj.html">Tcl_GetIndexFromObj</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>prefix, table lookup</p>

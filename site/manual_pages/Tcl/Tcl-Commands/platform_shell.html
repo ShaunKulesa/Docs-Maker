@@ -1,0 +1,49 @@
+<h1 id="name">NAME</h1>
+<p>platform::shell - System identification support code and
+utilities</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>package require platform::shell ?1.1.4?
+
+platform::shell::generic shell
+platform::shell::identify shell
+platform::shell::platform shell</code></pre>
+<h1 id="description">DESCRIPTION</h1>
+<p>The <strong>platform::shell</strong> package provides several utility
+commands useful for the identification of the architecture of a specific
+Tcl shell.</p>
+<p>This package allows the identification of the architecture of a
+specific Tcl shell different from the shell running the package. The
+only requirement is that the other shell (identified by its path), is
+actually executable on the current machine.</p>
+<p>While for most platform this means that the architecture of the
+interrogated shell is identical to the architecture of the running shell
+this is not generally true. A counter example are all platforms which
+have 32 and 64 bit variants and where a 64bit system is able to run
+32bit code. For these running and interrogated shell may have different
+32/64 bit settings and thus different identifiers.</p>
+<p>For applications like a code repository it is important to identify
+the architecture of the shell which will actually run the installed
+packages, versus the architecture of the shell running the repository
+software.</p>
+<h1 id="commands">COMMANDS</h1>
+<dl>
+<dt><strong>platform::shell::identify</strong> <em>shell</em></dt>
+<dd>
+<p>This command does the same identification as
+<strong>platform::identify</strong>, for the specified Tcl shell, in
+contrast to the running shell.</p>
+</dd>
+<dt><strong>platform::shell::generic</strong> <em>shell</em></dt>
+<dd>
+<p>This command does the same identification as
+<strong>platform::generic</strong>, for the specified Tcl shell, in
+contrast to the running shell.</p>
+</dd>
+<dt><strong>platform::shell::platform</strong> <em>shell</em></dt>
+<dd>
+<p>This command returns the contents of
+<strong>tcl_platform(platform)</strong> for the specified Tcl shell.</p>
+</dd>
+</dl>
+<h1 id="keywords">KEYWORDS</h1>
+<p>operating system, cpu architecture, platform, architecture</p>

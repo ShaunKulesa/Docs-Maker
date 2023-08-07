@@ -1,0 +1,17 @@
+<h1 id="name">NAME</h1>
+<p>bell - Ring a display's bell</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>bell</strong> ?<strong>-displayof</strong> <em>window</em>?
+?<strong>-nice</strong>?</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>This command rings the bell on the display for <em>window</em> and
+returns an empty string. If the <strong>-displayof</strong> option is
+omitted, the display of the application's main window is used by
+default. The command uses the current bell-related settings for the
+display, which may be modified with programs such as
+<strong>xset</strong>.</p>
+<p>If <strong>-nice</strong> is not specified, this command also resets
+the screen saver for the screen. Some screen savers will ignore this,
+but others will reset so that the screen becomes visible again.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>beep, bell, ring</p>

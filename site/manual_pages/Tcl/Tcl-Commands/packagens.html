@@ -1,0 +1,52 @@
+<h1 id="name">NAME</h1>
+<p>pkg::create - Construct an appropriate 'package ifneeded' command for
+a given package specification</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>::pkg::create</strong> <strong>-name</strong>
+<em>packageName</em> <strong>-version</strong> <em>packageVersion</em>
+?<strong>-load</strong> <em>filespec</em>? ... ?<strong>-source</strong>
+<em>filespec</em>? ...</p>
+<h1 id="description">DESCRIPTION</h1>
+<p><strong>::pkg::create</strong> is a utility procedure that is part of
+the standard Tcl library. It is used to create an appropriate
+<strong>package ifneeded</strong> command for a given package
+specification. It can be used to construct a
+<strong>pkgIndex.tcl</strong> file for use with the
+<strong>package</strong> mechanism.</p>
+<h1 id="options">OPTIONS</h1>
+<p>The parameters supported are:</p>
+<dl>
+<dt><strong>-name</strong> <em>packageName</em></dt>
+<dd>
+<p>This parameter specifies the name of the package. It is required.</p>
+</dd>
+<dt><strong>-version</strong> <em>packageVersion</em></dt>
+<dd>
+<p>This parameter specifies the version of the package. It is
+required.</p>
+</dd>
+<dt><strong>-load</strong> <em>filespec</em></dt>
+<dd>
+<p>This parameter specifies a binary library that must be loaded with
+the <strong>load</strong> command. <em>filespec</em> is a list with two
+elements. The first element is the name of the file to load. The second,
+optional element is a list of commands supplied by loading that file. If
+the list of procedures is empty or omitted,
+<strong>::pkg::create</strong> will set up the library for direct
+loading (see <strong>pkg_mkIndex</strong>). Any number of
+<strong>-load</strong> parameters may be specified.</p>
+</dd>
+<dt><strong>-source</strong> <em>filespec</em></dt>
+<dd>
+<p>This parameter is similar to the <strong>-load</strong> parameter,
+except that it specifies a Tcl library that must be loaded with the
+<strong>source</strong> command. Any number of <strong>-source</strong>
+parameters may be specified.</p>
+</dd>
+</dl>
+<p>At least one <strong>-load</strong> or <strong>-source</strong>
+parameter must be given.</p>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-Commands/package.html">package</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>auto-load, index, package, version</p>

@@ -1,0 +1,25 @@
+<h1 id="name">NAME</h1>
+<p>Tk_GetUserInactiveTime, Tk_ResetUserInactiveTime - discover user
+inactivity time</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tk.h&gt;
+
+long
+Tk_GetUserInactiveTime(display)
+
+Tk_ResetUserInactiveTime(display)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>The display on which the user inactivity timer is to be queried or
+reset.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p><strong>Tk_GetUserInactiveTime</strong> returns the number of
+milliseconds that have passed since the last user interaction (usually
+via keyboard or mouse) with the respective display. On systems and
+displays that do not support querying the user inactivity time,
+<strong>-1</strong> is returned.
+<strong>Tk_ResetUserInactiveTime</strong> resets the user inactivity
+timer of the given display to zero. On windowing systems that do not
+support multiple displays <em>display</em> can be passed as
+<strong>NULL</strong>.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>idle, inactive</p>

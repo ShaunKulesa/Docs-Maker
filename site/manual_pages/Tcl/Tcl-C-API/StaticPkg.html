@@ -1,0 +1,50 @@
+<h1 id="name">NAME</h1>
+<p>Tcl_StaticPackage - make a statically linked package available via
+the 'load' command</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tcl.h&gt;
+
+Tcl_StaticPackage(interp, prefix, initProc, safeInitProc)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>If not NULL, points to an interpreter into which the package has
+already been loaded (i.e., the caller has already invoked the
+appropriate initialization procedure). NULL means the package has not
+yet been incorporated into any interpreter.</p>
+<p>Prefix for library initialization function; should be properly
+capitalized (first letter upper-case, all others lower-case).</p>
+<p>Procedure to invoke to incorporate this package into a trusted
+interpreter.</p>
+<p>Procedure to call to incorporate this package into a safe interpreter
+(one that will execute untrusted scripts). NULL means the package cannot
+be used in safe interpreters.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>This procedure may be invoked to announce that a package has been
+linked statically with a Tcl application and, optionally, that it has
+already been loaded into an interpreter. Once
+<strong>Tcl_StaticPackage</strong> has been invoked for a package, it
+may be loaded into interpreters using the <strong>load</strong> command.
+<strong>Tcl_StaticPackage</strong> is normally invoked only by the
+<strong>Tcl_AppInit</strong> procedure for the application, not by
+packages for themselves (<strong>Tcl_StaticPackage</strong> should only
+be invoked for statically loaded packages, and code in the package
+itself should not need to know whether the package is dynamically or
+statically loaded).</p>
+<p>When the <strong>load</strong> command is used later to load the
+package into an interpreter, one of <em>initProc</em> and
+<em>safeInitProc</em> will be invoked, depending on whether the target
+interpreter is safe or not. <em>initProc</em> and <em>safeInitProc</em>
+must both match the following prototype:</p>
+<pre><code>typedef int Tcl_PackageInitProc(
+        Tcl_Interp *interp);</code></pre>
+<p>The <em>interp</em> argument identifies the interpreter in which the
+package is to be loaded. The initialization procedure must return
+<strong>TCL_OK</strong> or <strong>TCL_ERROR</strong> to indicate
+whether or not it completed successfully; in the event of an error it
+should set the interpreter's result to point to an error message. The
+result or error from the initialization procedure will be returned as
+the result of the <strong>load</strong> command that caused the
+initialization procedure to be invoked.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>initialization procedure, package, static linking</p>
+<h1 id="see-also">SEE ALSO</h1>
+<p>load(n), package(n), Tcl_PkgRequire(3)</p>

@@ -1,0 +1,416 @@
+<p><br />
+</p>
+<h1 id="name">NAME</h1>
+<p>tdbc::connection - TDBC connection object</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>package require tdbc 1.0
+package require tdbc::driver version
+
+tdbc::driver::connection create db ?-option value...?
+
+db configure ?-option value...?
+db close
+db foreignkeys ?-primary tableName? ?-foreign tableName?
+db prepare sql-code
+db preparecall call
+db primarykeys tableName
+db statements
+db resultsets
+db tables ?pattern?
+db columns table ?pattern?
+db begintransaction
+db commit
+db rollback
+db transaction script</code></pre>
+<p><em>db</em> <strong>allrows</strong> ?<strong>-as
+lists</strong>|<strong>dicts</strong>?
+?<strong>-columnsvariable</strong> <em>name</em>? ?<strong>--</strong>?
+<em>sql-code</em> ?<em>dictionary</em>?<br />
+</p>
+<p><em>db</em> <strong>foreach</strong> ?<strong>-as
+lists</strong>|<strong>dicts</strong>?
+?<strong>-columnsvariable</strong> <em>name</em>? ?--? <em>varName
+sqlcode</em> ?<em>dictionary</em>? <em>script</em></p>
+<p><br />
+</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>Every database driver for TDBC (Tcl DataBase Connectivity) implements
+a <em>connection</em> object that represents a connection to a database.
+By convention, this object is created by the command,
+<strong>tdbc::</strong><em>driver</em><strong>::connection
+create</strong>. This command accepts the name of a Tcl command that
+will represent the connection and a possible set of options (see
+<strong>CONFIGURATION</strong> OPTIONS). It establishes a connection to
+the database and returns the name of the newly-created Tcl command.</p>
+<p>The <strong>configure</strong> object command on a database
+connection, if presented with no arguments, returns a list of
+alternating keywords and values representing the connection's current
+configuration. If presented with a single argument <em>-option</em>, it
+returns the configured value of the given option. Otherwise, it must be
+given an even number of arguments which are alternating options and
+values. The specified options receive the specified values, and nothing
+is returned.</p>
+<p>The <strong>close</strong> object command on a database connection
+closes the connection. All active statements and result sets on the
+connection are closed. Any uncommitted transaction is rolled back. The
+object command is deleted.</p>
+<p>The <strong>prepare</strong> object command on a database connection
+prepares a SQL statement for execution. The <em>sql-code</em> argument
+must contain a single SQL statement to be executed. Bound variables may
+be included. The return value is a newly-created Tcl command that
+represents the statement. See <strong>tdbc::statement</strong> for more
+detailed discussion of the SQL accepted by the <strong>prepare</strong>
+object command and the interface accepted by a statement.</p>
+<p>On a database connection where the underlying database and driver
+support stored procedures, the <strong>preparecall</strong> object
+command prepares a call to a stored procedure for execution. The syntax
+of the stored procedure call is:</p>
+<p>?<em>resultvar</em> =? <em>procname</em>(?<em>arg</em> ?,
+<em>arg</em>...?)</p>
+<p>The return value is a newly-created Tcl command that represents the
+statement. See <strong>tdbc::statement</strong> for the interface
+accepted by a statement.</p>
+<p>The <strong>statements</strong> object command returns a list of
+statements that have been created by <strong>prepare</strong> and
+<strong>preparecall</strong> statements against the given connection and
+have not yet been closed.</p>
+<p>The <strong>resultsets</strong> object command returns a list of
+result sets that have been obtained by executing statements prepared
+using the given connection and not yet closed.</p>
+<p>The <strong>tables</strong> object command allows the program to
+query the connection for the names of tables that exist in the database.
+The optional <em>pattern</em> parameter is a pattern to match the name
+of a table. It may contain the SQL wild-card characters
+'<strong>%</strong>' and and whose values are subdictionaries. See the
+documentation for the individual database driver for the interpretation
+of the values.</p>
+<p>The <strong>columns</strong> object command allows the program to
+query the connection for the names of columns that exist in a given
+table. The optional <strong>pattern</strong> parameter is a pattern to
+match the name of a column. It may contain the SQL wild-card characters
+'<strong>%</strong>' and and whose values are dictionaries. Each of the
+subdictionaries will contain at least the following keys and values (and
+may contain others whose usage is determined by a specific database
+driver).</p>
+<dl>
+<dt>type</dt>
+<dd>
+<p>Contains the data type of the column, and will generally be chosen
+from the set, <strong>bigint</strong>, <strong>binary</strong>,
+<strong>bit</strong>, <strong>char</strong>, <strong>date</strong>,
+<strong>decimal</strong>, <strong>double</strong>,
+<strong>float</strong>, <strong>integer</strong>,
+<strong>longvarbinary</strong>, <strong>longvarchar</strong>,
+<strong>numeric</strong>, <strong>real</strong>, <strong>time</strong>,
+<strong>timestamp</strong>, <strong>smallint</strong>,
+<strong>tinyint</strong>, <strong>varbinary</strong>, and
+<strong>varchar</strong>. (If the column has a type that cannot be
+represented as one of the above, <strong>type</strong> will contain a
+driver-dependent description of the type.)</p>
+</dd>
+<dt>precision</dt>
+<dd>
+<p>Contains the precision of the column in bits, decimal digits, or the
+width in characters, according to the type.</p>
+</dd>
+<dt>scale</dt>
+<dd>
+<p>Contains the scale of the column (the number of digits after the
+radix point), for types that support the concept.</p>
+</dd>
+<dt>nullable</dt>
+<dd>
+<p>Contains 1 if the column can contain NULL values, and 0
+otherwise.</p>
+</dd>
+</dl>
+<p>The <strong>primarykeys</strong> object command allows the program to
+query the connection for the primary keys belonging to a given table.
+The <em>tableName</em> parameter identifies the table being
+interrogated. The result is a list of dictionaries enumerating the keys
+(in a similar format to the list returned by <em>$connection</em>
+<strong>allrows -as dicts</strong>). The keys of the dictionary may
+include at least the following. Values that are NULL or meaningless in a
+given database are omitted.</p>
+<dl>
+<dt>tableCatalog</dt>
+<dd>
+<p>Name of the catalog in which the table appears.</p>
+</dd>
+<dt>tableSchema</dt>
+<dd>
+<p>Name of the schema in which the table appears.</p>
+</dd>
+<dt>tableName</dt>
+<dd>
+<p>Name of the table owning the primary key.</p>
+</dd>
+<dt>constraintCatalog</dt>
+<dd>
+<p>Name of the catalog in which the primary key constraint appears. In
+some database systems, this may not be the same as the table's
+catalog.</p>
+</dd>
+<dt>constraintSchema</dt>
+<dd>
+<p>Name of the schema in which the primary key constraint appears. In
+some database systems, this may not be the same as the table's
+schema.</p>
+</dd>
+<dt>constraintName</dt>
+<dd>
+<p>Name of the primary key constraint,</p>
+</dd>
+<dt>columnName</dt>
+<dd>
+<p>Name of a column that is a member of the primary key.</p>
+</dd>
+<dt>ordinalPosition</dt>
+<dd>
+<p>Ordinal position of the column within the primary key.</p>
+</dd>
+</dl>
+<p>To these columns may be added additional ones that are specific to a
+particular database system.</p>
+<p>The <strong>foreignkeys</strong> object command allows the program to
+query the connection for foreign key relationships that apply to a
+particular table. The relationships may be constrained to the keys that
+appear in a particular table (<strong>-foreign</strong>
+<em>tableName</em>), the keys that refer to a particular table
+(<strong>-primary</strong> <em>tableName</em>), or both. At least one of
+<strong>-primary</strong> and <strong>-foreign</strong> should be
+specified, although some drivers will enumerate all foreign keys in the
+current catalog if both options are omitted. The result of the
+<strong>foreignkeys</strong> object command is a list of dictionaries,
+with one list element per key (in a similar format to the list returned
+by <em>$connection</em> <strong>allrows -as dicts</strong>). The keys of
+the dictionary may include at least the following. Values that are NULL
+or meaningless in a given database are omitted.</p>
+<dl>
+<dt>foreignConstraintCatalog</dt>
+<dd>
+<p>Catalog in which the foreign key constraint appears.</p>
+</dd>
+<dt>foreignConstraintSchema</dt>
+<dd>
+<p>Schema in which the foreign key constraint appears.</p>
+</dd>
+<dt>foreignConstraintName</dt>
+<dd>
+<p>Name of the foreign key constraint.</p>
+</dd>
+<dt>primaryConstraintCatalog</dt>
+<dd>
+<p>Catalog holding the primary key constraint (or unique key constraint)
+on the column to which the foreign key refers.</p>
+</dd>
+<dt>primaryConstraintSchema</dt>
+<dd>
+<p>Schema holding the primary key constraint (or unique key constraint)
+on the column to which the foreign key refers.</p>
+</dd>
+<dt>primaryConstraintName</dt>
+<dd>
+<p>Name of the primary key constraint (or unique key constraint) on the
+column to which the foreign key refers.</p>
+</dd>
+<dt>updateAction</dt>
+<dd>
+<p>Action to take when an UPDATE statement invalidates the constraint.
+The value will be <strong>CASCADE</strong>, <strong>SET
+DEFAULT</strong>, <strong>SET NULL</strong>, <strong>RESTRICT</strong>,
+or <strong>NO ACTION</strong>.</p>
+</dd>
+<dt>deleteAction</dt>
+<dd>
+<p>Action to take when a DELETE statement invalidates the constraint.
+The value will be <strong>CASCADE</strong>, <strong>SET
+DEFAULT</strong>, <strong>SET NULL</strong>, <strong>RESTRICT</strong>,
+or <strong>NO ACTION</strong>.</p>
+</dd>
+<dt>primaryCatalog</dt>
+<dd>
+<p>Catalog name in which the primary table (the one to which the foreign
+key refers) appears.</p>
+</dd>
+<dt>primarySchema</dt>
+<dd>
+<p>Schema name in which the primary table (the one to which the foreign
+key refers) appears.</p>
+</dd>
+</dl>
+<!-- -->
+<dl>
+<dt>primaryTable</dt>
+<dd>
+<p>Table name of the primary table (the one to which the foreign key
+refers).</p>
+</dd>
+<dt>primaryColumn</dt>
+<dd>
+<p>Name of the column to which the foreign key refers.</p>
+</dd>
+<dt>foreignCatalog</dt>
+<dd>
+<p>Name of the catalog in which the table containing the foreign key
+appears.</p>
+</dd>
+<dt>foreignSchema</dt>
+<dd>
+<p>Name of the schema in which the table containing the foreign key
+appears.</p>
+</dd>
+<dt>foreignTable</dt>
+<dd>
+<p>Name of the table containing the foreign key.</p>
+</dd>
+<dt>foreignColumn</dt>
+<dd>
+<p>Name of the column appearing in the foreign key.</p>
+</dd>
+<dt>ordinalPosition</dt>
+<dd>
+<p>Position of the column in the foreign key, if the key is a compound
+key.</p>
+</dd>
+</dl>
+<p>The <strong>begintransaction</strong> object command on a database
+connection begins a transaction on the database. If the underlying
+database does not support atomic, consistent, isolated, durable
+transactions, the <strong>begintransaction</strong> object command
+returns an error reporting the fact. Similarly, if multiple
+<strong>begintransaction</strong> commands are executed withough an
+intervening <strong>commit</strong> or <strong>rollback</strong>
+command, an error is returned unless the underlying database supports
+nested transactions.</p>
+<p>The <strong>commit</strong> object command on a database connection
+ends the most recent transaction started by
+<strong>begintransaction</strong> and commits changes to the
+database.</p>
+<p>The <strong>rollback</strong> object command on a database connection
+rolls back the most recent transaction started by
+<strong>begintransaction</strong>. The state of the database is as if
+nothing happened during the transaction.</p>
+<p>The <strong>transaction</strong> object command on a database
+connection presents a simple way of bundling a database transaction. It
+begins a transaction, and evaluates the supplied <em>script</em>
+argument as a Tcl script in the caller's scope. If <em>script</em>
+terminates normally, or by <strong>break</strong>,
+<strong>continue</strong>, or <strong>return</strong>, the transaction
+is committed (and any action requested by <strong>break</strong>,
+<strong>continue</strong>, or <strong>return</strong> takes place). If
+the commit fails for any reason, the error in the commit is treated as
+an error in the <em>script</em>. In the case of an error in
+<em>script</em> or in the commit, the transaction is rolled back and the
+error is rethrown. Any nonstandard return code from the script causes
+the transaction to be rolled back and then is rethrown.</p>
+<p>The <strong>allrows</strong> object command prepares a SQL statement
+(given by the <em>sql-code</em> parameter) to execute against the
+database. It then executes it (see <strong>tdbc::statement</strong> for
+details) with the optional <em>dictionary</em> parameter giving bind
+variables. Finally, it uses the <em>allrows</em> object command on the
+result set (see <strong>tdbc::resultset</strong>) to construct a list of
+the results. Finally, both result set and statement are closed. The
+return value is the list of results.</p>
+<p>The <strong>foreach</strong> object command prepares a SQL statement
+(given by the <em>sql-code</em> parameter) to execute against the
+database. It then executes it (see <strong>tdbc::statement</strong> for
+details) with the optional <em>dictionary</em> parameter giving bind
+variables. Finally, it uses the <em>foreach</em> object command on the
+result set (see <strong>tdbc::resultset</strong>) to evaluate the given
+<em>script</em> for each row of the results. Finally, both result set
+and statement are closed, even if the given <em>script</em> results in a
+<strong>return</strong>, an error, or an unusual return code.</p>
+<h1 id="configuration-options">CONFIGURATION OPTIONS</h1>
+<p>The configuration options accepted when the connection is created and
+on the connection's <strong>configure</strong> object command include
+the following, and may include others specific to a database driver.</p>
+<dl>
+<dt>-encoding name</dt>
+<dd>
+<p>Specifies the encoding to be used in connecting to the database. The
+<em>name</em> should be one of the names accepted by the
+<strong>encoding</strong> command. This option is usually unnecessary;
+most database drivers can figure out the encoding in use by
+themselves.</p>
+</dd>
+<dt>-isolation level</dt>
+<dd>
+<p>Specifies the transaction isolation level needed for transactions on
+the database. The acceptable values for <em>level</em> are shown under
+<strong>TRANSACTION ISOLATION LEVELS</strong>.</p>
+</dd>
+<dt>-timeout ms</dt>
+<dd>
+<p>Specifies the maximum time to wait for a an operation database engine
+before reporting an error to the caller. The <em>ms</em> argument gives
+the maximum time in milliseconds. A value of zero (the default)
+specifies that the calling process is to wait indefinitely for database
+operations.</p>
+</dd>
+<dt>-readonly flag</dt>
+<dd>
+<p>Specifies that the connection will not modify the database (if the
+Boolean parameter <em>flag</em> is true), or that it may modify the
+database (if <em>flag</em> is false). If <em>flag</em> is true, this
+option may have the effect of raising the transaction isolation level to
+<em>readonly</em>.</p>
+</dd>
+</dl>
+<h2 id="transaction-isolation-levels">TRANSACTION ISOLATION LEVELS</h2>
+<p>The acceptable values for the <strong>-isolation</strong>
+configuration option are as follows:</p>
+<dl>
+<dt>readuncommitted</dt>
+<dd>
+<p>Allows the transaction to read "dirty", that is, uncommitted data.
+This isolation level may compromise data integrity, does not guarantee
+that foreign keys or uniqueness constraints are satisfied, and in
+general does not guarantee data consistency.</p>
+</dd>
+<dt>readcommitted</dt>
+<dd>
+<p>Forbids the transaction from reading "dirty" data, but does not
+guarantee repeatable reads; if a transaction reads a row of a database
+at a given time, there is no guarantee that the same row will be
+available at a later time in the same transaction.</p>
+</dd>
+<dt>repeatableread</dt>
+<dd>
+<p>Guarantees that any row of the database, once read, will have the
+same values for the life of a transaction. Still permits "phantom reads"
+(that is, newly-added rows appearing if a table is queried a second
+time).</p>
+</dd>
+<dt>serializable</dt>
+<dd>
+<p>The most restrictive (and most expensive) level of transaction
+isolation. Any query to the database, if repeated, will return precisely
+the same results for the life of the transaction, exactly as if the
+transaction is the only user of the database.</p>
+</dd>
+<dt>readonly</dt>
+<dd>
+<p>Behaves like <strong>serializable</strong> in that the only results
+visible to the transaction are those that were committed prior to the
+start of the transaction, but forbids the transaction from modifying the
+database.</p>
+</dd>
+</dl>
+<p>A database that does not implement one of these isolation levels will
+instead use the next more restrictive isolation level. If the given
+level of isolation cannot be obtained, the database interface throws an
+error reporting the fact. The default isolation level is
+<strong>readcommitted</strong>.</p>
+<p>A script should not the isolation level when a transaction is in
+progress.</p>
+<h1 id="see-also">SEE ALSO</h1>
+<p>encoding(n), <a href="../tdbc1.1.5/tdbc.html">tdbc</a>, <a
+href="../tdbc1.1.5/tdbc::resultset.html">tdbc::resultset</a>, <a
+href="../tdbc1.1.5/tdbc::statement.html">tdbc::statement</a>, <a
+href="../tdbc1.1.5/tdbc::tokenize.html">tdbc::tokenize</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>TDBC, SQL, database, connectivity, connection, resultset,
+statement</p>
+<h1 id="copyright">COPYRIGHT</h1>
+<p>Copyright (c) 2008 by Kevin B. Kenny.</p>

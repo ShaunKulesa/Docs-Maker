@@ -1,0 +1,28 @@
+<h1 id="name">NAME</h1>
+<p>itcl::component - define components for extendedclass, widget or
+widgetadaptor</p>
+<p>Parts of this description are "borrowed" from Tcl extension [snit],
+as the functionality is mostly identical.</p>
+<h1 id="warning">WARNING!</h1>
+<p>This is new functionality in [incr Tcl] where the API can still
+change!!</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>public component comp ?-inherit?
+protected component comp ?-inherit?
+private component comp ?-inherit?</code></pre>
+<h1 id="description">DESCRIPTION</h1>
+<p>The <strong>component</strong> command is used inside an
+<strong>[incr Tcl]</strong> extendedclass/widget/widgetadaptor
+definition to define components.</p>
+<p>Explicitly declares a component called comp, and automatically
+defines the component's instance variable.</p>
+<p>If the <em>-inherit</em> option is specified then all unknown methods
+and options will be delegated to this component. The name -inherit
+implies that instances of this new type inherit, in a sense, the methods
+and options of the component. That is, -inherit yes is equivalent
+to:</p>
+<pre><code>component mycomp
+delegate option * to mycomp
+delegate method * to mycomp</code></pre>
+<h1 id="keywords">KEYWORDS</h1>
+<p>component, widget, widgetadaptor, extendedclass</p>

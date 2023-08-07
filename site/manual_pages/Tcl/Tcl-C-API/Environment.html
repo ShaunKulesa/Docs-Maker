@@ -1,0 +1,21 @@
+<h1 id="name">NAME</h1>
+<p>Tcl_PutEnv - procedures to manipulate the environment</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tcl.h&gt;
+
+int
+Tcl_PutEnv(assignment)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Info about environment variable in the format The <em>assignment</em>
+argument is in the system encoding.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p><strong>Tcl_PutEnv</strong> sets an environment variable. The
+information is passed in a single string of the form This procedure is
+intended to be a stand-in for the UNIX <strong>putenv</strong> system
+call. All Tcl-based applications using <strong>putenv</strong> should
+redefine it to <strong>Tcl_PutEnv</strong> so that they will interface
+properly to the Tcl runtime.</p>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-Commands/env.html">env</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>environment, variable</p>

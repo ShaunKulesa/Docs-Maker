@@ -1,0 +1,126 @@
+<h1 id="name">NAME</h1>
+<p>clipboard - Manipulate Tk clipboard</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>clipboard</strong> <em>option</em> ?<em>arg arg ...</em>?</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>This command provides a Tcl interface to the Tk clipboard, which
+stores data for later retrieval using the selection mechanism (via the
+<strong>-selection CLIPBOARD</strong> option). In order to copy data
+into the clipboard, <strong>clipboard clear</strong> must be called,
+followed by a sequence of one or more calls to
+<strong>clipboard</strong> append. To ensure that the clipboard is
+updated atomically, all appends should be completed before returning to
+the event loop.</p>
+<p>The first argument to <strong>clipboard</strong> determines the
+format of the rest of the arguments and the behavior of the command. The
+following forms are currently supported:</p>
+<dl>
+<dt><strong>clipboard append</strong> ?<strong>-displayof</strong>
+<em>window</em>? ?<strong>-format</strong> <em>format</em>?
+?<strong>-type</strong> <em>type</em>? ?<strong>- -</strong>?
+<em>data</em></dt>
+<dd>
+<p>Appends <em>data</em> to the clipboard on <em>window</em>'s display
+in the form given by <em>type</em> with the representation given by
+<em>format</em> and claims ownership of the clipboard on
+<em>window</em>'s display.</p>
+<p><em>Type</em> specifies the form in which the selection is to be
+returned (the desired for conversion, in ICCCM terminology), and should
+be an atom name such as <strong>STRING</strong> or
+<strong>FILE_NAME</strong>; see the Inter-Client Communication
+Conventions Manual for complete details. <em>Type</em> defaults to
+<strong>STRING</strong>.</p>
+<p>The <em>format</em> argument specifies the representation that should
+be used to transmit the selection to the requester (the second column of
+Table 2 of the ICCCM), and defaults to <strong>STRING</strong>. If
+<em>format</em> is <strong>STRING</strong>, the selection is transmitted
+as 8-bit ASCII characters. If <em>format</em> is <strong>ATOM</strong>,
+then the <em>data</em> is divided into fields separated by white space;
+each field is converted to its atom value, and the 32-bit atom value is
+transmitted instead of the atom name. For any other <em>format</em>,
+<em>data</em> is divided into fields separated by white space and each
+field is converted to a 32-bit integer; an array of integers is
+transmitted to the selection requester. Note that strings passed to
+<strong>clipboard append</strong> are concatenated before conversion, so
+the caller must take care to ensure appropriate spacing across string
+boundaries. All items appended to the clipboard with the same
+<em>type</em> must have the same <em>format</em>.</p>
+<p>The <em>format</em> argument is needed only for compatibility with
+clipboard requesters that do not use Tk. If the Tk toolkit is being used
+to retrieve the <strong>CLIPBOARD</strong> selection then the value is
+converted back to a string at the requesting end, so <em>format</em> is
+irrelevant.</p>
+<p>A <strong>- -</strong> argument may be specified to mark the end of
+options: the next argument will always be used as <em>data</em>. This
+feature may be convenient if, for example, <em>data</em> starts with a
+<strong>-</strong>.</p>
+</dd>
+<dt><strong>clipboard clear</strong> ?<strong>-displayof</strong>
+<em>window</em>?</dt>
+<dd>
+<p>Claims ownership of the clipboard on <em>window</em>'s display and
+removes any previous contents. <em>Window</em> defaults to Returns an
+empty string.</p>
+</dd>
+<dt><strong>clipboard get</strong> ?<strong>-displayof</strong>
+<em>window</em>? ?<strong>-type</strong> <em>type</em>?</dt>
+<dd>
+<p>Retrieve data from the clipboard on <em>window</em>'s display.
+<em>Window</em> defaults to <em>Type</em> specifies the form in which
+the data is to be returned and should be an atom name such as
+<strong>STRING</strong> or <strong>FILE_NAME</strong>. <em>Type</em>
+defaults to <strong>STRING</strong>. This command is equivalent to</p>
+<p>Note that on modern X11 systems, the most useful type to retrieve for
+transferred strings is not <strong>STRING</strong>, but rather
+<strong>UTF8_STRING</strong>.</p>
+</dd>
+</dl>
+<h1 id="examples">EXAMPLES</h1>
+<p>Get the current contents of the clipboard.</p>
+<pre><code>if {[catch {clipboard get} contents]} {
+    # There were no clipboard contents at all
+}</code></pre>
+<p>Set the clipboard to contain a fixed string.</p>
+<pre><code>clipboard clear
+clipboard append &quot;some fixed string&quot;</code></pre>
+<p>You can put custom data into the clipboard by using a custom
+<strong>-type</strong> option. This is not necessarily portable, but can
+be very useful. The method of passing Tcl scripts this way is effective,
+but should be mixed with safe interpreters in production code.</p>
+<pre><code># This is a very simple canvas serializer;
+# it produces a script that recreates the item(s) when executed
+proc getItemConfig {canvas tag} {
+   set script {}
+   foreach item [$canvas find withtag $tag] {
+      append script {$canvas create } [$canvas type $item]
+      append script { } [$canvas coords $item] { }
+      foreach config [$canvas itemconf $item] {
+         lassign $config name - - - value
+         append script [list $name $value] { }
+      }
+      append script \n
+   }
+   return [string trim $script]
+}
+
+# Set up a binding on a canvas to cut and paste an item
+set c [canvas .c]
+pack $c
+$c create text 150 30 -text &quot;cut and paste me&quot;
+bind $c &lt;&lt;Cut&gt;&gt; {
+   clipboard clear
+   clipboard append -type TkCanvasItem \
+         [getItemConfig %W current]
+   # Delete because this is cut, not copy.
+   %W delete current
+}
+bind $c &lt;&lt;Paste&gt;&gt; {
+   catch {
+      set canvas %W
+      eval [clipboard get -type TkCanvasItem]
+   }
+}</code></pre>
+<h1 id="see-also">SEE ALSO</h1>
+<p>interp(n), <a href="../Tk-Commands/selection.html">selection</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>clear, format, clipboard, append, selection, type</p>

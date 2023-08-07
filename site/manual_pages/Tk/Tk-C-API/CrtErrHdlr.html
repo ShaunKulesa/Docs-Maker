@@ -1,0 +1,124 @@
+<h1 id="name">NAME</h1>
+<p>Tk_CreateErrorHandler, Tk_DeleteErrorHandler - handle X protocol
+errors</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tk.h&gt;
+
+Tk_ErrorHandler
+Tk_CreateErrorHandler(display, error, request, minor, proc, clientData)
+
+Tk_DeleteErrorHandler(handler)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Display whose errors are to be handled.</p>
+<p>Match only error events with this value in the <em>error_code</em>
+field. If -1, then match any <em>error_code</em> value.</p>
+<p>Match only error events with this value in the <em>request_code</em>
+field. If -1, then match any <em>request_code</em> value.</p>
+<p>Match only error events with this value in the <em>minor_code</em>
+field. If -1, then match any <em>minor_code</em> value.</p>
+<p>Procedure to invoke whenever an error event is received for
+<em>display</em> and matches <em>error</em>, <em>request</em>, and
+<em>minor</em>. NULL means ignore any matching errors.</p>
+<p>Arbitrary one-word value to pass to <em>proc</em>.</p>
+<p>Token for error handler to delete (return value from a previous call
+to <strong>Tk_CreateErrorHandler</strong>).</p>
+<h1 id="description">DESCRIPTION</h1>
+<p><strong>Tk_CreateErrorHandler</strong> arranges for a particular
+procedure (<em>proc</em>) to be called whenever certain protocol errors
+occur on a particular display (<em>display</em>). Protocol errors occur
+when the X protocol is used incorrectly, such as attempting to map a
+window that does not exist. See the Xlib documentation for
+<strong>XSetErrorHandler</strong> for more information on the kinds of
+errors that can occur. For <em>proc</em> to be invoked to handle a
+particular error, five things must occur:</p>
+<dl>
+<dt>[1]</dt>
+<dd>
+<p>The error must pertain to <em>display</em>.</p>
+</dd>
+<dt>[2]</dt>
+<dd>
+<p>Either the <em>error</em> argument to
+<strong>Tk_CreateErrorHandler</strong> must have been -1, or the
+<em>error</em> argument must match the <em>error_code</em> field from
+the error event.</p>
+</dd>
+<dt>[3]</dt>
+<dd>
+<p>Either the <em>request</em> argument to
+<strong>Tk_CreateErrorHandler</strong> must have been -1, or the
+<em>request</em> argument must match the <em>request_code</em> field
+from the error event.</p>
+</dd>
+<dt>[4]</dt>
+<dd>
+<p>Either the <em>minor</em> argument to
+<strong>Tk_CreateErrorHandler</strong> must have been -1, or the
+<em>minor</em> argument must match the <em>minor_code</em> field from
+the error event.</p>
+</dd>
+<dt>[5]</dt>
+<dd>
+<p>The protocol request to which the error pertains must have been made
+when the handler was active (see below for more information).</p>
+</dd>
+</dl>
+<p><em>Proc</em> should have arguments and result that match the
+following type:</p>
+<pre><code>typedef int Tk_ErrorProc(
+        ClientData clientData,
+        XErrorEvent *errEventPtr);</code></pre>
+<p>The <em>clientData</em> parameter to <em>proc</em> is a copy of the
+<em>clientData</em> argument given to
+<strong>Tcl_CreateErrorHandler</strong> when the callback was created.
+Typically, <em>clientData</em> points to a data structure containing
+application-specific information that is needed to deal with the error.
+<em>ErrEventPtr</em> is a pointer to the X error event. The procedure
+<em>proc</em> should return an integer value. If it returns 0 it means
+that <em>proc</em> handled the error completely and there is no need to
+take any other action for the error. If it returns non-zero it means
+<em>proc</em> was unable to handle the error.</p>
+<p>If a value of NULL is specified for <em>proc</em>, all matching
+errors will be ignored: this will produce the same result as if a
+procedure had been specified that always returns 0.</p>
+<p>If more than more than one handler matches a particular error, then
+they are invoked in turn. The handlers will be invoked in reverse order
+of creation: most recently declared handler first. If any handler
+returns 0, then subsequent (older) handlers will not be invoked. If no
+handler returns 0, then Tk invokes X's default error handler, which
+prints an error message and aborts the program. If you wish to have a
+default handler that deals with errors that no other handler can deal
+with, then declare it first.</p>
+<p>The X documentation states that This restriction applies to handlers
+declared by <strong>Tk_CreateErrorHandler</strong>; disobey it at your
+own risk.</p>
+<p><strong>Tk_DeleteErrorHandler</strong> may be called to delete a
+previously-created error handler. The <em>handler</em> argument
+identifies the error handler, and should be a value returned by a
+previous call to <strong>Tk_CreateEventHandler</strong>.</p>
+<p>A particular error handler applies to errors resulting from protocol
+requests generated between the call to
+<strong>Tk_CreateErrorHandler</strong> and the call to
+<strong>Tk_DeleteErrorHandler</strong>. However, the actual callback to
+<em>proc</em> may not occur until after the
+<strong>Tk_DeleteErrorHandler</strong> call, due to buffering in the
+client and server. If an error event pertains to a protocol request made
+just before calling <strong>Tk_DeleteErrorHandler</strong>, then the
+error event may not have been processed before the
+<strong>Tk_DeleteErrorHandler</strong> call. When this situation arises,
+Tk will save information about the handler and invoke the handler's
+<em>proc</em> later when the error event finally arrives. If an
+application wishes to delete an error handler and know for certain that
+all relevant errors have been processed, it should first call
+<strong>Tk_DeleteErrorHandler</strong> and then call
+<strong>XSync</strong>; this will flush out any buffered requests and
+errors, but will result in a performance penalty because it requires
+communication to and from the X server. After the <strong>XSync</strong>
+call Tk is guaranteed not to call any error handlers deleted before the
+<strong>XSync</strong> call.</p>
+<p>For the Tk error handling mechanism to work properly, it is essential
+that application code never calls <strong>XSetErrorHandler</strong>
+directly; applications should use only
+<strong>Tk_CreateErrorHandler</strong>.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>callback, error, event, handler</p>

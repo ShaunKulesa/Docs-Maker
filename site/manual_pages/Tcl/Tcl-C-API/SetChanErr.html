@@ -1,0 +1,152 @@
+<h1 id="name">NAME</h1>
+<p>Tcl_SetChannelError, Tcl_SetChannelErrorInterp, Tcl_GetChannelError,
+Tcl_GetChannelErrorInterp - functions to create/intercept Tcl errors by
+channel drivers.</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tcl.h&gt;
+
+void
+Tcl_SetChannelError(chan, msg)
+
+void
+Tcl_SetChannelErrorInterp(interp, msg)
+
+void
+Tcl_GetChannelError(chan, msgPtr)
+
+void
+Tcl_GetChannelErrorInterp(interp, msgPtr)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Refers to the Tcl channel whose bypass area is accessed.</p>
+<p>Refers to the Tcl interpreter whose bypass area is accessed.</p>
+<p>Error message put into a bypass area. A list of return options and
+values, followed by a string message. Both message and the option/value
+information are optional.</p>
+<p>Reference to a place where the message stored in the accessed bypass
+area can be stored in.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>The current definition of a Tcl channel driver does not permit the
+direct return of arbitrary error messages, except for the setting and
+retrieval of channel options. All other functions are restricted to
+POSIX error codes.</p>
+<p>The functions described here overcome this limitation. Channel
+drivers are allowed to use <strong>Tcl_SetChannelError</strong> and
+<strong>Tcl_SetChannelErrorInterp</strong> to place arbitrary error
+messages in <strong>bypass areas</strong> defined for channels and
+interpreters. And the generic I/O layer uses
+<strong>Tcl_GetChannelError</strong> and
+<strong>Tcl_GetChannelErrorInterp</strong> to look for messages in the
+bypass areas and arrange for their return as errors. The POSIX error
+codes set by a driver are used now if and only if no messages are
+present.</p>
+<p><strong>Tcl_SetChannelError</strong> stores error information in the
+bypass area of the specified channel. The number of references to the
+<strong>msg</strong> value goes up by one. Previously stored information
+will be discarded, by releasing the reference held by the channel. The
+channel reference must not be NULL.</p>
+<p><strong>Tcl_SetChannelErrorInterp</strong> stores error information
+in the bypass area of the specified interpreter. The number of
+references to the <strong>msg</strong> value goes up by one. Previously
+stored information will be discarded, by releasing the reference held by
+the interpreter. The interpreter reference must not be NULL.</p>
+<p><strong>Tcl_GetChannelError</strong> places either the error message
+held in the bypass area of the specified channel into <em>msgPtr</em>,
+or NULL; and resets the bypass, that is, after an invocation all
+following invocations will return NULL, until an intervening invocation
+of <strong>Tcl_SetChannelError</strong> with a non-NULL message. The
+<em>msgPtr</em> must not be NULL. The reference count of the message is
+not touched. The reference previously held by the channel is now held by
+the caller of the function and it is its responsibility to release that
+reference when it is done with the value.</p>
+<p><strong>Tcl_GetChannelErrorInterp</strong> places either the error
+message held in the bypass area of the specified interpreter into
+<em>msgPtr</em>, or NULL; and resets the bypass, that is, after an
+invocation all following invocations will return NULL, until an
+intervening invocation of <strong>Tcl_SetChannelErrorInterp</strong>
+with a non-NULL message. The <em>msgPtr</em> must not be NULL. The
+reference count of the message is not touched. The reference previously
+held by the interpreter is now held by the caller of the function and it
+is its responsibility to release that reference when it is done with the
+value.</p>
+<p>Which functions of a channel driver are allowed to use which bypass
+function is listed below, as is which functions of the public channel
+API may leave a messages in the bypass areas.</p>
+<dl>
+<dt>Tcl_DriverCloseProc</dt>
+<dd>
+<p>May use <strong>Tcl_SetChannelErrorInterp</strong>, and only this
+function.</p>
+</dd>
+<dt>Tcl_DriverInputProc</dt>
+<dd>
+<p>May use <strong>Tcl_SetChannelError</strong>, and only this
+function.</p>
+</dd>
+<dt>Tcl_DriverOutputProc</dt>
+<dd>
+<p>May use <strong>Tcl_SetChannelError</strong>, and only this
+function.</p>
+</dd>
+<dt>Tcl_DriverSeekProc</dt>
+<dd>
+<p>May use <strong>Tcl_SetChannelError</strong>, and only this
+function.</p>
+</dd>
+<dt>Tcl_DriverWideSeekProc</dt>
+<dd>
+<p>May use <strong>Tcl_SetChannelError</strong>, and only this
+function.</p>
+</dd>
+<dt>Tcl_DriverSetOptionProc</dt>
+<dd>
+<p>Has already the ability to pass arbitrary error messages. Must
+<em>not</em> use any of the new functions.</p>
+</dd>
+<dt>Tcl_DriverGetOptionProc</dt>
+<dd>
+<p>Has already the ability to pass arbitrary error messages. Must
+<em>not</em> use any of the new functions.</p>
+</dd>
+<dt>Tcl_DriverWatchProc</dt>
+<dd>
+<p>Must <em>not</em> use any of the new functions. Is internally called
+and has no ability to return any type of error whatsoever.</p>
+</dd>
+<dt>Tcl_DriverBlockModeProc</dt>
+<dd>
+<p>May use <strong>Tcl_SetChannelError</strong>, and only this
+function.</p>
+</dd>
+<dt>Tcl_DriverGetHandleProc</dt>
+<dd>
+<p>Must <em>not</em> use any of the new functions. It is only a
+low-level function, and not used by Tcl commands.</p>
+</dd>
+<dt>Tcl_DriverHandlerProc</dt>
+<dd>
+<p>Must <em>not</em> use any of the new functions. Is internally called
+and has no ability to return any type of error whatsoever.</p>
+</dd>
+</dl>
+<p>Given the information above the following public functions of the Tcl
+C API are affected by these changes; when these functions are called,
+the channel may now contain a stored arbitrary error message requiring
+processing by the caller.</p>
+<blockquote>
+<pre><code>Tcl_Flush   Tcl_GetsObj Tcl_Gets
+Tcl_ReadChars   Tcl_ReadRaw Tcl_Read
+Tcl_Seek    Tcl_StackChannel    Tcl_Tell
+Tcl_WriteChars  Tcl_WriteObj    Tcl_WriteRaw
+Tcl_Write</code></pre>
+</blockquote>
+<p>All other API functions are unchanged. In particular, the functions
+below leave all their error information in the interpreter result.</p>
+<blockquote>
+<pre><code>Tcl_Close   Tcl_UnstackChannel  Tcl_UnregisterChannel</code></pre>
+</blockquote>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-C-API/Tcl_Close.html">Tcl_Close</a>, <a
+href="../Tcl-C-API/Tcl_OpenFileChannel.html">Tcl_OpenFileChannel</a>, <a
+href="../Tcl-C-API/Tcl_SetErrno.html">Tcl_SetErrno</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>channel driver, error messages, channel type</p>

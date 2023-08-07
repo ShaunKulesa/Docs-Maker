@@ -1,0 +1,66 @@
+<h1 id="name">NAME</h1>
+<p>Tk_GetJustifyFromObj, Tk_GetJustify, Tk_NameOfJustify - translate
+between strings and justification styles</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tk.h&gt;
+
+int
+Tk_GetJustifyFromObj(interp, objPtr, justifyPtr)
+
+int
+Tk_GetJustify(interp, string, justifyPtr)
+
+const char *
+Tk_NameOfJustify(justify)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Interpreter to use for error reporting, or NULL.</p>
+<p>String value contains name of justification style - one of or - or a
+unique abbreviation of one. The internal rep will be modified to cache
+corresponding justify value.</p>
+<p>Same as <em>objPtr</em> except description of justification style is
+passed as a string.</p>
+<p>Pointer to location in which to store justify value corresponding to
+<em>objPtr</em> or <em>string</em>.</p>
+<p>Justification style (one of the values listed below).</p>
+<h1 id="description">DESCRIPTION</h1>
+<p><strong>Tk_GetJustifyFromObj</strong> places in <em>*justifyPtr</em>
+the justify value corresponding to <em>objPtr</em>'s value. This value
+will be one of the following:</p>
+<dl>
+<dt><strong>TK_JUSTIFY_LEFT</strong></dt>
+<dd>
+<p>Means that the text on each line should start at the left edge of the
+line; as a result, the right edges of lines may be ragged.</p>
+</dd>
+<dt><strong>TK_JUSTIFY_RIGHT</strong></dt>
+<dd>
+<p>Means that the text on each line should end at the right edge of the
+line; as a result, the left edges of lines may be ragged.</p>
+</dd>
+<dt><strong>TK_JUSTIFY_CENTER</strong></dt>
+<dd>
+<p>Means that the text on each line should be centered; as a result,
+both the left and right edges of lines may be ragged.</p>
+</dd>
+</dl>
+<p>Under normal circumstances the return value is
+<strong>TCL_OK</strong> and <em>interp</em> is unused. If
+<em>objPtr</em> does not contain a valid justification style or an
+abbreviation of one of these names, <strong>TCL_ERROR</strong> is
+returned, <em>*justifyPtr</em> is unmodified, and an error message is
+stored in <em>interp</em>'s result if <em>interp</em> is not NULL.
+<strong>Tk_GetJustifyFromObj</strong> caches information about the
+return value in <em>objPtr</em>, which speeds up future calls to
+<strong>Tk_GetJustifyFromObj</strong> with the same <em>objPtr</em>.</p>
+<p><strong>Tk_GetJustify</strong> is identical to
+<strong>Tk_GetJustifyFromObj</strong> except that the description of the
+justification is specified with a string instead of an object. This
+prevents <strong>Tk_GetJustify</strong> from caching the return value,
+so <strong>Tk_GetJustify</strong> is less efficient than
+<strong>Tk_GetJustifyFromObj</strong>.</p>
+<p><strong>Tk_NameOfJustify</strong> is the logical inverse of
+<strong>Tk_GetJustify</strong>. Given a justify value it returns a
+statically-allocated string corresponding to <em>justify</em>. If
+<em>justify</em> is not a legal justify value, then is returned.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>center, fill, justification, string</p>

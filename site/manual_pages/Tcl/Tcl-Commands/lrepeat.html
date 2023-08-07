@@ -1,0 +1,28 @@
+<h1 id="name">NAME</h1>
+<p>lrepeat - Build a list by repeating elements</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>lrepeat</strong> <em>count</em> ?<em>element ...</em>?</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>The <strong>lrepeat</strong> command creates a list of size <em>count
+* number of</em> elements by repeating <em>count</em> times the sequence
+of elements <em>element ...</em>. <em>count</em> must be a non-negative
+integer, <em>element</em> can be any Tcl value. Note that
+<strong>lrepeat 1 element ...</strong> is identical to <strong>list
+element ...</strong>.</p>
+<h1 id="examples">EXAMPLES</h1>
+<pre><code>lrepeat 3 a
+      → a a a
+lrepeat 3 [lrepeat 3 0]
+      → {0 0 0} {0 0 0} {0 0 0}
+lrepeat 3 a b c
+      → a b c a b c a b c
+lrepeat 3 [lrepeat 2 a] b c
+      → {a a} b c {a a} b c {a a} b c</code></pre>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-Commands/list.html">list</a>, <a
+href="../Tcl-Commands/lappend.html">lappend</a>, <a
+href="../Tcl-Commands/linsert.html">linsert</a>, <a
+href="../Tcl-Commands/llength.html">llength</a>, <a
+href="../Tcl-Commands/lset.html">lset</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>element, index, list</p>

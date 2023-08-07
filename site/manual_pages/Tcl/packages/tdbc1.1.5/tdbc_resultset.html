@@ -1,0 +1,133 @@
+<p><br />
+</p>
+<h1 id="name">NAME</h1>
+<p>tdbc::resultset - TDBC result set object</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>package require tdbc 1.0
+package require tdbc::driver version
+
+tdbc::driver::connection create db ?-option value...?
+
+set stmt [db prepare sql-code]
+set resultset [$stmt execute ?args...?]
+
+$resultset columns
+$resultset rowcount
+$resultset nextrow ?-as lists|dicts? ?--? varname
+$resultset nextlist varname
+$resultset nextdict varname
+$resultset nextresults</code></pre>
+<p><em>$resultset</em> <strong>allrows</strong> ?<strong>-as
+lists|dicts</strong>? ?<strong>-columnsvariable</strong> <em>name</em>?
+?<strong>--</strong>?<br />
+</p>
+<p><em>$resultset</em> <strong>foreach</strong> ?<strong>-as
+lists|dicts</strong>? ?<strong>-columnsvariable</strong> <em>name</em>?
+?<strong>--</strong>? <em>varname</em> <em>script</em><br />
+</p>
+<p><em>$resultset</em> <strong>close</strong></p>
+<p><br />
+</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>Every database driver for TDBC (Tcl DataBase Connectivity) implements
+a <em>result set</em> object that represents a the results returned from
+executing SQL statement in a database. Instances of this object are
+created by executing the <strong>execute</strong> object command on a
+statement object.</p>
+<p>The <strong>columns</strong> object command returns a list of the
+names of the columns in the result set. The columns will appear in the
+same order as they appeared in the SQL statement that performed the
+database query. If the SQL statement does not return a set of columns
+(for instance, if it is an INSERT, UPDATE, or DELETE statement), the
+<strong>columns</strong> command will return an empty list.</p>
+<p>The <strong>rowcount</strong> object command returns the number of
+rows in the database that were affected by the execution of an INSERT,
+UPDATE or DELETE statement. For a SELECT statement, the row count is
+unspecified.</p>
+<p>The <strong>nextlist</strong> object command sets the variable given
+by <em>varname</em> in the caller's scope to the next row of the
+results, expressed as a list of column values. NULL values are replaced
+by empty strings. The columns of the result row appear in the same order
+in which they appeared on the SELECT statement. The return of
+<strong>nextlist</strong> is <strong>1</strong> if the operation
+succeeded, and <strong>0</strong> if the end of the result set was
+reached.</p>
+<p>The <strong>nextdict</strong> object command sets the variable given
+by <em>varname</em> in the caller's scope to the next row of the
+results, expressed as a dictionary. The dictionary's keys are column
+names, and the values are the values of those columns in the row. If a
+column's value in the row is NULL, its key is omitted from the
+dictionary. The keys appear in the dictionary in the same order in which
+the columns appeared on the SELECT statement. The return of
+<strong>nextdict</strong> is <strong>1</strong> if the operation
+succeeded, and <strong>0</strong> if the end of the result set was
+reached.</p>
+<p>The <strong>nextrow</strong> object command is precisely equivalent
+to the <strong>nextdict</strong> or <strong>nextlist</strong> object
+command, depending on whether <strong>-as dicts</strong> (the default)
+or <strong>-as lists</strong> is specified.</p>
+<p>Some databases support the idea of a single statement that returns
+multiple sets of results. The <strong>nextresults</strong> object
+command is executed, typically after the <strong>nextlist</strong> of
+<strong>nextdict</strong> object command has returned
+<strong>0</strong>, to advance to the next result set. It returns
+<strong>1</strong> if there is another result set to process, and
+<strong>0</strong> if the result set just processed was the last. After
+calling <strong>nextresults</strong> and getting the return value of
+<strong>1</strong>, the caller may once again call
+<strong>columns</strong> to get the column descriptions of the next
+result set, and then return to calling <strong>nextdict</strong> or
+<strong>nextlist</strong> to process the rows of the next result set. It
+is an error to call <strong>columns</strong>, <strong>nextdict</strong>,
+<strong>nextlist</strong> or <strong>nextrow</strong> after
+<strong>nextresults</strong> has returned <strong>0</strong>.</p>
+<p>The <strong>allrows</strong> object command sets the variable
+designated by the <strong>-columnsvariable</strong> option (if present)
+to the result of the <strong>columns</strong> object command. It then
+executes the <strong>nextrow</strong> object command repeatedly until
+the end of the result set is reached. If <strong>nextresults</strong>
+returns a nonzero value, it executes the above two steps
+(<strong>columns</strong> followed by iterated <strong>nextrow</strong>
+calls) as long as further results are available. The rows returned by
+<strong>nextrow</strong> are assembled into a Tcl list and become the
+return value of the <strong>allrows</strong> command; the last value
+returned from <strong>columns</strong> is what the application will see
+in <strong>-columnsvariable</strong>.</p>
+<p>The <strong>foreach</strong> object command sets the variable
+designated by the <strong>-columnsvariable</strong> option (if present)
+to the result of the <strong>columns</strong> object command. It then
+executes the <strong>nextrow</strong> object command repeatedly until
+the end of the result set is reached, storing the successive rows in the
+variable designated by <em>varName</em>. For each row, it executes the
+given <em>script</em>. If the script terminates with an error, the error
+is reported by the <strong>foreach</strong> command, and iteration
+stops. If the script performs a <strong>break</strong> operation, the
+iteration terminates prematurely. If the script performs a
+<strong>continue</strong> operation, the iteration recommences with the
+next row. If the script performs a <strong>return</strong>, results are
+the same as if a script outside the control of <strong>foreach</strong>
+had returned. Any other unusual return code terminates the iteration and
+is reported from the <strong>foreach</strong>.</p>
+<p>Once <strong>nextrow</strong> returns <strong>0</strong>, the
+<strong>foreach</strong> object command tries to advance to the next
+result set using <strong>nextresults</strong>. If
+<strong>nextresults</strong> returns <strong>1</strong>, the above steps
+(<strong>columns</strong> and <strong>nextrow</strong>, with script
+invocation) are repeated as long as more result sets remain. The
+<em>script</em> will always see the correct description of the columns
+of the current result set in the variable designated byt
+<strong>-columnsvariable</strong>. At the end of the call, the variable
+designated by <strong>-columnsvariable</strong> will have the
+description of the columns of the last result set.</p>
+<p>The <strong>close</strong> object command deletes the result set and
+frees any associated system resources.</p>
+<h1 id="see-also">SEE ALSO</h1>
+<p>encoding(n), <a href="../tdbc1.1.5/tdbc.html">tdbc</a>, <a
+href="../tdbc1.1.5/tdbc::connection.html">tdbc::connection</a>, <a
+href="../tdbc1.1.5/tdbc::statement.html">tdbc::statement</a>, <a
+href="../tdbc1.1.5/tdbc::tokenize.html">tdbc::tokenize</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>TDBC, SQL, database, connectivity, connection, resultset, statement,
+bound variable, stored procedure, call</p>
+<h1 id="copyright">COPYRIGHT</h1>
+<p>Copyright (c) 2008 by Kevin B. Kenny.</p>

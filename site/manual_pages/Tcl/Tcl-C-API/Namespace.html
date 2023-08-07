@@ -1,0 +1,132 @@
+<h1 id="name">NAME</h1>
+<p>Tcl_AppendExportList, Tcl_CreateNamespace, Tcl_DeleteNamespace,
+Tcl_Export, Tcl_FindCommand, Tcl_FindNamespace, Tcl_ForgetImport,
+Tcl_GetCurrentNamespace, Tcl_GetGlobalNamespace,
+Tcl_GetNamespaceUnknownHandler, Tcl_Import,
+Tcl_SetNamespaceUnknownHandler - manipulate namespaces</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tcl.h&gt;
+
+Tcl_Namespace *
+Tcl_CreateNamespace(interp, name, clientData, deleteProc)
+
+Tcl_DeleteNamespace(nsPtr)
+
+int
+Tcl_AppendExportList(interp, nsPtr, objPtr)
+
+int
+Tcl_Export(interp, nsPtr, pattern, resetListFirst)
+
+int
+Tcl_Import(interp, nsPtr, pattern, allowOverwrite)
+
+int
+Tcl_ForgetImport(interp, nsPtr, pattern)
+
+Tcl_Namespace *
+Tcl_GetCurrentNamespace(interp)
+
+Tcl_Namespace *
+Tcl_GetGlobalNamespace(interp)
+
+Tcl_Namespace *
+Tcl_FindNamespace(interp, name, contextNsPtr, flags)
+
+Tcl_Command
+Tcl_FindCommand(interp, name, contextNsPtr, flags)
+
+Tcl_Obj *
+Tcl_GetNamespaceUnknownHandler(interp, nsPtr)
+
+int
+Tcl_SetNamespaceUnknownHandler(interp, nsPtr, handlerPtr)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>The interpreter in which the namespace exists and where name lookups
+are performed. Also where error result messages are written.</p>
+<p>The name of the namespace or command to be created or accessed.</p>
+<p>A context pointer by the creator of the namespace. Not interpreted by
+Tcl at all.</p>
+<p>A pointer to function to call when the namespace is deleted, or NULL
+if no such callback is to be performed.</p>
+<p>The namespace to be manipulated, or NULL (for other than
+<strong>Tcl_DeleteNamespace</strong>) to manipulate the current
+namespace.</p>
+<p>A reference to an unshared value to which the function output will be
+written.</p>
+<p>The glob-style pattern (see <strong>Tcl_StringMatch</strong>) that
+describes the commands to be imported or exported.</p>
+<p>Whether the list of export patterns should be reset before adding the
+current pattern to it.</p>
+<p>Whether new commands created by this import action can overwrite
+existing commands.</p>
+<p>The location in the namespace hierarchy where the search for a
+namespace or command should be conducted relative to when the search
+term is not rooted at the global namespace. NULL indicates the current
+namespace.</p>
+<p>OR-ed combination of bits controlling how the search is to be
+performed. The following flags are supported:
+<strong>TCL_GLOBAL_ONLY</strong> (indicates that the search is always to
+be conducted relative to the global namespace),
+<strong>TCL_NAMESPACE_ONLY</strong> (just for
+<strong>Tcl_FindCommand</strong>; indicates that the search is always to
+be conducted relative to the context namespace), and
+<strong>TCL_LEAVE_ERR_MSG</strong> (indicates that an error message
+should be left in the interpreter if the search fails.)</p>
+<p>A script fragment to be installed as the unknown command handler for
+the namespace, or NULL to reset the handler to its default.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>Namespaces are hierarchic naming contexts that can contain commands
+and variables. They also maintain a list of patterns that describes what
+commands are exported, and can import commands that have been exported
+by other namespaces. Namespaces can also be manipulated through the Tcl
+command <strong>namespace</strong>.</p>
+<p>The <em>Tcl_Namespace</em> structure encapsulates a namespace, and is
+guaranteed to have the following fields in it: <em>name</em> (the local
+name of the namespace, with no namespace separator characters in it,
+with empty denoting the global namespace), <em>fullName</em> (the fully
+specified name of the namespace), <em>clientData</em>,
+<em>deleteProc</em> (the values specified in the call to
+<strong>Tcl_CreateNamespace</strong>), and <em>parentPtr</em> (a pointer
+to the containing namespace, or NULL for the global namespace.)</p>
+<p><strong>Tcl_CreateNamespace</strong> creates a new namespace. The
+<em>deleteProc</em> will have the following type signature:</p>
+<pre><code>typedef void Tcl_NamespaceDeleteProc(
+        ClientData clientData);</code></pre>
+<p><strong>Tcl_DeleteNamespace</strong> deletes a namespace, calling the
+<em>deleteProc</em> defined for the namespace (if any).</p>
+<p><strong>Tcl_AppendExportList</strong> retrieves the export patterns
+for a namespace given namespace and appends them (as list items) to
+<em>objPtr</em>.</p>
+<p><strong>Tcl_Export</strong> sets and appends to the export patterns
+for a namespace. Patterns are appended unless the
+<em>resetListFirst</em> flag is true.</p>
+<p><strong>Tcl_Import</strong> imports commands matching a pattern into
+a namespace. Note that the pattern must include the name of the
+namespace to import from. This function returns an error if an attempt
+to import a command over an existing command is made, unless the
+<em>allowOverwrite</em> flag has been set.</p>
+<p><strong>Tcl_ForgetImport</strong> removes imports matching a
+pattern.</p>
+<p><strong>Tcl_GetCurrentNamespace</strong> returns the current
+namespace for an interpreter.</p>
+<p><strong>Tcl_GetGlobalNamespace</strong> returns the global namespace
+for an interpreter.</p>
+<p><strong>Tcl_FindNamespace</strong> searches for a namespace named
+<em>name</em> within the context of the namespace <em>contextNsPtr</em>.
+If the namespace cannot be found, NULL is returned.</p>
+<p><strong>Tcl_FindCommand</strong> searches for a command named
+<em>name</em> within the context of the namespace <em>contextNsPtr</em>.
+If the command cannot be found, NULL is returned.</p>
+<p><strong>Tcl_GetNamespaceUnknownHandler</strong> returns the unknown
+command handler for the namespace, or NULL if none is set.</p>
+<p><strong>Tcl_SetNamespaceUnknownHandler</strong> sets the unknown
+command handler for the namespace. If <em>handlerPtr</em> is NULL, then
+the handler is reset to its default.</p>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-C-API/Tcl_CreateCommand.html">Tcl_CreateCommand</a>,
+<a
+href="../Tcl-C-API/Tcl_ListObjAppendList.html">Tcl_ListObjAppendList</a>,
+<a href="../Tcl-C-API/Tcl_SetVar.html">Tcl_SetVar</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>namespace, command</p>

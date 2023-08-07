@@ -1,0 +1,50 @@
+<h1 id="name">NAME</h1>
+<p>Tcl_UpVar, Tcl_UpVar2 - link one variable to another</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;tcl.h&gt;
+
+int
+Tcl_UpVar(interp, frameName, sourceName, destName, flags)
+
+int
+Tcl_UpVar2(interp, frameName, name1, name2, destName, flags)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Interpreter containing variables; also used for error reporting.</p>
+<p>Identifies the stack frame containing source variable. May have any
+of the forms accepted by the <strong>upvar</strong> command, such as
+<strong>#0</strong> or <strong>1</strong>.</p>
+<p>Name of source variable, in the frame given by <em>frameName</em>.
+May refer to a scalar variable or to an array variable with a
+parenthesized index.</p>
+<p>Name of destination variable, which is to be linked to source
+variable so that references to <em>destName</em> refer to the other
+variable. Must not currently exist except as an upvar-ed variable.</p>
+<p>One of <strong>TCL_GLOBAL_ONLY</strong>,
+<strong>TCL_NAMESPACE_ONLY</strong> or 0; if non-zero, then
+<em>destName</em> is a global or namespace variable; otherwise it is
+local to the current procedure (or current namespace if no procedure is
+active).</p>
+<p>First part of source variable's name (scalar name, or name of array
+without array index).</p>
+<p>If source variable is an element of an array, gives the index of the
+element. For scalar source variables, is NULL.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p><strong>Tcl_UpVar</strong> and <strong>Tcl_UpVar2</strong> provide
+the same functionality as the <strong>upvar</strong> command: they make
+a link from a source variable to a destination variable, so that
+references to the destination are passed transparently through to the
+source. The name of the source variable may be specified either as a
+single string such as <strong>xyx</strong> or <strong>a(24)</strong> (by
+calling <strong>Tcl_UpVar</strong>) or in two parts where the array name
+has been separated from the element name (by calling
+<strong>Tcl_UpVar2</strong>). The destination variable name is specified
+in a single string; it may not be an array element.</p>
+<p>Both procedures return either <strong>TCL_OK</strong> or
+<strong>TCL_ERROR</strong>, and they leave an error message in the
+interpreter's result if an error occurs.</p>
+<p>As with the <strong>upvar</strong> command, the source variable need
+not exist; if it does exist, unsetting it later does not destroy the
+link. The destination variable may exist at the time of the call, but if
+so it must exist as a linked variable.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>linked variable, upvar, variable</p>

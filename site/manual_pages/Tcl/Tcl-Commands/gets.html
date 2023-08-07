@@ -1,0 +1,47 @@
+<h1 id="name">NAME</h1>
+<p>gets - Read a line from a channel</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>gets</strong> <em>channelId</em> ?<em>varName</em>?</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>This command reads the next line from <em>channelId</em>, returns
+everything in the line up to (but not including) the end-of-line
+character(s), and discards the end-of-line character(s).</p>
+<p><em>ChannelId</em> must be an identifier for an open channel such as
+the Tcl standard input channel (<strong>stdin</strong>), the return
+value from an invocation of <strong>open</strong> or
+<strong>socket</strong>, or the result of a channel creation command
+provided by a Tcl extension. The channel must have been opened for
+input.</p>
+<p>If <em>varName</em> is omitted the line is returned as the result of
+the command. If <em>varName</em> is specified then the line is placed in
+the variable by that name and the return value is a count of the number
+of characters returned.</p>
+<p>If end of file occurs while scanning for an end of line, the command
+returns whatever input is available up to the end of file. If
+<em>channelId</em> is in non-blocking mode and there is not a full line
+of input available, the command returns an empty string and does not
+consume any input. If <em>varName</em> is specified and an empty string
+is returned in <em>varName</em> because of end-of-file or because of
+insufficient data in non-blocking mode, then the return count is -1.
+Note that if <em>varName</em> is not specified then the end-of-file and
+no-full-line-available cases can produce the same results as if there
+were an input line consisting only of the end-of-line character(s). The
+<strong>eof</strong> and <strong>fblocked</strong> commands can be used
+to distinguish these three cases.</p>
+<h1 id="example">EXAMPLE</h1>
+<p>This example reads a file one line at a time and prints it out with
+the current line number attached to the start of each line.</p>
+<pre><code>set chan [open &quot;some.file.txt&quot;]
+set lineNumber 0
+while {[gets $chan line] &gt;= 0} {
+    puts &quot;[incr lineNumber]: $line&quot;
+}
+close $chan</code></pre>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-Commands/file.html">file</a>, <a
+href="../Tcl-Commands/eof.html">eof</a>, <a
+href="../Tcl-Commands/fblocked.html">fblocked</a>, <a
+href="../Tcl-C-API/Tcl_StandardChannels.html">Tcl_StandardChannels</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>blocking, channel, end of file, end of line, line, non-blocking,
+read</p>

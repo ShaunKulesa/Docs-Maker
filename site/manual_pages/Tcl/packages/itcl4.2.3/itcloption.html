@@ -1,0 +1,121 @@
+<h1 id="name">NAME</h1>
+<p>itcl::option - define options for extendedclass, widget or
+widgetadaptor</p>
+<p>Parts of this description are "borrowed" from Tcl extension [snit],
+as the functionality is mostly identical.</p>
+<h1 id="warning">WARNING!</h1>
+<p>This is new functionality in [incr Tcl] where the API can still
+change!!</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>option optionSpec ?defaultValue?
+option optionSpec ?options?</code></pre>
+<h1 id="description">DESCRIPTION</h1>
+<p>The <strong>option</strong> command is used inside an <strong>[incr
+Tcl]</strong> extendedclass/widget/widgetadaptor definition to define
+options.</p>
+<p>In the first form defines an option for instances of this type, and
+optionally gives it an initial value. The initial value defaults to the
+empty string if no defaultValue is specified.</p>
+<p>An option defined in this way is said to be locally defined. The
+optionSpec is a list defining the option's name, resource name, and
+class name, e.g.:</p>
+<pre><code>    option {-font font Font} {Courier 12}</code></pre>
+<p>The option name must begin with a hyphen, and must not contain any
+upper case letters. The resource name and class name are optional; if
+not specified, the resource name defaults to the option name, minus the
+hyphen, and the class name defaults to the resource name with the first
+letter capitalized. Thus, the following statement is equivalent to the
+previous example:</p>
+<pre><code>    option -font {Courier 12}</code></pre>
+<p>See The Tk Option Database for more information about resource and
+class names.</p>
+<p>Options are normally set and retrieved using the standard instance
+methods configure and cget; within instance code (method bodies, etc.),
+option values are available through the options array:</p>
+<pre><code>    set myfont $itcl_options(-font)</code></pre>
+<p>In the second form you can define option handlers (e.g.,
+-configuremethod), then it should probably use configure and cget to
+access its options to avoid subtle errors.</p>
+<p>The option statement may include the following options:</p>
+<dl>
+<dt><strong>-default</strong> <em>defvalue</em></dt>
+<dd>
+<p>Defines the option's default value; the option's default value will
+be "" otherwise.</p>
+</dd>
+<dt><strong>-readonly</strong></dt>
+<dd>
+<p>The option is handled read-only -- it can only be set using configure
+at creation time, i.e., in the type's constructor.</p>
+</dd>
+<dt><strong>-cgetmethod</strong> <em>methodName</em></dt>
+<dd>
+<p>Every locally-defined option may define a -cgetmethod; it is called
+when the option's value is retrieved using the cget method. Whatever the
+method's body returns will be the return value of the call to cget.</p>
+<p>The named method must take one argument, the option name. For
+example, this code is equivalent to (though slower than) Itcl's default
+handling of cget:</p>
+<pre><code>        option -font -cgetmethod GetOption
+        method GetOption {option} {
+            return $itcl_options($option)
+        }</code></pre>
+<p>Note that it's possible for any number of options to share a
+-cgetmethod.</p>
+</dd>
+<dt><strong>-cgetmethodvar</strong> <em>varName</em></dt>
+<dd>
+<p>That is very similar to -cgetmethod, the only difference is, one can
+define a variable, where to find the cgetmethod during runtime.</p>
+</dd>
+<dt><strong>-configuremethod</strong> <em>methodName</em></dt>
+<dd>
+<p>Every locally-defined option may define a -configuremethod; it is
+called when the option's value is set using the configure or
+configurelist methods. It is the named method's responsibility to save
+the option's value; in other words, the value will not be saved to the
+itcl_options() array unless the method saves it there.</p>
+<p>The named method must take two arguments, the option name and its new
+value. For example, this code is equivalent to (though slower than)
+Itcl's default handling of configure:</p>
+<pre><code>        option -font -configuremethod SetOption
+        method SetOption {option value} {
+            set itcl_options($option) $value
+        }</code></pre>
+<p>Note that it's possible for any number of options to share a single
+-configuremethod.</p>
+</dd>
+<dt><strong>-configuremethodvar</strong> <em>varName</em></dt>
+<dd>
+<p>That is very similar to -configuremethod, the only difference is, one
+can define a variable, where to find the configuremethod during
+runtime.</p>
+</dd>
+<dt><strong>-validatemethod</strong> <em>methodName</em></dt>
+<dd>
+<p>Every locally-defined option may define a -validatemethod; it is
+called when the option's value is set using the configure or
+configurelist methods, just before the -configuremethod (if any). It is
+the named method's responsibility to validate the option's new value,
+and to throw an error if the value is invalid.</p>
+<p>The named method must take two arguments, the option name and its new
+value. For example, this code verifies that -flag's value is a valid
+Boolean value:</p>
+<pre><code>        option -font -validatemethod CheckBoolean
+        method CheckBoolean {option value} {
+            if {![string is boolean -strict $value]} {
+                error &quot;option $option must have a boolean value.&quot;
+            }
+        }</code></pre>
+<p>Note that it's possible for any number of options to share a single
+-validatemethod.</p>
+</dd>
+<dt><strong>-validatemethodvar</strong> <em>varName</em></dt>
+<dd>
+<p>That is very similar to -validatemethod, the only difference is, one
+can define a variable, where to find the validatemethod during
+runtime.</p>
+</dd>
+</dl>
+<h1 id="keywords">KEYWORDS</h1>
+<p>option, widget, widgetadaptor, extendedclass</p>

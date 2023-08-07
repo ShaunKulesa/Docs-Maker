@@ -1,0 +1,65 @@
+<h1 id="name">NAME</h1>
+<p>Itcl_Alloc, Itcl_Free, Itcl_PreserveData, Itcl_ReleaseData,
+Itcl_EventuallyFree - Manipulate an Itcl list object.</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<pre><code>#include &lt;itcl.h&gt;
+
+void *
+Itcl_Alloc(size)
+
+void
+Itcl_PreserveData(ptr)
+
+void
+Itcl_ReleaseData(ptr)
+
+void
+Itcl_EventuallyFree(ptr, fproc)
+
+void
+Itcl_Free(ptr)</code></pre>
+<h1 id="arguments">ARGUMENTS</h1>
+<p>Number of bytes to allocate.</p>
+<p>Pointer value allocated by <strong>Itcl_Alloc</strong>.</p>
+<p>Address of function to call when the block is to be freed.</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>These procedures are used to allocate and release memory, especially
+blocks of memory that will be used by multiple independent modules. They
+are similar in function to the routines in the public Tcl interface,
+<strong>Tcl_Alloc</strong>, <strong>Tcl_Free</strong>,
+<strong>Tcl_Preserve</strong>, <strong>Tcl_Release</strong>, and
+<strong>Tcl_EventuallyFree</strong>. The Tcl routines suffer from issues
+with performance scaling as the number of blocks managed grows large.
+The facilities of Itcl encounter these performance scaling issues and
+require an alternative that does not suffer from them.</p>
+<p><strong>Itcl_Alloc</strong> returns an untyped pointer to an
+allocated block of memory of at least <em>size</em> bytes. All
+<em>size</em> bytes are initialized to zero.</p>
+<p>A module calls <strong>Itcl_PreserveData</strong> on a pointer
+<em>ptr</em> allocated by <strong>Itcl_Alloc</strong> to prevent
+deallocation of that memory while the module remains interested in
+it.</p>
+<p>A module calls <strong>Itcl_ReleaseData</strong> on a pointer
+<em>ptr</em> previously preserved by <strong>Itcl_PreserveData</strong>
+to indicate the module no longer has an interest in the block of memory,
+and will not be disturbed by its deallocation.</p>
+<p><strong>Itcl_EventuallyFree</strong> is called on a pointer
+<em>ptr</em> allocated by <strong>Itcl_Alloc</strong> to register a
+deallocation routine <em>fproc</em> to be called when the number of
+calls to <strong>Itcl_ReleaseData</strong> on <em>ptr</em> matches the
+number of calls to <strong>Itcl_PreserveData</strong> on <em>ptr</em>.
+This condition indicates all modules have ended their interest in the
+block of memory and a call to <em>fproc</em> with argument <em>ptr</em>
+will deallocate the memory that no module needs anymore.</p>
+<p><strong>Itcl_Free</strong> is a deallocation routine for a
+<em>ptr</em> value allocated by <strong>Itcl_Alloc</strong>. It may be
+called on any <em>ptr</em> with no history of an
+<strong>Itcl_PreserveData</strong> call unmatched by an
+<strong>Itcl_ReleaseData</strong> call. It is best used as an
+<em>fproc</em> argument to <strong>Itcl_EventuallyFree</strong> or as a
+routine called from within such an <em>fproc</em> routine. It can also
+be used to deallocate a <em>ptr</em> value when it can be assured that
+value has never been passed to <strong>Itcl_PreserveData</strong> or
+<strong>Itcl_EventuallyFree</strong>.</p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>free, memory</p>

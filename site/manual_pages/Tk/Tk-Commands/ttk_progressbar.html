@@ -1,0 +1,143 @@
+<h1 id="name">NAME</h1>
+<p>ttk::progressbar - Provide progress feedback</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>ttk::progressbar</strong> <em>pathName</em>
+?<em>options</em>?</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>A <strong>ttk::progressbar</strong> widget shows the status of a
+long-running operation. They can operate in two modes:
+<em>determinate</em> mode shows the amount completed relative to the
+total amount of work to be done, and <em>indeterminate</em> mode
+provides an animated display to let the user know that something is
+happening.</p>
+<h1 id="standard-options">STANDARD OPTIONS</h1>
+<pre><code>-class   -cursor -takefocus
+-style</code></pre>
+<p>See the manual entry for details on the standard options.</p>
+<h1 id="widget-specific-options">WIDGET-SPECIFIC OPTIONS</h1>
+<pre><code>Command-Line Name:   -length
+Database Name:  length
+Database Class: Length</code></pre>
+<blockquote>
+<p>Specifies the length of the long axis of the progress bar (width if
+horizontal, height if vertical).</p>
+</blockquote>
+<pre><code>Command-Line Name:   -maximum
+Database Name:  maximum
+Database Class: Maximum</code></pre>
+<blockquote>
+<p>A floating point number specifying the maximum
+<strong>-value</strong>. Defaults to 100.</p>
+</blockquote>
+<pre><code>Command-Line Name:   -mode
+Database Name:  mode
+Database Class: Mode</code></pre>
+<blockquote>
+<p>One of <strong>determinate</strong> or
+<strong>indeterminate</strong>.</p>
+</blockquote>
+<pre><code>Command-Line Name:   -orient
+Database Name:  orient
+Database Class: Orient</code></pre>
+<blockquote>
+<p>One of <strong>horizontal</strong> or <strong>vertical</strong>.
+Specifies the orientation of the progress bar.</p>
+</blockquote>
+<pre><code>Command-Line Name:   -phase
+Database Name:  phase
+Database Class: Phase</code></pre>
+<blockquote>
+<p>Read-only option. The widget periodically increments the value of
+this option whenever the <strong>-value</strong> is greater than 0 and,
+in <em>determinate</em> mode, less than <strong>-maximum</strong>. This
+option may be used by the current theme to provide additional animation
+effects.</p>
+</blockquote>
+<pre><code>Command-Line Name:   -value
+Database Name:  value
+Database Class: Value</code></pre>
+<blockquote>
+<p>The current value of the progress bar. In <em>determinate</em> mode,
+this represents the amount of work completed. In <em>indeterminate</em>
+mode, it is interpreted modulo <strong>-maximum</strong>; that is, the
+progress bar completes one when the <strong>-value</strong> increases by
+<strong>-maximum</strong>. If <strong>-variable</strong> is set to an
+existing variable, specifying <strong>-value</strong> has no effect (the
+variable value takes precedence).</p>
+</blockquote>
+<pre><code>Command-Line Name:   -variable
+Database Name:  variable
+Database Class: Variable</code></pre>
+<blockquote>
+<p>The name of a global Tcl variable which is linked to the
+<strong>-value</strong>. If specified to an existing variable, the
+<strong>-value</strong> of the progress bar is automatically set to the
+value of the variable whenever the latter is modified.</p>
+</blockquote>
+<h1 id="widget-command">WIDGET COMMAND</h1>
+<dl>
+<dt><em>pathName</em> <strong>cget</strong> <em>option</em></dt>
+<dd>
+<p>Returns the current value of the specified <em>option</em>; see
+<em>ttk::widget(n)</em>.</p>
+</dd>
+<dt><em>pathName</em> <strong>configure</strong> ?<em>option</em>?
+?<em>value option value ...</em>?</dt>
+<dd>
+<p>Modify or query widget options; see <em>ttk::widget(n)</em>.</p>
+</dd>
+<dt><em>pathName</em> <strong>identify</strong> <em>x y</em></dt>
+<dd>
+<p>Returns the name of the element at position <em>x</em>, <em>y</em>.
+See <em>ttk::widget(n)</em>.</p>
+</dd>
+<dt><em>pathName</em> <strong>instate</strong> <em>statespec</em>
+?<em>script</em>?</dt>
+<dd>
+<p>Test the widget state; see <em>ttk::widget(n)</em>.</p>
+</dd>
+<dt><em>pathName</em> <strong>start</strong> ?<em>interval</em>?</dt>
+<dd>
+<p>Begin autoincrement mode: schedules a recurring timer event that
+calls <strong>step</strong> every <em>interval</em> milliseconds. If
+omitted, <em>interval</em> defaults to 50 milliseconds (20
+steps/second).</p>
+</dd>
+<dt><em>pathName</em> <strong>state</strong> ?<em>stateSpec</em>?</dt>
+<dd>
+<p>Modify or query the widget state; see <em>ttk::widget(n)</em>.</p>
+</dd>
+<dt><em>pathName</em> <strong>step</strong> ?<em>amount</em>?</dt>
+<dd>
+<p>Increments the <strong>-value</strong> by <em>amount</em>.
+<em>amount</em> defaults to 1.0 if omitted.</p>
+</dd>
+<dt><em>pathName</em> <strong>stop</strong></dt>
+<dd>
+<p>Stop autoincrement mode: cancels any recurring timer event initiated
+by <em>pathName</em> <strong>start</strong>.</p>
+</dd>
+</dl>
+<h1 id="styling-options">STYLING OPTIONS</h1>
+<p>The class name for a <strong>ttk::progressbar</strong> is
+<strong>TProgressbar</strong>.</p>
+<p><strong>TProgressbar</strong> styling options configurable with
+<strong>ttk::style</strong> are:</p>
+<p><strong>-background</strong> <em>color</em><br />
+<strong>-bordercolor</strong> <em>color</em><br />
+<strong>-darkcolor</strong> <em>color</em><br />
+<strong>-lightcolor</strong> <em>color</em><br />
+<strong>-maxphase</strong></p>
+<blockquote>
+<p>For the aqua theme.</p>
+</blockquote>
+<p><strong>-period</strong></p>
+<blockquote>
+<p>For the aqua theme.</p>
+</blockquote>
+<p><strong>-troughcolor</strong> <em>color</em></p>
+<p>Some options are only available for specific themes.</p>
+<p>See the <strong>ttk::style</strong> manual page for information on
+how to configure ttk styles.</p>
+<h1 id="see-also">SEE ALSO</h1>
+<p>ttk::widget(n)</p>

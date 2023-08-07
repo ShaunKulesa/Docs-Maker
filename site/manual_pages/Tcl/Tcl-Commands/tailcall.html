@@ -1,0 +1,43 @@
+<h1 id="name">NAME</h1>
+<p>tailcall - Replace the current procedure with another command</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>tailcall</strong> <em>command</em> ?<em>arg ...</em>?</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>The <strong>tailcall</strong> command replaces the currently
+executing procedure, lambda application, or method with another command.
+The <em>command</em>, which will have <em>arg ...</em> passed as
+arguments if they are supplied, will be looked up in the current
+namespace context, not in the caller's. Apart from that difference in
+resolution, it is equivalent to:</p>
+<pre><code>return [uplevel 1 [list command ?arg ...?]]</code></pre>
+<p>This command may not be invoked from within an
+<strong>uplevel</strong> into a procedure or inside a
+<strong>catch</strong> inside a procedure or lambda.</p>
+<h1 id="example">EXAMPLE</h1>
+<p>Compute the factorial of a number.</p>
+<pre><code>proc factorial {n {accum 1}} {
+    if {$n &lt; 2} {
+        return $accum
+    }
+    tailcall factorial [expr {$n - 1}] [expr {$accum * $n}]
+}</code></pre>
+<p>Print the elements of a list with alternating lines having different
+indentations.</p>
+<pre><code>proc printList {theList} {
+    if {[llength $theList]} {
+        puts &quot;&gt; [lindex $theList 0]&quot;
+        tailcall printList2 [lrange $theList 1 end]
+    }
+}
+proc printList2 {theList} {
+    if {[llength $theList]} {
+        puts &quot;&lt; [lindex $theList 0]&quot;
+        tailcall printList [lrange $theList 1 end]
+    }
+}</code></pre>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-Commands/apply.html">apply</a>, <a
+href="../Tcl-Commands/proc.html">proc</a>, <a
+href="../Tcl-Commands/uplevel.html">uplevel</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>call, recursion, tail recursion</p>

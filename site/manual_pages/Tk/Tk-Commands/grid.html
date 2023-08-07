@@ -1,0 +1,427 @@
+<h1 id="name">NAME</h1>
+<p>grid - Geometry manager that arranges widgets in a grid</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>grid</strong> <em>option arg</em> ?<em>arg ...</em>?</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>The <strong>grid</strong> command is used to communicate with the
+grid geometry manager that arranges widgets in rows and columns inside
+of another window, called the geometry container (or container window).
+The <strong>grid</strong> command can have any of several forms,
+depending on the <em>option</em> argument:</p>
+<dl>
+<dt><strong>grid</strong> <em>window</em> ?<em>window ...</em>?
+?<em>options</em>?</dt>
+<dd>
+<p>If the first argument to <strong>grid</strong> is suitable as the
+first window argument to <strong>grid configure</strong>, either a
+window name (any value starting with <strong>.</strong>) or one of the
+characters <strong>x</strong> or <strong>^</strong> (see the
+<strong>RELATIVE PLACEMENT</strong> section below), then the command is
+processed in the same way as <strong>grid configure</strong>.</p>
+</dd>
+<dt><strong>grid anchor</strong> <em>window</em> ?<em>anchor</em>?</dt>
+<dd>
+<p>The anchor value controls how to place the grid within the container
+window when no row/column has any weight. See <strong>THE GRID
+ALGORITHM</strong> below for further details. The default
+<em>anchor</em> is <em>nw</em>.</p>
+</dd>
+<dt><strong>grid bbox</strong> <em>window</em> ?<em>column row</em>?
+?<em>column2 row2</em>?</dt>
+<dd>
+<p>With no arguments, the bounding box (in pixels) of the grid is
+returned. The return value consists of 4 integers. The first two are the
+pixel offset from the container window (x then y) of the top-left corner
+of the grid, and the second two integers are the width and height of the
+grid, also in pixels. If a single <em>column</em> and <em>row</em> is
+specified on the command line, then the bounding box for that cell is
+returned, where the top left cell is numbered from zero. If both
+<em>column</em> and <em>row</em> arguments are specified, then the
+bounding box spanning the rows and columns indicated is returned.</p>
+</dd>
+<dt><strong>grid columnconfigure</strong> <em>window index</em>
+?<em>-option value...</em>?</dt>
+<dd>
+<p>Query or set the column properties of the <em>index</em> column of
+the geometry container, <em>window</em>. The valid options are
+<strong>-minsize</strong>, <strong>-weight</strong>,
+<strong>-uniform</strong> and <strong>-pad</strong>. If one or more
+options are provided, then <em>index</em> may be given as a list of
+column indices to which the configuration options will operate on.
+Indices may be integers, window names or the keyword <em>all</em>. For
+<em>all</em> the options apply to all columns currently occupied be
+content windows. For a window name, that window must be a content of
+this container and the options apply to all columns currently occupied
+be the content. The <strong>-minsize</strong> option sets the minimum
+size, in screen units, that will be permitted for this column. The
+<strong>-weight</strong> option (an integer value) sets the relative
+weight for apportioning any extra spaces among columns. A weight of zero
+(0) indicates the column will not deviate from its requested size. A
+column whose weight is two will grow at twice the rate as a column of
+weight one when extra space is allocated to the layout. The
+<strong>-uniform</strong> option, when a non-empty value is supplied,
+places the column in a <em>uniform group</em> with other columns that
+have the same value for <strong>-uniform</strong>. The space for columns
+belonging to a uniform group is allocated so that their sizes are always
+in strict proportion to their <strong>-weight</strong> values. See
+<strong>THE GRID ALGORITHM</strong> below for further details. The
+<strong>-pad</strong> option specifies the number of screen units that
+will be added to the largest window contained completely in that column
+when the grid geometry manager requests a size from the containing
+window. If only an option is specified, with no value, the current value
+of that option is returned. If only the container window and index is
+specified, all the current settings are returned in a list of pairs.</p>
+</dd>
+<dt><strong>grid configure</strong> <em>window</em> ?<em>window
+...</em>? ?<em>options</em>?</dt>
+<dd>
+<p>The arguments consist of the names of one or more content windows
+followed by pairs of arguments that specify how to manage the content.
+The characters <strong>-</strong>, <strong>x</strong> and
+<strong>^</strong>, can be specified instead of a window name to alter
+the default location of a <em>window</em>, as described in the
+<strong>RELATIVE PLACEMENT</strong> section, below. The following
+options are supported:</p>
+<dl>
+<dt><strong>-column</strong> <em>n</em></dt>
+<dd>
+<p>Insert the window so that it occupies the <em>n</em>th column in the
+grid. Column numbers start with 0. If this option is not supplied, then
+the window is arranged just to the right of previous window specified on
+this call to <strong>grid</strong>, or column if it is the first window.
+For each <strong>x</strong> that immediately precedes the
+<em>window</em>, the column position is incremented by one. Thus the
+<strong>x</strong> represents a blank column for this row in the
+grid.</p>
+</dd>
+<dt><strong>-columnspan</strong> <em>n</em></dt>
+<dd>
+<p>Insert the window so that it occupies <em>n</em> columns in the grid.
+The default is one column, unless the window name is followed by a
+<strong>-</strong>, in which case the columnspan is incremented once for
+each immediately following <strong>-</strong>.</p>
+</dd>
+<dt><strong>-in</strong> <em>container</em></dt>
+<dd>
+<p>Insert the window(s) in the container window given by
+<em>container</em>. The default is the first window's parent window.</p>
+</dd>
+<dt><strong>-ipadx</strong> <em>amount</em></dt>
+<dd>
+<p>The <em>amount</em> specifies how much horizontal internal padding to
+leave on each side of the content. This is space is added inside the
+content border. The <em>amount</em> must be a valid screen distance,
+such as <strong>2</strong> or <strong>.5c</strong>. It defaults to
+0.</p>
+</dd>
+<dt><strong>-ipady</strong> <em>amount</em></dt>
+<dd>
+<p>The <em>amount</em> specifies how much vertical internal padding to
+leave on the top and bottom of the content. This space is added inside
+the content border. The <em>amount</em> defaults to 0.</p>
+</dd>
+<dt><strong>-padx</strong> <em>amount</em></dt>
+<dd>
+<p>The <em>amount</em> specifies how much horizontal external padding to
+leave on each side of the content, in screen units. <em>Amount</em> may
+be a list of two values to specify padding for left and right
+separately. The <em>amount</em> defaults to 0. This space is added
+outside the content border.</p>
+</dd>
+<dt><strong>-pady</strong> <em>amount</em></dt>
+<dd>
+<p>The <em>amount</em> specifies how much vertical external padding to
+leave on the top and bottom of the content, in screen units.
+<em>Amount</em> may be a list of two values to specify padding for top
+and bottom separately. The <em>amount</em> defaults to 0. This space is
+added outside the content border.</p>
+</dd>
+<dt><strong>-row</strong> <em>n</em></dt>
+<dd>
+<p>Insert the content so that it occupies the <em>n</em>th row in the
+grid. Row numbers start with 0. If this option is not supplied, then the
+content is arranged on the same row as the previous content specified on
+this call to <strong>grid</strong>, or the next row after the highest
+occupied row if this is the first content.</p>
+</dd>
+<dt><strong>-rowspan</strong> <em>n</em></dt>
+<dd>
+<p>Insert the content so that it occupies <em>n</em> rows in the grid.
+The default is one row. If the next <strong>grid</strong> command
+contains <strong>^</strong> characters instead of <em>content</em> that
+line up with the columns of this <em>content</em>, then the
+<strong>rowspan</strong> of this <em>content</em> is extended by
+one.</p>
+</dd>
+<dt><strong>-sticky</strong> <em>style</em></dt>
+<dd>
+<p>If a content's cell is larger than its requested dimensions, this
+option may be used to position (or stretch) the content within its cell.
+<em>Style</em> is a string that contains zero or more of the characters
+<strong>n</strong>, <strong>s</strong>, <strong>e</strong> or
+<strong>w</strong>. The string can optionally contains spaces or commas,
+but they are ignored. Each letter refers to a side (north, south, east,
+or west) that the content will to. If both <strong>n</strong> and
+<strong>s</strong> (or <strong>e</strong> and <strong>w</strong>) are
+specified, the content will be stretched to fill the entire height (or
+width) of its cavity. The <strong>-sticky</strong> option subsumes the
+combination of <strong>-anchor</strong> and <strong>-fill</strong> that
+is used by <strong>pack</strong>. The default is which causes the
+content to be centered in its cavity, at its requested size.</p>
+</dd>
+</dl>
+<p>If any of the content is already managed by the geometry manager then
+any unspecified options for them retain their previous values rather
+than receiving default values.</p>
+</dd>
+<dt><strong>grid forget</strong> <em>window</em> ?<em>window
+...</em>?</dt>
+<dd>
+<p>Removes each of the <em>window</em>s from grid for its container and
+unmaps their windows. The content will no longer be managed by the grid
+geometry manager. The configuration options for that window are
+forgotten, so that if the window is managed once more by the grid
+geometry manager, the initial default settings are used.</p>
+</dd>
+<dt><strong>grid info</strong> <em>window</em></dt>
+<dd>
+<p>Returns a list whose elements are the current configuration state of
+the content given by <em>window</em> in the same option-value form that
+might be specified to <strong>grid configure</strong>. The first two
+elements of the list are where <em>container</em> is the windows's
+container window.</p>
+</dd>
+<dt><strong>grid location</strong> <em>window x y</em></dt>
+<dd>
+<p>Given <em>x</em> and <em>y</em> values in screen units relative to
+the container window, the column and row number at that <em>x</em> and
+<em>y</em> location is returned. For locations that are above or to the
+left of the grid, <strong>-1</strong> is returned.</p>
+</dd>
+<dt><strong>grid propagate</strong> <em>window</em>
+?<em>boolean</em>?</dt>
+<dd>
+<p>If <em>boolean</em> has a true boolean value such as
+<strong>1</strong> or <strong>on</strong> then propagation is enabled
+for <em>window</em>, which must be a window name (see <strong>GEOMETRY
+PROPAGATION</strong> below). If <em>boolean</em> has a false boolean
+value then propagation is disabled for <em>window</em>. In either of
+these cases an empty string is returned. If <em>boolean</em> is omitted
+then the command returns <strong>0</strong> or <strong>1</strong> to
+indicate whether propagation is currently enabled for <em>window</em>.
+Propagation is enabled by default.</p>
+</dd>
+<dt><strong>grid rowconfigure</strong> <em>window index</em>
+?<em>-option value...</em>?</dt>
+<dd>
+<p>Query or set the row properties of the <em>index</em> row of the
+geometry window, <em>window</em>. The valid options are
+<strong>-minsize</strong>, <strong>-weight</strong>,
+<strong>-uniform</strong> and <strong>-pad</strong>. If one or more
+options are provided, then <em>index</em> may be given as a list of row
+indices to which the configuration options will operate on. Indices may
+be integers, window names or the keyword <em>all</em>. For <em>all</em>
+the options apply to all rows currently occupied by content windows. For
+a window name, that window must be a content window of this container
+and the options apply to all rows currently occupied by the container
+window. The <strong>-minsize</strong> option sets the minimum size, in
+screen units, that will be permitted for this row. The
+<strong>-weight</strong> option (an integer value) sets the relative
+weight for apportioning any extra spaces among rows. A weight of zero
+(0) indicates the row will not deviate from its requested size. A row
+whose weight is two will grow at twice the rate as a row of weight one
+when extra space is allocated to the layout. The
+<strong>-uniform</strong> option, when a non-empty value is supplied,
+places the row in a <em>uniform group</em> with other rows that have the
+same value for <strong>-uniform</strong>. The space for rows belonging
+to a uniform group is allocated so that their sizes are always in strict
+proportion to their <strong>-weight</strong> values. See <strong>THE
+GRID ALGORITHM</strong> below for further details. The
+<strong>-pad</strong> option specifies the number of screen units that
+will be added to the largest window contained completely in that row
+when the grid geometry manager requests a size from the containing
+window. If only an option is specified, with no value, the current value
+of that option is returned. If only the container window and index is
+specified, all the current settings are returned in a list of pairs.</p>
+</dd>
+<dt><strong>grid remove</strong> <em>window</em> ?<em>window
+...</em>?</dt>
+<dd>
+<p>Removes each of the <em>window</em>s from grid for its container and
+unmaps their windows. The content will no longer be managed by the grid
+geometry manager. However, the configuration options for that window are
+remembered, so that if the content window is managed once more by the
+grid geometry manager, the previous values are retained.</p>
+</dd>
+<dt><strong>grid size</strong> <em>container</em></dt>
+<dd>
+<p>Returns the size of the grid (in columns then rows) for
+<em>container</em>. The size is determined either by the
+<em>content</em> occupying the largest row or column, or the largest
+column or row with a <strong>-minsize</strong>,
+<strong>-weight</strong>, or <strong>-pad</strong> that is non-zero.</p>
+</dd>
+<dt><strong>grid slaves</strong> <em>window</em> ?<em>-option
+value</em>?</dt>
+<dd>
+<p>If no options are supplied, a list of all of the content in
+<em>window</em> are returned, most recently managed first.
+<em>Option</em> can be either <strong>-row</strong> or
+<strong>-column</strong> which causes only the content in the row (or
+column) specified by <em>value</em> to be returned.</p>
+</dd>
+</dl>
+<!-- -->
+<dl>
+<dt><strong>grid content</strong> <em>window</em> ?<em>-option
+value</em>?</dt>
+<dd>
+<p>Synonym for <strong>grid slaves</strong> <em>window</em> ?<em>-option
+value</em>?.</p>
+</dd>
+</dl>
+<h1 id="relative-placement">RELATIVE PLACEMENT</h1>
+<p>The <strong>grid</strong> command contains a limited set of
+capabilities that permit layouts to be created without specifying the
+row and column information for each content. This permits content to be
+rearranged, added, or removed without the need to explicitly specify row
+and column information. When no column or row information is specified
+for a <em>content</em>, default values are chosen for
+<strong>-column</strong>, <strong>-row</strong>,
+<strong>-columnspan</strong> and <strong>-rowspan</strong> at the time
+the <em>content</em> is managed. The values are chosen based upon the
+current layout of the grid, the position of the <em>content</em>
+relative to other <em>content</em>s in the same grid command, and the
+presence of the characters <strong>-</strong>, <strong>x</strong>, and
+<strong>^</strong> in <strong>grid</strong> command where
+<em>content</em> names are normally expected.</p>
+<blockquote>
+<dl>
+<dt><strong>-</strong></dt>
+<dd>
+<p>This increases the <strong>-columnspan</strong> of the
+<em>content</em> to the left. Several <strong>-</strong>'s in a row will
+successively increase the number of columns spanned. A
+<strong>-</strong> may not follow a <strong>^</strong> or a
+<strong>x</strong>, nor may it be the first <em>content</em> argument to
+<strong>grid configure</strong>.</p>
+</dd>
+<dt><strong>x</strong></dt>
+<dd>
+<p>This leaves an empty column between the <em>content</em> on the left
+and the <em>content</em> on the right.</p>
+</dd>
+<dt><strong>^</strong></dt>
+<dd>
+<p>This extends the <strong>-rowspan</strong> of the <em>content</em>
+above the <strong>^</strong>'s in the grid. The number of
+<strong>^</strong>'s in a row must match the number of columns spanned
+by the <em>content</em> above it.</p>
+</dd>
+</dl>
+</blockquote>
+<h1 id="the-grid-algorithm">THE GRID ALGORITHM</h1>
+<p>The grid geometry manager lays out its content in three steps. In the
+first step, the minimum size needed to fit all of the content is
+computed, then (if propagation is turned on), a request is made of the
+container window to become that size. In the second step, the requested
+size is compared against the actual size of the container. If the sizes
+are different, then spaces is added to or taken away from the layout as
+needed. For the final step, each content is positioned in its row(s) and
+column(s) based on the setting of its <em>sticky</em> flag.</p>
+<p>To compute the minimum size of a layout, the grid geometry manager
+first looks at all content whose <strong>-columnspan</strong> and
+<strong>-rowspan</strong> values are one, and computes the nominal size
+of each row or column to be either the <em>minsize</em> for that row or
+column, or the sum of the <em>pad</em>ding plus the size of the largest
+content, whichever is greater. After that the rows or columns in each
+uniform group adapt to each other. Then the content whose row-spans or
+column-spans are greater than one are examined. If a group of rows or
+columns need to be increased in size in order to accommodate these
+content, then extra space is added to each row or column in the group
+according to its <em>weight</em>. For each group whose weights are all
+zero, the additional space is apportioned equally.</p>
+<p>When multiple rows or columns belong to a uniform group, the space
+allocated to them is always in proportion to their weights. (A weight of
+zero is considered to be 1.) In other words, a row or column configured
+with <strong>-weight 1 -uniform a</strong> will have exactly the same
+size as any other row or column configured with <strong>-weight 1
+-uniform</strong> a. A row or column configured with <strong>-weight 2
+-uniform b</strong> will be exactly twice as large as one that is
+configured with <strong>-weight 1</strong> -uniform b.</p>
+<p>More technically, each row or column in the group will have a size
+equal to <em>k*weight</em> for some constant <em>k</em>. The constant
+<em>k</em> is chosen so that no row or column becomes smaller than its
+minimum size. For example, if all rows or columns in a group have the
+same weight, then each row or column will have the same size as the
+largest row or column in the group.</p>
+<p>For containers whose size is larger than the requested layout, the
+additional space is apportioned according to the row and column weights.
+If all of the weights are zero, the layout is placed within its
+container according to the <em>anchor</em> value. For containers whose
+size is smaller than the requested layout, space is taken away from
+columns and rows according to their weights. However, once a column or
+row shrinks to its minsize, its weight is taken to be zero. If more
+space needs to be removed from a layout than would be permitted, as when
+all the rows or columns are at their minimum sizes, the layout is placed
+and clipped according to the <em>anchor</em> value.</p>
+<h1 id="geometry-propagation">GEOMETRY PROPAGATION</h1>
+<p>The grid geometry manager normally computes how large a container
+must be to just exactly meet the needs of its content, and it sets the
+requested width and height of the container to these dimensions. This
+causes geometry information to propagate up through a window hierarchy
+to a top-level window so that the entire sub-tree sizes itself to fit
+the needs of the leaf windows. However, the <strong>grid
+propagate</strong> command may be used to turn off propagation for one
+or more containers. If propagation is disabled then grid will not set
+the requested width and height of the container window. This may be
+useful if, for example, you wish for a container window to have a fixed
+size that you specify.</p>
+<h1 id="restrictions-on-container-windows">RESTRICTIONS ON CONTAINER
+WINDOWS</h1>
+<p>The container for each content must either be the content's parent
+(the default) or a descendant of the content's parent. This restriction
+is necessary to guarantee that the content can be placed over any part
+of its container that is visible without danger of the content being
+clipped by its parent. In addition, all content in one call to
+<strong>grid</strong> must have the same container.</p>
+<h1 id="stacking-order">STACKING ORDER</h1>
+<p>If the container for a content is not its parent then you must make
+sure that the content is higher in the stacking order than the
+container. Otherwise the container will obscure the content and it will
+appear as if the content has not been managed correctly. The easiest way
+to make sure the content is higher than the container is to create the
+container window first: the most recently created window will be highest
+in the stacking order.</p>
+<h1 id="credits">CREDITS</h1>
+<p>The <strong>grid</strong> command is based on ideas taken from the
+<em>GridBag</em> geometry manager written by Doug. Stein, and the
+<strong>blt_table</strong> geometry manager, written by George
+Howlett.</p>
+<h1 id="examples">EXAMPLES</h1>
+<p>A toplevel window containing a text widget and two scrollbars:</p>
+<pre><code># Make the widgets
+toplevel .t
+text .t.txt -wrap none -xscroll {.t.h set} -yscroll {.t.v set}
+scrollbar .t.v -orient vertical   -command {.t.txt yview}
+scrollbar .t.h -orient horizontal -command {.t.txt xview}
+
+# Lay them out
+grid .t.txt .t.v -sticky nsew
+grid .t.h        -sticky nsew
+
+# Tell the text widget to take all the extra room
+grid rowconfigure    .t .t.txt -weight 1
+grid columnconfigure .t .t.txt -weight 1</code></pre>
+<p>Three widgets of equal width, despite their different widths:</p>
+<pre><code>button .b -text &quot;Foo&quot;
+entry .e -textvariable foo ; set foo &quot;Hello World!&quot;
+label .l -text &quot;This is a fairly long piece of text&quot;
+
+grid .b .e .l -sticky ew
+grid columnconfigure . &quot;all&quot; -uniform allTheSame</code></pre>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tk-Commands/pack.html">pack</a>, <a
+href="../Tk-Commands/place.html">place</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>geometry manager, location, grid, cell, propagation, size, pack</p>

@@ -1,0 +1,44 @@
+<h1 id="name">NAME</h1>
+<p>eof - Check for end of file condition on channel</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>eof</strong> <em>channelId</em></p>
+<h1 id="description">DESCRIPTION</h1>
+<p>Returns 1 if an end of file condition occurred during the most recent
+input operation on <em>channelId</em> (such as <strong>gets</strong>), 0
+otherwise.</p>
+<p><em>ChannelId</em> must be an identifier for an open channel such as
+a Tcl standard channel (<strong>stdin</strong>, <strong>stdout</strong>,
+or <strong>stderr</strong>), the return value from an invocation of
+<strong>open</strong> or <strong>socket</strong>, or the result of a
+channel creation command provided by a Tcl extension.</p>
+<h1 id="examples">EXAMPLES</h1>
+<p>Read and print out the contents of a file line-by-line:</p>
+<pre><code>set f [open somefile.txt]
+while {1} {
+    set line [gets $f]
+    if {[eof $f]} {
+        close $f
+        break
+    }
+    puts &quot;Read line: $line&quot;
+}</code></pre>
+<p>Read and print out the contents of a file by fixed-size records:</p>
+<pre><code>set f [open somefile.dat]
+fconfigure $f -translation binary
+set recordSize 40
+while {1} {
+    set record [read $f $recordSize]
+    if {[eof $f]} {
+        close $f
+        break
+    }
+    puts &quot;Read record: $record&quot;
+}</code></pre>
+<h1 id="see-also">SEE ALSO</h1>
+<p><a href="../Tcl-Commands/file.html">file</a>, <a
+href="../Tcl-Commands/open.html">open</a>, <a
+href="../Tcl-Commands/close.html">close</a>, <a
+href="../Tcl-Commands/fblocked.html">fblocked</a>, <a
+href="../Tcl-C-API/Tcl_StandardChannels.html">Tcl_StandardChannels</a></p>
+<h1 id="keywords">KEYWORDS</h1>
+<p>channel, end of file</p>
