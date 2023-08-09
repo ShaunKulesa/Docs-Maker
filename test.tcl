@@ -188,7 +188,7 @@ proc tree-callback {tree node action} {
     
 
     # get parent node subnodes
-    if {$node != [ $tree root ]} {
+    if {$node != [ $tree rootname ]} {
         
         set subnodes [ $tree children [$tree parent $node] ]
 
