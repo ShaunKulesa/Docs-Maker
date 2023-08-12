@@ -171,18 +171,18 @@ set dir_tree [struct::tree]
 $dir_tree rename root ./docs
 
 file delete -force ./temp/
-file delete -force ./site/
+file delete -force ./site/manual_pages/
 
 # create temp dir
 file mkdir ./temp
-file mkdir ./site
+file mkdir ./site/manual_pages
 
 proc tree-callback {tree node action} {
     upvar 1 commands commands
     # puts $node
     set files [glob -nocomplain -directory $node *md]
 
-    file mkdir [file join ./site [string range $node 7 end]]
+    file mkdir [file join ./site/manual_pages [string range $node 7 end]]
 
     set file_dict [dict get $commands $node]
     
@@ -213,7 +213,7 @@ proc tree-callback {tree node action} {
         convert_links $new_file
 
         # pandoc md to html
-        set html_file [file join ./site [string range $node 7 end] [string replace [file tail $file] end-2 end .html]]
+        set html_file [file join ./site/manual_pages [string range $node 7 end] [string replace [file tail $file] end-2 end .html]]
 
         exec pandoc -f markdown -t html $new_file -o $html_file
     }
@@ -227,7 +227,7 @@ proc tree-callback {tree node action} {
 proc create_index {tree node action} {
     upvar 1 commands commands
 
-    set index_file [open [file join ./site [string range $node 7 end] index.html] w]
+    set index_file [open [file join ./site/manual_pages [string range $node 7 end] index.html] w]
 
     set subnodes [ $tree children $node ]
 
@@ -246,7 +246,7 @@ proc create_index {tree node action} {
         puts $index_file "<h1> Commands </h1>"
 
         foreach {command command_file} $command_files {
-            set command [string range [file tail $command_file] 0 end-3]
+            set command_file [string range [file tail $command_file] 0 end-3]
             puts $index_file "<a href=\"./$command.html\">$command</a><br>"
         }
     }
