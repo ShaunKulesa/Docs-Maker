@@ -1,27 +1,5 @@
-# Language Tcl
+package require struct::tree 2.1.1
 
-# Get folders and sub-folders in .\docs
-proc ::findFiles { baseDir pattern } {
-    set dirs [ glob -nocomplain -type d [ file join $baseDir * ] ]
-    set files {}
-    foreach dir $dirs { 
-        lappend files {*}[ findFiles $dir $pattern ] 
-    }
-    lappend files {*}[ glob -nocomplain -type f [ file join $baseDir $pattern ] ] 
-    return $files
-
-    # ./docs/category1/subcatergory1/index.md
-    # ./docs/category1/index.md
-    # ./docs/index.md
-}
-
-# Delete everything in ".\site\"
-file delete -force ./site/
-
-# get all css files in .\css
-set css_files [ findFiles css *.css ]
-
-# Convert markdown links to html links
 proc convert_links {file_path} {
     # find a matching pair of ()
     # get the text inside the ()
@@ -115,6 +93,7 @@ proc see_also_links {file_path file_dict} {
     # SEE ALSO
     # after(n), interp(n)
 
+
     set file [ open $file_path r ]
 
     set file_contents [ read $file ]
@@ -134,28 +113,47 @@ proc see_also_links {file_path file_dict} {
 
     # Turn each comma spearated command into a list item
     set see_also_section [ split $see_also_section "," ]
-    
+
+    # puts $see_also_section    
     set command_index 0
 
     foreach command $see_also_section {
         # remove spaces
         set command [ string trim $command ]
 
-        # remove the last 3 characters such as "(n)"
-        set command [ string range $command 0 end-3 ]
+                    
+        # if {[file tail $file_path] == "options.md"} {
+        #     puts $command
+        # }
+
+        #remove (n) (1) (3)
+        regsub -all {\([0-9|n]\)} $command {} command
 
         if {![dict exists $file_dict $command]} {
+
             incr command_index
             continue
         }
 
+        #check if command is in current dir or a dir one level below
+        if {[dict get $file_dict $command] == [file dirname $file_path]} {
+            set command_dir [./]
+        } else {
+
+            set command_dir "../[lindex [split [file dirname [dict get $file_dict $command]] /] end end]/"
+        }
+
+ 
+
+        set command "\[$command\]($command_dir$command.md)"
+      
         # Add link to command
-        set command "\[$command\](./[file tail [dict get $file_dict $command]])"
 
         set see_also_section [ lreplace $see_also_section $command_index $command_index $command]
 
         incr command_index
     }
+
 
     set see_also_section [ join $see_also_section ", " ]
 
@@ -169,218 +167,143 @@ proc see_also_links {file_path file_dict} {
     close $file
 }
 
-proc create_index {dir file_dict categoty_dirs} {
-    # Create index.md for each dir
+set dir_tree [struct::tree]
+$dir_tree rename root ./docs
 
-    set index_file_dir [ string cat $dir/index.md ]
+file delete -force ./temp/
+file delete -force ./site/manual_pages/
 
-    # Create index.md
-    set index_file [ open $index_file_dir w ]
+# create temp dir
+file mkdir ./temp
+file mkdir ./site/manual_pages
 
-    if {[llength $categoty_dirs] > 0} {
-        puts -nonewline $index_file "Catrgories\n\n"
+proc tree-callback {tree node action} {
+    upvar 1 commands commands
+    # puts $node
+    set files [glob -nocomplain -directory $node *md]
 
-        foreach category_dir $categoty_dirs {
-            set category_name [ file tail $category_dir ]
+    file mkdir [file join ./site/manual_pages [string range $node 7 end]]
 
-            puts -nonewline $index_file "\[$category_name\](./[file tail $category_dir]/index.html)\n\n"
+    set file_dict [dict get $commands $node]
+    
+
+    # get parent node subnodes
+    if {$node != [ $tree rootname ]} {
+        
+        set subnodes [ $tree children [$tree parent $node] ]
+
+        foreach subnode $subnodes {
+            set file_dict [dict merge $file_dict [dict get $commands $subnode]]
+        }
+    }
+   
+    # puts $file_dict
+    
+    # create copies of files in temp dir
+    foreach file $files {
+        set new_file [file join ./temp [file tail $file]]
+        file copy $file $new_file
+
+        # create see also links
+        # puts $file_dict
+
+        see_also_links $new_file $file_dict
+
+        # convert links
+        convert_links $new_file
+
+        # pandoc md to html
+        set html_file [file join ./site/manual_pages [string range $node 7 end] [string replace [file tail $file] end-2 end .html]]
+
+        exec pandoc -f markdown -t html $new_file -o $html_file
+    }
+
+    # empty temp dir
+    file delete -force ./temp/
+    
+    file mkdir ./temp
+}
+
+proc create_index {tree node action} {
+    upvar 1 commands commands
+
+    set index_file [open [file join ./site/manual_pages [string range $node 7 end] index.html] w]
+
+    set subnodes [ $tree children $node ]
+
+    if {[llength $subnodes] != 0} {
+        puts $index_file "<h1> Categories </h1>"
+
+        foreach category $subnodes {
+            set subnode_local [lindex [split $category /] end]
+            puts $index_file "<a href=\"./$subnode_local/index.html\">$subnode_local</a><br>"
         }
     }
 
-    if {[dict size $file_dict] > 0} {
-        puts -nonewline $index_file "Commands\n\n"
+    set command_files [dict get $commands $node]
 
-        #sort the dictionary by key
-        set keys [dict keys $file_dict]
+    if {[llength $command_files] != 0} {
+        puts $index_file "<h1> Commands </h1>"
 
-        # Sort the keys using lsort
-        set sortedKeys [lsort $keys]
-
-        # Create a new dictionary with sorted keys
-        set sortedDict [dict create]
-
-        foreach key $sortedKeys {
-            dict set sortedDict $key [dict get $file_dict $key]
-        }
-
-        dict for {command file_dir} $sortedDict {
-            puts -nonewline $index_file "\[$command\](./[file tail $file_dir])\n\n"
+        foreach {command command_file} $command_files {
+            set command_file [string range [file tail $command_file] 0 end-3]
+            puts $index_file "<a href=\"./$command.html\">$command</a><br>"
         }
     }
 
     close $index_file
 }
 
-# Get all files in .\docs
-set files [ findFiles docs *.md ]
-
-#add empty string to the end of the list to know when to stop looping
-lappend files ""
-
-set current_dir [ file dirname [lindex $files 0] ]
-# set commands [dict create]
-# set category_dirs [list]
-
-# # Create temp directory
-# file mkdir ./temp/
-
-# # Loop through markdown files
-# foreach file $files {
-#     # Check to see if on new directory
-#     if {$current_dir != [ file dirname $file ]} {
-#         create_index ./temp $commands $category_dirs
-
-#         # Loop through temp files
-#         foreach temp_file [glob ./temp/*] {
-            
-#             see_also_links $temp_file $commands
-
-#             convert_links $temp_file
-
-#             set file_site_dir [ string cat ./site/[string replace $current_dir 0 4 ""]/[string replace [ file tail $temp_file ] end-2 end ".html" ]]
-            
-#             exec pandoc -f markdown -t html $temp_file -o $file_site_dir
-
-#             set cdn_file [open "./incl/docscdn" r]    ;# 'r' means to open the file for reading
-# 		    set cdndata [read $cdn_file]
-#             close $cdn_file
-#             set dir_depth [ llength [ split $file_dir / ] ]
-#             set html [ read [open $file_site_dir r] ]
-#             set html [ string cat "</head><body><div class=\"container\">" $html ]
-
-#             set html [ string cat "<link rel=\"stylesheet\" href=\"../" [ string repeat "../" $dir_depth ] "data/css/style.css\">" $html ]
-#             set html [ string cat "<head> $cdndata" $html ]
-
-#             set html [ string cat "<!DOCTYPE html>" $html ]
-
-#             # write html to file
-#             set f [ open $file_site_dir "w" ]
-#             puts -nonewline $f $html
-#             puts -nonewline $f "</div><script>hljs.highlightAll();</script></body></html>"
-#             close $f
-
-#         }
-
-#         # Delete temp directory
-#         file delete -force ./temp/
-
-#         # Create temp directory
-#         file mkdir ./temp/
-
-#         set current_dir [ file dirname $file ]
-#     }
-
-#     if {$file == ""} {
-#         continue
-#     }
-
-#     set file_commands [ find_commands $file [ split [ read [ open $file r ] ] "\n" ] ]
-
-#     set commands [dict merge $commands $file_commands]
-
-
-
-#     set file_extension [ file extension $file ]
-
-#     if {$file_extension == ".md"} {
-#         ### Find commands in files under NAME section ###
-
-#         # Open markdown file
-#         set f [ open $file r ]
-#         set file_contents [ read $f ]
-#         set file_lines [ split $file_contents "\n" ]
-
-#         # set file_contents [ convert_links $file_contents ]
-#         close $f
-
-#         # Get file name and remove .md
-#         set file_name [ string range [ file tail $file ] 0 end-3 ]
-
-#         find_commands "$file_name.md" $file_lines
-
-#         set temp_file_dir [ string cat ./temp/$file_name.md ]
-
-#         # Create temp file
-#         set temp_file [open $temp_file_dir w]
-#         puts -nonewline $temp_file $file_contents
-#         close $temp_file
-
-#         # File directory - get dirname and remove docs/ at the start
-#         set file_dir [ string range [ file dirname $file ] 5 end ]
-
-#         # Create directory if the file is not in the base directory
-#         if {$file_dir != ""} {
-#             file mkdir [ string cat ./site/$file_dir ]
-#         }
-#     }
-# }
-
-# # Delete temp directory 
-# file delete -force ./temp/
-
-# {dir {files {}} {category_dirs {}}
-set docs_structure [dict create]
-set dir_files [list]
-set dir_category_dirs [list]
-
-# # Loop through markdown files
-# foreach file $files {
-#     # check if dir is in dict
-#     if {[dict exists $docs_structure $current_dir] == 0} {
-#         dict set docs_structure $current_dir [dict create files [list] category_dirs [list]]
-#     }
-        
-#     if {[file dirname $file] != $current_dir} {
-#         # check if current dir is a subdirectory of another already in the dict
-#         set current_dir_split [split [file dirname $file] /]
-#         set current_dir_split_length [llength $current_dir_split]
-#         set current_dir_split_length [expr $current_dir_split_length - 1]
-#         set current_dir_split [lrange $current_dir_split 0 $current_dir_split_length]
-#         set current_dir_split [join $current_dir_split /]
-
-#         puts "$current_dir_split, $docs_structure\n" 
-
-#         if {[dict exists $docs_structure $current_dir_split]} {
-#             # puts "subdir of $current_dir_split"
-#             dict set docs_structure $current_dir_split files $dir_files
-#             dict set docs_structure $current_dir_split category_dirs $dir_category_dirs
-#         }
-
-#         set current_dir [file dirname $file]
-        
-#     }
-
-# }
-
-# puts $docs_structure
-
-# recursively loop through dirs and subdirs
-proc loop_dirs {dir} {
-    global docs_structure
-    global dir_files
-    global dir_category_dirs
-
-    set files [glob $dir/*]
-    set current_dir [file dirname [lindex $files 0] ]
-    set dir_files [list]
-    set dir_category_dirs [list]
-
-    foreach file $files {
-        if {[file isdirectory $file]} {
-            loop_dirs $file
-        } else {
-            lappend dir_files $file
-        }
+proc ftw_1 {{dirs .}} {
+    set subdirs {}
+    while {[llength $dirs]} {
+        set dirs [lassign $dirs name]
+        lappend dirs {*}[glob -nocomplain -directory $name -type d *]
+        lappend subdirs $name
     }
 
-    dict set docs_structure $current_dir files $dir_files
-    dict set docs_structure $current_dir category_dirs $dir_category_dirs
+    return $subdirs
 }
 
-loop_dirs ./docs
+proc add_to_tree {tree dirs} {
+    foreach dir $dirs {
+        set parent [file dirname $dir]
 
-puts $docs_structure
+        $tree insert $parent 0 $dir
+    }
+}
+
+set dirs [ftw_1 [list ./docs]]
+set dirs [lreplace $dirs 0 0]
+
+add_to_tree $dir_tree $dirs
+
+
+proc find_commands_callback {tree node action} {
+    upvar 1 commands commands
+    set files [glob -nocomplain -directory $node *md]
+
+    dict set commands $node [dict create]
+
+    foreach file_path $files {
+        set file [ open $file_path r ]
+        set file_lines [ split [ read $file ] "\n" ]
+        close $file
+
+        set file_dict [ find_commands $file_path $file_lines ]
+
+        dict set commands $node [dict merge [dict get $commands $node] $file_dict]
+    }
+}
+
+# todo
+
+# walk all dirs to create a dictionary of dirs and their {commands: files}
 
 set commands [dict create]
 
+$dir_tree walkproc ./docs -order post -type bfs find_commands_callback
 
+$dir_tree walkproc ./docs -order post -type bfs tree-callback
+
+$dir_tree walkproc ./docs -order post -type bfs create_index
