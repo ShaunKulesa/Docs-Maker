@@ -245,7 +245,7 @@ proc create_index {tree node action} {
     if {[llength $command_files] != 0} {
         puts $index_file "<h1> Commands </h1>"
 
-        foreach {command command_file} $command_files {
+        dict for {command command_file} $command_files {
             set command_file [string range [file tail $command_file] 0 end-3]
             puts $index_file "<a href=\"./$command.html\">$command</a><br>"
         }
