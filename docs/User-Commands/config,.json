@@ -1,4 +1,7 @@
 {"command_references": [
+    "./User-Commands",
+    "./Tk/Tk-Commands",
+    "./Tk/Tk-C-API",
     "./Tcl/Tcl-Commands",
     "./Tcl/Tcl-C-API"
 ]}
