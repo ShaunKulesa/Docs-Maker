@@ -1,4 +1,30 @@
 package require struct::tree 2.1.1
+package require json
+
+proc relTo {currentpath targetfile} {
+    set cc [file split [file normalize $currentpath]]
+    set tt [file split [file normalize $targetfile]]
+    if {![string equal [lindex $cc 0] [lindex $tt 0]]} {
+        # not on *n*x then
+        return -code error "$targetfile not on same volume as $currentpath"
+    }
+    while {[string equal [lindex $cc 0] [lindex $tt 0]] && [llength $cc] > 0} {
+        # discard matching components from the front
+        set cc [lreplace $cc 0 0]
+        set tt [lreplace $tt 0 0]
+    }
+    set prefix {} 
+    if {[llength $cc] == 0} {
+        # just the file name, so targetfile is lower down (or in same place)
+        set prefix .
+    }
+    # step up the tree
+    for {set i 0} {$i < [llength $cc]} {incr i} {
+        append prefix { ..}
+    }
+    # stick it all together
+    file join {*}$prefix {*}$tt
+}
 
 proc convert_links {file_path} {
     # find a matching pair of ()
@@ -89,7 +115,7 @@ proc find_commands {file_name file_lines} {
     return $file_dict
 }
 
-proc see_also_links {file_path file_dict} {
+proc see_also_links {original_file file_path file_dict} {
     # SEE ALSO
     # after(n), interp(n)
 
@@ -121,11 +147,6 @@ proc see_also_links {file_path file_dict} {
         # remove spaces
         set command [ string trim $command ]
 
-                    
-        # if {[file tail $file_path] == "options.md"} {
-        #     puts $command
-        # }
-
         #remove (n) (1) (3)
         regsub -all {\([0-9|n]\)} $command {} command
 
@@ -135,19 +156,20 @@ proc see_also_links {file_path file_dict} {
             continue
         }
 
-        #check if command is in current dir or a dir one level below
-        if {[dict get $file_dict $command] == [file dirname $file_path]} {
-            set command_dir [./]
-        } else {
+        set command_dir [ dict get $file_dict $command ]
 
-            set command_dir "../[lindex [split [file dirname [dict get $file_dict $command]] /] end end]/"
+        set original_file_html_dir [string cat ./site/manual_pages/ [join [lrange [split [string range $original_file 7 end] "/"] 0 end-1] "/"]]
+        set command_html_dir [string cat ./site/manual_pages/ [join [lrange [split [string range $command_dir 7 end] "/"] 0 end-1] "/"]]
+       
+        if {[relTo $original_file_html_dir $command_html_dir] == "."} {
+            set relative_path [file tail $command_dir]
+        } else {
+            set relative_path [string cat [relTo $original_file_html_dir $command_html_dir] "/" [file tail $command_dir]]
         }
 
- 
-
-        set command "\[$command\]($command_dir$command.md)"
+        set command "\[$command\]($relative_path)"
       
-        # Add link to command
+        # # Add link to command
 
         set see_also_section [ lreplace $see_also_section $command_index $command_index $command]
 
@@ -185,17 +207,47 @@ proc tree-callback {tree node action} {
     file mkdir [file join ./site/manual_pages [string range $node 7 end]]
 
     set file_dict [dict get $commands $node]
+
+    #check if config.json exists
+    if {[file exists [file join $node config.json]]} {
+        set config_file [open [file join $node config.json] r]
+        set command_dirs [dict get [json::json2dict [read $config_file]] "command_references"]
+        close $config_file
+
+
+
+        
+
+        foreach command_dir $command_dirs {
+            # puts $command_dir
+            # remove . from start of command dir and add .docs to start of command_dir
+            set command_dir [string cat "./docs" [string range $command_dir 1 end]]
+
+            # check if dir is a folder
+            if {[file isdirectory $command_dir]} {
+                set file_dict [dict merge $file_dict [dict get $commands $command_dir]]
+                puts $node
+                puts $command_dir
+
+                
+            } elseif {[file exists [file join $node $command_dir]]} {
+                set command_dir [file dirname $command_dir]
+            }
+        }
+
+        # puts 
+    }
     
 
     # get parent node subnodes
-    if {$node != [ $tree rootname ]} {
+    # if {$node != [ $tree rootname ]} {
         
-        set subnodes [ $tree children [$tree parent $node] ]
+    #     set subnodes [ $tree children [$tree parent $node] ]
 
-        foreach subnode $subnodes {
-            set file_dict [dict merge $file_dict [dict get $commands $subnode]]
-        }
-    }
+    #     foreach subnode $subnodes {
+    #         set file_dict [dict merge $file_dict [dict get $commands $subnode]]
+    #     }
+    # }
    
     # puts $file_dict
     
@@ -207,7 +259,7 @@ proc tree-callback {tree node action} {
         # create see also links
         # puts $file_dict
 
-        see_also_links $new_file $file_dict
+        see_also_links $file $new_file $file_dict
 
         # convert links
         convert_links $new_file
@@ -247,7 +299,7 @@ proc create_index {tree node action} {
 
         dict for {command command_file} $command_files {
             set command_file [string range [file tail $command_file] 0 end-3]
-            puts $index_file "<a href=\"./$command.html\">$command</a><br>"
+            puts $index_file "<a href=\"./$command_file.html\">$command</a><br>"
         }
     }
 

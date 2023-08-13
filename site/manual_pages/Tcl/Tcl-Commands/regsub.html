@@ -121,9 +121,8 @@ set substitution {[format \\\\u%04x [scan &quot;\\&amp;&quot; %c]]}
 set quoted [subst [string map {\n {\\u000a}} \
         [regsub -all $RE $string $substitution]]]</code></pre>
 <h1 id="see-also">SEE ALSO</h1>
-<p><a href="../Tcl-Commands/regexp.html">regexp</a>, <a
-href="../Tcl-Commands/re_syntax.html">re_syntax</a>, <a
-href="../Tcl-Commands/subst.html">subst</a>, <a
-href="../Tcl-Commands/string.html">string</a></p>
+<p><a href="regexp.html">regexp</a>, <a
+href="re_syntax.html">re_syntax</a>, <a href="subst.html">subst</a>, <a
+href="string.html">string</a></p>
 <h1 id="keywords">KEYWORDS</h1>
 <p>match, pattern, quoting, regular expression, substitution</p>
